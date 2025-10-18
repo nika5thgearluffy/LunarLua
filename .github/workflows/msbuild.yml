@@ -31,16 +31,11 @@ jobs:
     - uses: actions/checkout@v4
 
     - name: Add MSBuild to PATH
-      uses: microsoft/setup-msbuild@v2
-      with:
-          msbuild-architecture: x86
+      uses: microsoft/setup-msbuild@v1.0.2
 
     - name: Add MSVC++ to PATH
       uses: ilammy/msvc-dev-cmd@v1
 
-    - name: Download and install Visual Studio Build Tools 2015
-      run: choco install VisualCppBuildTools -packageParameters "--Features Win81SDK_CppBuildSKUV1,Win10_EmulatorV1"
-      
     - name: Download and install Windows 8.1 SDK
       run: |
         import subprocess
