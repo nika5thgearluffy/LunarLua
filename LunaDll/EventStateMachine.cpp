@@ -8,7 +8,6 @@
 #include "Misc/LoadScreen.h"
 #include "Rendering/GL/GLEngineProxy.h"
 #include "SdlMusic/SdlMusPlayer.h"
-#include "../Episode/EpisodeMain.h"
 #include "SMBXInternal/Variables.h"
 
 // Global instance

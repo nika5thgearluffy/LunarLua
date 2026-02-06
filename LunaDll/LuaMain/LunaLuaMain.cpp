@@ -997,7 +997,11 @@ void CLunaLua::bindAll()
             ],
 
             namespace_("Editor")[
-                def("getItem", (std::string(*)()) & GetEditorPlacedItem)
+                def("getItem", (std::string(*)()) &GetEditorPlacedItem)
+            ],
+
+            namespace_("Monitor")[
+                def("count", (int(*)()) &MonitorCount)
             ],
 
             LUAHELPER_DEF_CLASS(NativeInputConfig)

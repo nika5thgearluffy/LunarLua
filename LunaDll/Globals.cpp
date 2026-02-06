@@ -137,8 +137,13 @@ void printBoxA(const char *fmt, ...)
     dbgboxA(buf);
 }
 
+// Editor entity
 std::string gEditorPlacedItem = "nil";
 std::mutex g_editorIPCMutex;
 
 bool gEpisodeLoadedOnBoot = false;
 Characters gPlayerStoredCharacters[] = {CHARACTER_MARIO,CHARACTER_MARIO,CHARACTER_MARIO,CHARACTER_MARIO };
+
+// Are we testing a level?
+std::mutex g_testingLevelMutex;
+bool gIsTestingLevel = false;

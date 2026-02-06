@@ -475,6 +475,19 @@ uint32_t PGE_Sounds::GetMemUsage()
     return PGE_Sounds::memUsage;
 }
 
+/*const char* PGE_Sounds::SND_FindPath(Mix_Chunk* chunk)
+{
+    auto search = g_chunkStorage.find(std::shared_ptr<PGE_Sounds::ChunkStorage>(chunk));
+    if (search != g_chunkStorage.end())
+    {
+        return search->mFilePath;
+    }
+    else
+    {
+        return "";
+    }
+}*/
+
 Mix_Chunk *PGE_Sounds::SND_OpenSnd(const char *sndFile)
 {
     PGE_SDL_Manager::initSDL();
@@ -495,6 +508,7 @@ Mix_Chunk *PGE_Sounds::SND_OpenSnd(const char *sndFile)
     {
         // Use cache entry
         chunk = cachePtr->mChunk;
+        cachePtr->mFilePath = sndFile;
     }
     else
     {
@@ -529,12 +543,21 @@ bool PGE_Sounds::SND_PlaySnd(const char *sndFile)
 {
     Mix_Chunk* chunk = SND_OpenSnd(sndFile);
 
-    if (chunk && (Mix_PlayChannelVol(-1, chunk, 0, MIX_MAX_VOLUME) == -1))
+    if (chunk)
     {
-        if (std::string(Mix_GetError()) != "No free channels available") //Don't show overflow messagebox
+        int played = 0;
+        bool isCancelled = createSFXStartLuaEvent(-1, sndFile);
+        if (!isCancelled)
         {
-            PGE_Sounds::lastError = Mix_GetError();
-            return false;
+            played = Mix_PlayChannelVol(-1, chunk, 0, MIX_MAX_VOLUME);
+        }
+        if (played == -1)
+        {
+            if (std::string(Mix_GetError()) != "No free channels available") //Don't show overflow messagebox
+            {
+                PGE_Sounds::lastError = Mix_GetError();
+                return false;
+            }
         }
     }
 

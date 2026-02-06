@@ -238,11 +238,16 @@ void MusicManager::play(std::string alias) //Chunk will be played once, stream w
         //Detect out-of-bounds chanID
         if((chanID >= 0)&&(chanID <91))
         {
-            if(!PGE_Sounds::playOverrideForAlias(alias, sounds[chanID].channel))
-            {
-                //Play it!
-                sounds[chanID].play();
-            }
+			int realID = chanID + 1;
+			bool isCancelled = createSFXStartLuaEvent(realID, sounds[chanID].fullPath);
+			if (!isCancelled)
+			{
+				if (!PGE_Sounds::playOverrideForAlias(alias, sounds[chanID].channel))
+				{
+					//Play it!
+					sounds[chanID].play();
+				}
+			}
         }
     } else {
         if (!seizedSections[curSection])

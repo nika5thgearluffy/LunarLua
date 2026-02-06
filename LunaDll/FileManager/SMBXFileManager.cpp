@@ -22,8 +22,6 @@
 #include "../SMBXInternal/Layer.h"
 #include "../SMBXInternal/SMBXEvents.h"
 
-#include "../../Episode/EpisodeMain.h"
-
 #include <DirManager/dirman.h>
 
 SMBXLevelFileBase::SMBXLevelFileBase() :

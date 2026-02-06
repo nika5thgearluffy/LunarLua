@@ -68,13 +68,14 @@ struct StartupSettings
     bool forceHardGL;
     bool runWhenUnfocused;
     bool sendIPCReady;
+	std::wstring testLevelFilepath;
     StartupEpisodeSettings epSettings;
 
     StartupSettings() :
         patch(false), game(false), lvlEditor(false), frameskip(false), noSound(false), debugger(false),
         logger(false), newLauncher(false), console(false), waitForIPC(false), currentlyWaitingForIPC(false),
         oldLvlLoader(false), softwareGL(false), forceHardGL(false), runWhenUnfocused(false), sendIPCReady(false),
-        epSettings()
+		testLevelFilepath(L""), epSettings()
     {
     }
 };
@@ -222,3 +223,7 @@ extern std::mutex g_editorIPCMutex;
 // Episode loading
 extern Characters gPlayerStoredCharacters[];
 extern bool gEpisodeLoadedOnBoot;
+
+// Testing levels
+extern std::mutex g_testingLevelMutex;
+extern bool gIsTestingLevel;

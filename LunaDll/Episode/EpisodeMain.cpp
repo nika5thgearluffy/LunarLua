@@ -32,6 +32,12 @@
 extern PlayerMOB* getTemplateForCharacterWithDummyFallback(int id);
 extern "C" void __cdecl LunaLuaSetGameData(const char* dataPtr, int dataLen);
 
+int EpisodeMain_EpisodeCount = 0;
+int EpisodeMain_EpisodeIdx = 0;
+bool EpisodeMain_SaveFileExists = false;
+
+EpisodeList g_episodeList[32767];
+
 // The big one. This will load an episode anywhere in the engine. This is also used when booting the engine.
 void EpisodeMain::LaunchEpisode(std::wstring wldPathWS, int saveSlot, int playerCount, Characters firstCharacter, Characters secondCharacter)
 {
@@ -176,7 +182,7 @@ void EpisodeMain::LaunchEpisode(std::wstring wldPathWS, int saveSlot, int player
     gEpisodeMain.PopulateEpisodeList();
 
     // get the episode idx for the new system
-    EpisodeIdx = findEpisodeIDFromWorldFileAndPath(wldPathS);
+	EpisodeMain_EpisodeIdx = findEpisodeIDFromWorldFileAndPath(wldPathS);
     
     // make sure that the old system still has an episode entry, otherwise we'll crash
     gEpisodeMain.WriteLegacyEpisodeEntry(worldNameVB6, fullPthNoWorldFileWithEndSlashVB6, fullWorldFileNoPthVB6, wldData, true);
@@ -638,7 +644,7 @@ void EpisodeMain::PopulateEpisodeList()
     DirMan worldDir(WStr2Str(worldsPath));
 
     // Reset episode count
-    EpisodeCount = 0;
+	EpisodeMain_EpisodeCount = 0;
 
     // Get list of (potential) episode folders
     std::vector<std::string> episodeDirs;
@@ -683,8 +689,8 @@ void EpisodeMain::PopulateEpisodeList()
                 }
 
                 // Make new episode list entry
-                int newIdx = EpisodeCount;
-                EpisodeCount++;
+                int newIdx = EpisodeMain_EpisodeCount;
+				EpisodeMain_EpisodeCount++;
                 g_episodeList[newIdx].episodeName = Str2WStr(wldData.EpisodeTitle);
                 g_episodeList[newIdx].episodePath = Str2WStr(epPath + "\\");
                 g_episodeList[newIdx].episodeWorldFile = Str2WStr(wldName);
@@ -714,12 +720,12 @@ void EpisodeMain::PopulateEpisodeList()
 
 int EpisodeMain::GetEpisodeCount()
 {
-    return EpisodeCount;
+    return EpisodeMain_EpisodeCount;
 }
 
 int EpisodeMain::GetEpisodeIdx()
 {
-    return EpisodeIdx;
+    return EpisodeMain_EpisodeIdx;
 }
 
 bool EpisodeMain::CheckCollision(SMBX13::Types::Location_t momentumA, SMBX13::Types::Location_t momentumB)

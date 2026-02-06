@@ -81,6 +81,11 @@ STestModeSettings getTestModeSettings()
     return testModeSettings;
 }
 
+STestModeData getTestModeData()
+{
+    return testModeData;
+}
+
 static void sendTestSettingsToPgeEditor(const STestModeSettings &settings)
 {
     PGE_EditorCommandSender feedBack;
@@ -97,6 +102,11 @@ void setTestModeSettings(const STestModeSettings& settings)
 {
     sendTestSettingsToPgeEditor(settings);
     testModeSettings = settings;
+}
+
+void setTestModeData(const STestModeData& data)
+{
+    testModeData = data;
 }
 
 LevelData &getCurrentLevelData()
@@ -355,6 +365,14 @@ void testModeDisable(void)
 json IPCTestLevel(const json& params)
 {
     if (!params.is_object()) throw IPCInvalidParams();
+
+    std::lock_guard<std::mutex> testingLvlIPCLock(g_testingLevelMutex);
+    std::string isTestingLvl = params.dump();
+    if (isTestingLvl != "")
+    {
+        gIsTestingLevel = true;
+    }
+
     json::const_iterator filenameIt = params.find("filename");
     if ((filenameIt == params.cend()) || (!filenameIt.value().is_string())) throw IPCInvalidParams();
 

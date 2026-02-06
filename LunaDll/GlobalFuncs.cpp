@@ -1219,3 +1219,41 @@ void checkBlockedCharacterFromWorldAndReplaceCharacterIfSo(int playerID)
         }
     }
 }
+
+
+
+
+
+
+bool createSFXStartLuaEvent(int id, std::string path)
+{
+	bool isCancelled = false;
+
+	if (gLunaLua.isValid())
+	{
+		std::shared_ptr<Event> SFXStartEvent = std::make_shared<Event>("onSFXStart", true);
+		SFXStartEvent->setDirectEventName("onSFXStart");
+		SFXStartEvent->setLoopable(false);
+		gLunaLua.callEvent(SFXStartEvent, id, path);
+		isCancelled = SFXStartEvent->native_cancelled();
+	}
+
+	return isCancelled;
+}
+
+
+// Count the number of monitors
+BOOL CALLBACK MonitorEnumProc(HMONITOR hMonitor, HDC hdcMonitor, LPRECT lprcMonitor, LPARAM dwData)
+{
+    int *Count = (int*)dwData;
+    (*Count)++;
+    return TRUE;
+}
+
+int MonitorCount()
+{
+    int Count = 0;
+    if (EnumDisplayMonitors(NULL, NULL, MonitorEnumProc, (LPARAM)&Count))
+        return Count;
+    return -1;//signals an error
+}

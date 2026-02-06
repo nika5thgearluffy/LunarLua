@@ -11,9 +11,9 @@
 #include "../SMBXInternal/Types.h"
 #include "../SMBXInternal/Variables.h"
 
-int EpisodeCount = 0;
-int EpisodeIdx = 0;
-bool SaveFileExists = false;
+extern int EpisodeMain_EpisodeCount;
+extern int EpisodeMain_EpisodeIdx;
+extern bool EpisodeMain_SaveFileExists;
 
 struct EpisodeList
 {

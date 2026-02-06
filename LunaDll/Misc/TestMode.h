@@ -59,7 +59,10 @@ void testModeSmbxChangeModeHook(void);
 bool testModeLoadLevelHook(VB6StrPtr* filename);
 
 STestModeSettings getTestModeSettings();
+STestModeData getTestModeData();
+
 void setTestModeSettings(const STestModeSettings& settings);
+void setTestModeData(const STestModeData& data);
 
 LevelData &getCurrentLevelData();
 

@@ -1116,6 +1116,8 @@ void ParseArgs(const std::vector<std::wstring>& args)
             }
         }
 
+		gStartupSettings.testLevelFilepath = levelPath;
+
         if (levelPath.length() > 0)
         {
             STestModeSettings settings;

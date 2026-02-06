@@ -92,6 +92,7 @@ private:
     static std::string lastError;
 public:
     static const char* SND_getLastError() { return lastError.c_str(); }
+    static const char* SND_FindPath(Mix_Chunk* chunk);
     static bool SND_PlaySnd(const char *sndFile);
     static void clearSoundBuffer();
     static Mix_Chunk *SND_OpenSnd(const char *sndFile);
@@ -105,12 +106,14 @@ public:
 public:
     static uint32_t GetMemUsage();
 public:
-    class ChunkStorage {
+	class ChunkStorage {
     public:
         Mix_Chunk* mChunk;
+		const char* mFilePath;
 
         ChunkStorage(Mix_Chunk* chunk) :
-            mChunk(chunk)
+            mChunk(chunk),
+            mFilePath("")
         {
             // Only increment memory usage if we successfully opened something
             if (chunk) {
@@ -136,7 +139,7 @@ private:
     };
     static char *current;
     static bool overrideArrayIsUsed;
-    static std::map<std::string, ChunkOverrideSettings > overrideSettings;
+    static std::map<std::string, ChunkOverrideSettings> overrideSettings;
 public:
     static uint32_t memUsage;
 };

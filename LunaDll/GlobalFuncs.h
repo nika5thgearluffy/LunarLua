@@ -187,3 +187,8 @@ extern void removeFilePathW(std::wstring &path);
 extern void removeFilePathW(wchar_t*path, int length);
 void removeFilePathA(std::string &path);
 void removeFilePathA(char*path, int length);
+
+bool createSFXStartLuaEvent(int id, std::string path);
+
+BOOL CALLBACK MonitorEnumProc(HMONITOR hMonitor, HDC hdcMonitor, LPRECT lprcMonitor, LPARAM dwData);
+int MonitorCount();
