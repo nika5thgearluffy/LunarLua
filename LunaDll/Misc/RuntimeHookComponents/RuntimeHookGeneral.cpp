@@ -464,8 +464,32 @@ static void ProcessRawKeyPress(uint32_t virtKey, uint32_t scanCode, bool repeate
     // Process F11 key for GIF recorder toggle
     if ((virtKey == VK_F11) && plainPress && g_GLEngine.IsEnabled())
     {
-        short gifRecSoundID = (g_GLEngine.GifRecorderToggle() ? 24 : 12);
-        native_playSFX(&gifRecSoundID);
+        bool cantMakeSound = false;
+
+        g_GLEngine.GifRecorderToggle();
+
+        if(gLunaLua.isValid())
+        {
+            std::shared_ptr<Event> gifEvent = std::make_shared<Event>("onGIFRecord", true);
+            gifEvent->setDirectEventName("onGIFRecord");
+            gifEvent->setLoopable(false);
+            gLunaLua.callEvent(gifEvent, g_GLEngine.GifRecorderIsRunning());
+            cantMakeSound = gifEvent->native_cancelled();
+        }
+
+        if(!cantMakeSound)
+        {
+            short gifRecSoundID = 1;
+            if(!g_GLEngine.GifRecorderIsRunning())
+            {
+                gifRecSoundID = 12;
+            }
+            else
+            {
+                gifRecSoundID = 24;
+            }
+            native_playSFX(&gifRecSoundID);
+        }
     }
 
     // Process F4 key for letterbox toggle
