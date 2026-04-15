@@ -445,8 +445,24 @@ static void ProcessRawKeyPress(uint32_t virtKey, uint32_t scanCode, bool repeate
     // Process F12 key for screenshot to file
     if ((virtKey == VK_F12) && plainPress && g_GLEngine.IsEnabled())
     {
-        short screenshotSoundID = 12;
-        native_playSFX(&screenshotSoundID);
+        bool cantMakeSound = false;
+        std::string screenshotFilename = generateTimestampForFilename() + ".png";
+
+        if(gLunaLua.isValid())
+        {
+            std::shared_ptr<Event> screenEvent = std::make_shared<Event>("onScreenCapture", true);
+            screenEvent->setDirectEventName("onScreenCapture");
+            screenEvent->setLoopable(false);
+            gLunaLua.callEvent(screenEvent);
+            cantMakeSound = screenEvent->native_cancelled();
+        }
+
+        if(!cantMakeSound)
+        {
+            short screenshotSoundID = 12;
+            native_playSFX(&screenshotSoundID);
+        }
+
         g_GLEngine.TriggerScreenshot([](HGLOBAL globalMem, const BITMAPINFOHEADER* header, void* pData, HWND curHwnd) {
             std::wstring screenshotPath = gAppPathWCHAR + std::wstring(L"\\screenshots");
             if (GetFileAttributesW(screenshotPath.c_str()) & INVALID_FILE_ATTRIBUTES) {
