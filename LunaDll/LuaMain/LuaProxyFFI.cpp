@@ -1029,3 +1029,26 @@ extern "C" {
         return strRet.c_str();
     }
 }
+
+extern "C" {
+    // Toggle the runWhenUnfocused setting on or off.
+    FFI_EXPORT(void) LunaLuaRunWhenUnfocused(bool value)
+    {
+        gStartupSettings.runWhenUnfocused = value;
+    }
+
+    // Returns if runWhenUnfocused is on or off.
+    FFI_EXPORT(bool) LunaLuaIsRunningWhenUnfocused()
+    {
+        return gStartupSettings.runWhenUnfocused;
+    }
+
+    // Gets the current window title.
+    /*FFI_EXPORT(const char*) LunaLuaGetWindowTitle()
+    {
+        LPWSTR title;
+        int error = GetWindowTextW(gMainWindowHwnd, title, 9999);
+        std::string titleFinal = CW2A(title);
+        return titleFinal.c_str();
+    }*/
+}
