@@ -1257,3 +1257,23 @@ int MonitorCount()
         return Count;
     return -1;//signals an error
 }
+
+
+
+// Get the OS language for automatically determining the language for episodes that have multiple languages
+double GetOSLanguage()
+{
+    // Retrieves the Windows language that is set in the OS
+    LANGID language = GetUserDefaultUILanguage();
+    return language;
+}
+
+
+
+// Retrieves the size of a file
+double GetFileSize(std::string file)
+{
+    std::wstring path = Str2WStr(file);
+    std::wifstream theFile(path, std::ios::binary| std::ios::ate);
+    return theFile.tellg();
+}

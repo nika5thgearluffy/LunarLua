@@ -745,7 +745,12 @@ void CLunaLua::bindAll()
                 def("__disablePerfTracker", &LuaProxy::Misc::__disablePerfTracker),
                 def("__getPerfTrackerData", &LuaProxy::Misc::__getPerfTrackerData),
                 def("__getNPCPropertyTableAddress", &NPC::GetPropertyTableAddress),
-                def("__getBlockPropertyTableAddress", &Blocks::GetPropertyTableAddress)
+                def("__getBlockPropertyTableAddress", &Blocks::GetPropertyTableAddress),
+                def("getOSLanguage", &GetOSLanguage)
+            ],
+            
+            namespace_("File")[
+                def("size", (double(*)(std::string))&GetFileSize)
             ],
 
             namespace_("FileFormats")[

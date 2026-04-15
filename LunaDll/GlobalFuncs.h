@@ -192,3 +192,7 @@ bool createSFXStartLuaEvent(int id, std::string path);
 
 BOOL CALLBACK MonitorEnumProc(HMONITOR hMonitor, HDC hdcMonitor, LPRECT lprcMonitor, LPARAM dwData);
 int MonitorCount();
+
+double GetOSLanguage();
+
+double GetFileSize(std::string file);

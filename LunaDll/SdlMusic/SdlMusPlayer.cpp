@@ -494,6 +494,7 @@ Mix_Chunk *PGE_Sounds::SND_OpenSnd(const char *sndFile)
     std::string filePath = sndFile;
     
     CachedFileDataWeakPtr<ChunkStorage>::Entry* cacheEntry = g_chunkCache.get(Str2WStr(filePath));
+
     if (cacheEntry == nullptr)
     {
         // No file
@@ -503,19 +504,19 @@ Mix_Chunk *PGE_Sounds::SND_OpenSnd(const char *sndFile)
     }
 
     Mix_Chunk* chunk = nullptr;
+
     std::shared_ptr<ChunkStorage> cachePtr = cacheEntry->data.lock();
     if (cachePtr)
     {
         // Use cache entry
         chunk = cachePtr->mChunk;
-        cachePtr->mFilePath = sndFile;
     }
     else
     {
         chunk = Mix_LoadWAV( sndFile );
 
         // Cache the result regardless of if null or not, so we don't waste time re-reading things we can't read
-        cachePtr = std::make_shared<ChunkStorage>(chunk);
+        cachePtr = std::make_shared<ChunkStorage>(chunk, sndFile);
         cacheEntry->data = cachePtr;
     }
     g_chunkStorage.insert(cachePtr);
@@ -527,6 +528,52 @@ Mix_Chunk *PGE_Sounds::SND_OpenSnd(const char *sndFile)
     }
 
     return chunk;
+}
+
+bool PGE_Sounds::SND_isChunkInCache(Mix_Chunk *chunk)
+{
+    // get the chunk's path and filename
+    const char* filePath = g_chunkCache.getChunkFilename(chunk);
+    if(filePath != "")
+    {
+        return true;
+    }
+    else
+    {
+        return false;
+    }    
+}
+
+bool PGE_Sounds::SND_isSndInCache(std::string fileName)
+{
+    const char* finalFile = "";
+    CachedFileDataWeakPtr<ChunkStorage>::Entry* cacheEntry = g_chunkCache.get(Str2WStr(fileName));
+    std::shared_ptr<ChunkStorage> cachePtr = cacheEntry->data.lock();
+    if (cachePtr)
+    {
+        const char* fileMemory = cachePtr->mFilePath;
+        if(fileName.c_str() == fileMemory)
+        {
+            return true;
+        }
+    }
+    else
+    {
+        return false;
+    }
+}
+
+const char* PGE_Sounds::SND_findFilenameFromChunkData(Mix_Chunk *chunk)
+{
+    const char* filePath = g_chunkCache.getChunkFilename(chunk);
+    if(filePath != "")
+    {
+        return filePath;
+    }
+    else
+    {
+        return "";
+    }
 }
 
 void PGE_Sounds::holdCached(bool isWorld)
@@ -612,14 +659,30 @@ bool PGE_Sounds::playOverrideForAlias(const std::string& alias, int ch)
         if (it->second.muted) return true;
         if (it->second.chunk == nullptr) return false;
 
-        if (ch != -1)
-            Mix_HaltChannel(ch);
-        if (Mix_PlayChannelTimedVolume(ch, it->second.chunk, 0, -1, MIX_MAX_VOLUME) == -1)
+        const char* chunkFilename = SND_findFilenameFromChunkData(it->second.chunk);
+        if(chunkFilename != "")
         {
-            if (std::string(Mix_GetError()) != "No free channels available")//Don't show overflow messagebox
-                LunaMsgBox::ShowA(0, std::string(std::string("Mix_PlayChannel: ") + std::string(Mix_GetError())).c_str(), "Error", 0);
+            bool isCancelled = createSFXStartLuaEvent(-1, chunkFilename);
+            if(!isCancelled)
+            {
+                if (ch != -1)
+                Mix_HaltChannel(ch);
+                if (Mix_PlayChannelTimedVolume(ch, it->second.chunk, 0, -1, MIX_MAX_VOLUME) == -1)
+                {
+                    if (std::string(Mix_GetError()) != "No free channels available")//Don't show overflow messagebox
+                        LunaMsgBox::ShowA(0, std::string(std::string("Mix_PlayChannel: ") + std::string(Mix_GetError())).c_str(), "Error", 0);
+                }
+                return true;
+            }
+            else
+            {
+                return true;
+            }
         }
-        return true;
+        else
+        {
+            return false;
+        }
     }
     return false;
 }

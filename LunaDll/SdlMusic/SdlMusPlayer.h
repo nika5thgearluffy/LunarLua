@@ -93,6 +93,9 @@ private:
 public:
     static const char* SND_getLastError() { return lastError.c_str(); }
     static const char* SND_FindPath(Mix_Chunk* chunk);
+    static bool SND_isSndInCache(std::string fileName);
+    static bool SND_isChunkInCache(Mix_Chunk *chunk);
+    static const char* SND_findFilenameFromChunkData(Mix_Chunk *chunk);
     static bool SND_PlaySnd(const char *sndFile);
     static void clearSoundBuffer();
     static Mix_Chunk *SND_OpenSnd(const char *sndFile);
@@ -111,7 +114,7 @@ public:
         Mix_Chunk* mChunk;
 		const char* mFilePath;
 
-        ChunkStorage(Mix_Chunk* chunk) :
+        ChunkStorage(Mix_Chunk* chunk, const char* mFilePath) :
             mChunk(chunk),
             mFilePath("")
         {
@@ -128,6 +131,7 @@ public:
             {
                 PGE_Sounds::memUsage -= mChunk->alen;
                 Mix_FreeChunk(mChunk);
+                mFilePath = "";
                 mChunk = nullptr;
             }
         }

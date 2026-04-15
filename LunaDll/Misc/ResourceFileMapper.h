@@ -9,6 +9,9 @@
 #include <mutex>
 #include "../GlobalFuncs.h"
 
+#include <SDL2/SDL.h>
+#include <SDL2/SDL_mixer_ext.h>
+
 class ResourceFileInfo {
 public:
     bool         done;
@@ -135,6 +138,30 @@ public:
                 cacheEntry++;
             }
         }
+    }
+    
+    const char* CachedFileDataWeakPtr::getChunkFilename(Mix_Chunk *chunk)
+    {
+        const char* finalFile = "";
+        for (auto&& cacheEntry = mCache.begin(); cacheEntry != mCache.end();)
+        {
+            std::shared_ptr<T> cachePtr = cacheEntry->second.data.lock();
+            if (cachePtr)
+            {
+                Mix_Chunk* memoryChunk = cachePtr->mChunk;
+                if(chunk == memoryChunk)
+                {
+                    finalFile = cachePtr->mFilePath;
+                    return finalFile;
+                }
+                cacheEntry++;
+            }
+            else
+            {
+                cacheEntry++;
+            }
+        }
+        return finalFile;
     }
 
     Entry* CachedFileDataWeakPtr::get(const NormalizedPath<std::wstring>& filePath)

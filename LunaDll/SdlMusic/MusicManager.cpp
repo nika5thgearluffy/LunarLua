@@ -244,8 +244,8 @@ void MusicManager::play(std::string alias) //Chunk will be played once, stream w
 			{
 				if (!PGE_Sounds::playOverrideForAlias(alias, sounds[chanID].channel))
 				{
-					//Play it!
-					sounds[chanID].play();
+                    //Play it!
+                    sounds[chanID].play();
 				}
 			}
         }
