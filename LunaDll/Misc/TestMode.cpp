@@ -17,6 +17,8 @@
 #include "PGEEditorCmdSender.h"
 #include "LoadScreen.h"
 
+#include "../Episode/EpisodeMain.h"
+
 #include "TestModeMenu.h"
 #include "TestMode.h"
 
@@ -205,7 +207,7 @@ static bool testModeSetupForLoading()
         memcpy(playerTemplate, player, sizeof(PlayerMOB));
     }
 
-    // Overwrite episode list data
+    // Replace old episode list data with test mode data
     GM_EP_LIST_COUNT = 1;
     EpisodeListItem* ep = EpisodeListItem::GetRaw(0);
     ep->episodeName = "Test Mode";
@@ -216,6 +218,9 @@ static bool testModeSetupForLoading()
         ep->blockChar[i] = 0;
     }
     ep->padding_16 = 0;
+
+    // Populate the episode list
+    gEpisodeMain.PopulateEpisodeList();
 
     // Set episode path...
     GM_FULLDIR = episodePath;
