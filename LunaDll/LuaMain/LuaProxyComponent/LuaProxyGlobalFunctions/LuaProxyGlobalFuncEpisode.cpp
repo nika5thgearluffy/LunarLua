@@ -20,7 +20,7 @@ static luabind::object getAllEpisodes(lua_State *L)
     {
         size_t counter = 0;
 
-        for (int i = 0; i <= gEpisodeMain.GetEpisodeCount(); i++)
+        for (int i = 0; i <= gEpisodeMain.GetEpisodeCount() - 1; i++)
         {
             luabind::object e = luabind::newtable(L);
             // Episode name
