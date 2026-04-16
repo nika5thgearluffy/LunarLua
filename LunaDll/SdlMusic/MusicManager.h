@@ -56,6 +56,7 @@ public:
     };
     static void initAudioEngine();
     static void rebuildSoundCache();
+    static void setMusicAlias(std::string alias);
     static void addSound(std::string alias, std::string fileName);
     static void close();
     static void play(std::string alias); //Chunk will be played once, stream will be played with loop
@@ -77,6 +78,11 @@ public:
     static void setCurrentSection(int section);
 
     static Mix_Chunk *getChunkForAlias(const std::string& alias);
+
+    static std::string curMusicAlias; //Current music alias
+    static int currentMusicID; //Currently playing music ID
+
+    static std::string getCurrentMusic();
 
 private:
     static std::unordered_map<std::string, musicFile > registredFiles;

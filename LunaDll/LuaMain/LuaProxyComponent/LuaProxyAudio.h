@@ -53,6 +53,7 @@ namespace LuaProxy
         double  MusicGetTempo();
         double  MusicGetPitch();
         double  MusicGetSpeed();
+        std::string MusicGet();
 
         //SFX
         Mix_Chunk* newMix_Chunk();

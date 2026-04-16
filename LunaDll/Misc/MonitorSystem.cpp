@@ -12,6 +12,8 @@
 #include <luabind/detail/call_function.hpp>
 #include "../LuaMain/LuaHelper.h"
 
+#include "../Rendering/WindowSizeHandler.h"
+
 // 10 monitors is the max Windows supports
 MonitorSystemMonitors monitorInformation[9];
 int numberOfMonitors = -1;
@@ -76,13 +78,19 @@ int MonitorSystem::GetScreenYPosition()
 
 int MonitorSystem::GetScreenCenterXPosition(int monitorID)
 {
-    int posx = monitorInformation[monitorID - 1].monitorWidth / 2 - (monitorInformation[monitorID - 1].monitorRight - monitorInformation[monitorID - 1].monitorLeft) / 2;
+    // Get window size
+    auto windowSize = gWindowSizeHandler.getWindowSize();
+
+    int posx = monitorInformation[monitorID - 1].monitorWidth / 2 - (windowSize.x - monitorInformation[monitorID - 1].monitorLeft) / 2;
     return posx;
 }
 
 int MonitorSystem::GetScreenCenterYPosition(int monitorID)
 {
-    int posy = monitorInformation[monitorID - 1].monitorHeight / 2 - (monitorInformation[monitorID - 1].monitorBottom - monitorInformation[monitorID - 1].monitorTop) / 2;
+    // Get window size
+    auto windowSize = gWindowSizeHandler.getWindowSize();
+
+    int posy = monitorInformation[monitorID - 1].monitorHeight / 2 - (windowSize.y - monitorInformation[monitorID - 1].monitorTop) / 2;
     return posy;
 }
 
@@ -109,9 +117,12 @@ int MonitorSystem::GetScreenY(int monitorID)
 // This will center the window to the screen. Useful for auto-moving the window to the center if you want to reset where X2 was when starting up the engine. monitorID will center to that specific monitor.
 void MonitorSystem::CenterWindow(int monitorID)
 {
+    // Get window size
+    auto windowSize = gWindowSizeHandler.getWindowSize();
+
     int x, y;
-    x = monitorInformation[monitorID - 1].monitorWidth / 2 - (monitorInformation[monitorID - 1].monitorRight - monitorInformation[monitorID - 1].monitorLeft) / 2,
-    y = monitorInformation[monitorID - 1].monitorHeight / 2 - (monitorInformation[monitorID - 1].monitorBottom - monitorInformation[monitorID - 1].monitorTop) / 2,
+    x = monitorInformation[monitorID - 1].monitorWidth / 2 - (windowSize.x - monitorInformation[monitorID - 1].monitorLeft) / 2,
+    y = monitorInformation[monitorID - 1].monitorHeight / 2 - (windowSize.y - monitorInformation[monitorID - 1].monitorTop) / 2,
 
     // When getting everything set, center the window!
     SetWindowPos(gMainWindowHwnd, NULL, x, y, 0, 0, SWP_NOSIZE | SWP_NOZORDER | SWP_NOACTIVATE);
@@ -123,9 +134,16 @@ void MonitorSystem::CenterWindow()
     MonitorSystem::CenterWindow(1);
 }
 
+// Sets the window position of the game.
 void MonitorSystem::SetWindowPosition(int x, int y)
 {
     SetWindowPos(gMainWindowHwnd, NULL, x, y, 0, 0, SWP_NOSIZE | SWP_NOZORDER | SWP_NOACTIVATE);
+}
+
+// Sets the window size of the game.
+void MonitorSystem::setWindowSize(int width, int height)
+{
+    gWindowSizeHandler.SetWindowSize(width, height);
 }
 
 static luabind::object getMonitorInfo(int monitorID, lua_State *L)

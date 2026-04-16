@@ -185,6 +185,11 @@ void  PGE_MusPlayer::MUS_playMusicFadeIn(int ms)
     }
 }
 
+std::string PGE_MusPlayer::MUS_get()
+{
+    return MusicManager::getCurrentMusic();
+}
+
 void PGE_MusPlayer::MUS_rewindMusic()
 {
     return Mix_RewindMusic();

@@ -35,6 +35,8 @@
 
 #include "../FileManager/SMBXFileManager.h"
 
+#include "../Rendering/WindowSizeHandler.h"
+
 #include "../Misc/MonitorSystem.h"
 
 /*static*/ DWORD CLunaFFILock::currentLockTlsIdx = TlsAlloc();
@@ -627,6 +629,16 @@ LUAHELPER_DEF_CLASS_HELPER(LuaProxy::Audio::PlayingSfxInstance, PlayingSfxInstan
 
 // LUAHELPER_DEF_CLASS(LuaImageResource)
 
+static int getCXScreen()
+{
+    return GetSystemMetrics(SM_CXSCREEN);
+}
+
+static int getCYScreen()
+{
+    return GetSystemMetrics(SM_CYSCREEN);
+}
+
 
 void CLunaLua::bindAll()
 {
@@ -923,6 +935,7 @@ void CLunaLua::bindAll()
                 def("MusicGetTempo", (double(*)())&LuaProxy::Audio::MusicGetTempo),
                 def("MusicGetPitch", (double(*)())&LuaProxy::Audio::MusicGetPitch),
                 def("MusicGetSpeed", (double(*)())&LuaProxy::Audio::MusicGetSpeed),
+                def("MusicGet", (std::string(*)())&LuaProxy::Audio::MusicGet),
 
                 //SFX
                 def("newMix_Chunk", (Mix_Chunk*(*)())&LuaProxy::Audio::newMix_Chunk),
@@ -1023,7 +1036,9 @@ void CLunaLua::bindAll()
                 // Monitor.screenHeight() - Gets the specific monitor's height.
                 def("screenHeight", (int(*)(int))&MonitorSystem::GetScreenResolutionHeight),
                 // Monitor.setWindowPosition(x, y) - Sets the window position of the game.
-                def("setWindowPosition", (void(*)(int, int))&MonitorSystem::SetWindowPosition)
+                def("setWindowPosition", (void(*)(int, int))&MonitorSystem::SetWindowPosition),
+                // Monitor.setWindowSize(width, height) - Sets the window size of the game.
+                def("setWindowSize", (void(*)(int, int))&MonitorSystem::setWindowSize)
             ],
 
             namespace_("Editor")[

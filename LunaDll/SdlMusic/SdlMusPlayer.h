@@ -37,6 +37,7 @@ public:
     static std::string MUS_MusicArtistTag();
     static std::string MUS_MusicAlbumTag();
     static std::string MUS_MusicCopyrightTag();
+    static std::string MUS_get();
 
     static void MUS_changeVolume(int vlm);
     static void MUS_openFile(const char *musFile);

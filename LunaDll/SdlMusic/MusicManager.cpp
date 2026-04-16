@@ -102,6 +102,9 @@ std::string MusicManager::defaultMusINI="";
 
 std::string MusicManager::curRoot="";
 
+std::string MusicManager::curMusicAlias = "";
+int MusicManager::currentMusicID = -1;
+
 
 void MusicManager::initAudioEngine()
 {
@@ -116,6 +119,11 @@ void MusicManager::initAudioEngine()
         loadMusics(defaultMusINI, PGE_SDL_Manager::appPath);
         rebuildSoundCache();
     }
+}
+
+void MusicManager::setMusicAlias(std::string alias)
+{
+    curMusicAlias = alias;
 }
 
 
@@ -252,17 +260,22 @@ void MusicManager::play(std::string alias) //Chunk will be played once, stream w
     } else {
         if (!seizedSections[curSection])
         {
+            setMusicAlias(alias);
             if(alias=="smusic") {
+                currentMusicID = 1;
                 music_spc[0].play();
             } else if(alias=="stmusic") {
+                currentMusicID = 2;
                 music_spc[1].play();
             } else if(alias=="tmusic") {
+                currentMusicID = 3;
                 music_spc[2].play();
             } else if(alias.substr(0, 6) == "wmusic") {
                 std::string musIDs = alias.substr(6);
                 int musID = std::atoi(musIDs.c_str()) - 1;
                 if(musID>=0 && musID<16)
                 {
+                    currentMusicID = musID;
                     music_wld[musID].play();
                 }
             } else if(alias.substr(0, 5) == "music") {
@@ -270,6 +283,7 @@ void MusicManager::play(std::string alias) //Chunk will be played once, stream w
                 int musID = std::atoi(musIDs.c_str()) - 1;
                 if(musID>=0 && musID<56)
                 {
+                    currentMusicID = musID;
                     music_lvl[musID].play();
                 }
             }
@@ -315,6 +329,30 @@ void MusicManager::stop(std::string alias)
             PGE_MusPlayer::MUS_stopMusic();
             pausedNatively = false;
         }
+    }
+}
+
+std::string MusicManager::getCurrentMusic()
+{
+    bool isSpecial = (curMusicAlias == "smusic" || curMusicAlias == "stmusic" || curMusicAlias == "tmusic");
+    bool isLevel = (curMusicAlias.substr(0, 5) == "music");
+    bool isOverworld = (curMusicAlias.substr(0, 6) == "wmusic");
+
+    if(isSpecial)
+    {
+        return music_spc[currentMusicID].fullPath;
+    }
+    else if(isOverworld)
+    {
+        return music_wld[currentMusicID].fullPath;
+    }
+    else if(isLevel)
+    {
+        return music_lvl[currentMusicID].fullPath;
+    }
+    else
+    {
+        return "";
     }
 }
 

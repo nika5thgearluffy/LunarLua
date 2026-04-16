@@ -227,6 +227,15 @@ double LuaProxy::Audio::MusicGetSpeed()
     return Mix_GetMusicSpeed(PGE_MusPlayer::currentMusic());
 }
 
+std::string LuaProxy::Audio::MusicGet()
+{
+#ifndef NO_SDL
+    return PGE_MusPlayer::MUS_get();
+#else
+    return "";
+#endif
+}
+
 
 
 void LuaProxy::Audio::seizeStream(int section)
@@ -338,6 +347,7 @@ void LuaProxy::Audio::musicFadeOut(int section, int fadeInDelayMs)
 {
     changeMusic(section, 0, fadeInDelayMs);
 }
+
 
 
 Mix_Chunk* LuaProxy::Audio::newMix_Chunk()

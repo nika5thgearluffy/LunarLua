@@ -63,6 +63,7 @@ namespace MonitorSystem{
     void CenterWindow();
 
     void SetWindowPosition(int x, int y);
+    void setWindowSize(int width, int height);
     
     luabind::object GetMonitorInfo(int monitorID, lua_State *L);
 };
