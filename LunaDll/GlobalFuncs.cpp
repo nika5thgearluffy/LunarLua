@@ -1242,22 +1242,6 @@ bool createSFXStartLuaEvent(int id, std::string path)
 }
 
 
-// Count the number of monitors
-BOOL CALLBACK MonitorEnumProc(HMONITOR hMonitor, HDC hdcMonitor, LPRECT lprcMonitor, LPARAM dwData)
-{
-    int *Count = (int*)dwData;
-    (*Count)++;
-    return TRUE;
-}
-
-int MonitorCount()
-{
-    int Count = 0;
-    if (EnumDisplayMonitors(NULL, NULL, MonitorEnumProc, (LPARAM)&Count))
-        return Count;
-    return -1;//signals an error
-}
-
 
 
 // Get the OS language for automatically determining the language for episodes that have multiple languages

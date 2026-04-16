@@ -30,6 +30,8 @@
 
 #include "../../FileManager/SaveFile.h"
 
+#include "../../Misc/MonitorSystem.h"
+
 #ifndef NO_SDL
 bool episodeStarted = false;
 #endif
@@ -1080,6 +1082,9 @@ LRESULT CALLBACK MsgHOOKProc(int nCode, WPARAM wParam, LPARAM lParam)
 
                 // Override window proc
                 gMainWindowProc = (WNDPROC)SetWindowLongPtrW(gMainWindowHwnd, GWLP_WNDPROC, (LONG_PTR)HandleWndProc);
+
+                // Setup monitors
+                MonitorSystem::SetupMonitors();
 
                 // Register for the raw input API for keyboard
                 RAWINPUTDEVICE rid;

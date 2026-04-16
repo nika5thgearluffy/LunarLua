@@ -35,6 +35,8 @@
 
 #include "../FileManager/SMBXFileManager.h"
 
+#include "../Misc/MonitorSystem.h"
+
 /*static*/ DWORD CLunaFFILock::currentLockTlsIdx = TlsAlloc();
 
 extern bool luaDidGameOverFlag;
@@ -998,12 +1000,34 @@ void CLunaLua::bindAll()
                 def("filename", (std::string(*)())&LuaProxy::Episode::filename)
             ],
 
-            namespace_("Editor")[
-                def("getItem", (std::string(*)()) &GetEditorPlacedItem)
+            namespace_("Monitor")[
+                // Monitor.get(monitorID) - Returns monitor information that's on the idx specified. Note that invalid monitors and anything higher than 10 will return an invalid table.
+                def("get", (luabind::object(*)(int, lua_State*))&MonitorSystem::GetMonitorInfo),
+                // Monitor.centerWindow(monitorID) - Centers the window to the middle of the screen. monitorID can be specified to center to a specific screen, rather than the main one.
+                def("centerWindow", (void(*)(int))&MonitorSystem::CenterWindow),
+                def("centerWindow", (void(*)())&MonitorSystem::CenterWindow),
+                // Monitor.x() - Gets the current X window position.
+                def("x", (int(*)())&MonitorSystem::GetScreenXPosition),
+                // Monitor.y() - Gets the current Y window position.
+                def("y", (int(*)())&MonitorSystem::GetScreenYPosition),
+                // Monitor.centerX(monitorID) - Gets the X window position where the window would be at if it was centered.
+                def("centerX", (int(*)(int))&MonitorSystem::GetScreenCenterXPosition),
+                // Monitor.centerY(monitorID) - Gets the Y window position where the window would be at if it was centered.
+                def("centerY", (int(*)(int))&MonitorSystem::GetScreenCenterYPosition),
+                // Monitor.screenX(monitorID) - Gets the specific monitor's X position.
+                def("screenX", (int(*)(int))&MonitorSystem::GetScreenX),
+                // Monitor.screenY(monitorID) - Gets the specific monitor's Y position.
+                def("screenY", (int(*)(int))&MonitorSystem::GetScreenY),
+                // Monitor.screenWidth() - Gets the specific monitor's width.
+                def("screenWidth", (int(*)(int))&MonitorSystem::GetScreenResolutionWidth),
+                // Monitor.screenHeight() - Gets the specific monitor's height.
+                def("screenHeight", (int(*)(int))&MonitorSystem::GetScreenResolutionHeight),
+                // Monitor.setWindowPosition(x, y) - Sets the window position of the game.
+                def("setWindowPosition", (void(*)(int, int))&MonitorSystem::SetWindowPosition)
             ],
 
-            namespace_("Monitor")[
-                def("count", (int(*)()) &MonitorCount)
+            namespace_("Editor")[
+                def("getItem", (std::string(*)()) &GetEditorPlacedItem)
             ],
 
             LUAHELPER_DEF_CLASS(NativeInputConfig)

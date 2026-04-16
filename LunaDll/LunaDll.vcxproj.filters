@@ -754,6 +754,9 @@
     <ClInclude Include="Episode\EpisodeMain.h">
       <Filter>Episode</Filter>
     </ClInclude>
+    <ClInclude Include="Misc\MonitorSystem.h">
+      <Filter>Misc</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="LuaMain\LuaHelper.cpp">
@@ -1483,6 +1486,9 @@
     </ClCompile>
     <ClCompile Include="Misc\RuntimeHookComponents\RuntimeHookDefines.cpp">
       <Filter>Misc\RuntimeHookComponents</Filter>
+    </ClCompile>
+    <ClCompile Include="Misc\MonitorSystem.cpp">
+      <Filter>Misc</Filter>
     </ClCompile>
     <ClCompile Include="Misc\Gameover.cpp">
       <Filter>Misc</Filter>
