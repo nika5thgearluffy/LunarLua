@@ -636,10 +636,10 @@ void MainLauncherWindow::internalRunSMBX(const QString &smbxExeFile, const QList
         runArgs.push_front(smbxExeFile);
 
 #ifdef _WIN32
-        QProcess::startDetached(loader, runArgs);
+        QProcess::start(loader, runArgs);
 #else
         runArgs.push_front(loader);
-        QProcess::startDetached("wine", runArgs);
+        QProcess::start("wine", runArgs);
 #endif
 
         /*
@@ -656,10 +656,18 @@ void MainLauncherWindow::internalRunSMBX(const QString &smbxExeFile, const QList
     else
     {
 #ifdef _WIN32
-        QProcess::startDetached(smbxExeFile, runArgs);
+        QProcess::start(smbxExeFile, runArgs);
 #else
         runArgs.push_front(smbxExeFile);
-        QProcess::startDetached("wine", runArgs);
+        QProcess::start("wine", runArgs);
 #endif
+    }
+
+    hide();
+    smbx.waitForStarted(-1);
+
+    if(smbx.waitForFinished(-1))
+    {
+        show();
     }
 }

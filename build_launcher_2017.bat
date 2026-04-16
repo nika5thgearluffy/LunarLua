@@ -1,14 +1,18 @@
 
 call "C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Auxiliary\Build\vcvarsall.bat" x86
 
-set QT_PATH=C:\Qt\5.12\msvc2017\bin\
-set JOM=C:\Qt\Tools\QtCreator\bin\jom
+set QT_PATH=E:\Drive\___Building_Environments\qt\5.12.12\5.12.12\msvc2017\bin\
+set JOM=E:\Drive\___Building_Environments\qt\5.12.12\Tools\QtCreator\bin\jom
 
 if not exist build-smbx-launcher\NUL md build-smbx-launcher
 cd build-smbx-launcher
 %QT_PATH%\qmake -spec win32-msvc CONFIG+=Win32 CONFIG+=release CONFIG-=debug ../LunadllNewLauncher/SMBXLauncher/SMBXLauncher.pro
 %JOM% /J 4
-if errorlevel 1 exit 1
+if errorlevel 1 (
+    echo Error 1
+    pause
+    exit
+)
 
 if exist build-smbx-launcher\NUL rd /S /Q deploy
 md deploy
@@ -45,3 +49,4 @@ rem ----------------------- A CLEAN-UP -----------------------
 cd ..
 
 cd ..
+pause
