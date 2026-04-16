@@ -2,7 +2,7 @@
 call "C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Auxiliary\Build\vcvarsall.bat" x86
 
 set QT_PATH=E:\Drive\___Building_Environments\qt\5.12.12\5.12.12\msvc2017\bin\
-set JOM=E:\Drive\___Building_Environments\qt\5.12.12\Tools\QtCreator\bin\jom
+set JOM=E:\Drive\___Building_Environments\qt\5.12.12\Tools\QtCreator\bin\jom\jom
 
 if not exist build-smbx-launcher\NUL md build-smbx-launcher
 cd build-smbx-launcher
