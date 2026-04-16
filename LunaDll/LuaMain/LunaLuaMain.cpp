@@ -1041,6 +1041,20 @@ void CLunaLua::bindAll()
                 def("setWindowSize", (void(*)(int, int))&MonitorSystem::setWindowSize)
             ],
 
+            namespace_("Keyboard")[
+                // Keyboard.count() - Returns the number of keyboards connected.
+                def("count", (int(*)())&HID_GetKeyboardCount),
+                // Keyboard.get(index) - Returns keyboard information that's on the idx specified. Note that invalid keyboards and anything higher than 10 will return an invalid table.
+                def("get", (luabind::object(*)(int, lua_State*))&HID_GetKeyboardInfoFromIdx)
+            ],
+            
+            namespace_("Mouse")[
+                // Mouse.count() - Returns the number of mouses connected.
+                def("count", (int(*)())&HID_GetMouseCount),
+                // Mouse.get(index) - Returns mouse information that's on the idx specified. Note that invalid mouses and anything higher than 10 will return an invalid table.
+                def("get", (luabind::object(*)(int, lua_State*))&HID_GetMouseInfoFromIdx)
+            ],
+
             namespace_("Editor")[
                 def("getItem", (std::string(*)()) &GetEditorPlacedItem)
             ],
