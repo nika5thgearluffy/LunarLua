@@ -390,7 +390,6 @@ void MainLauncherWindow::runSMBX()
     argList << QString("--saveslot=%1").arg(config.saveSlot());
 
     internalRunSMBX(m_smbxExe, argList);
-    close();
 }
 
 void MainLauncherWindow::runSMBXEditor()
@@ -501,7 +500,6 @@ void MainLauncherWindow::runSMBXLevel(const QString& file)
 #endif
 
     internalRunSMBX(m_smbxExe, {"--testLevel=" + filePath});
-    close();
 }
 
 void MainLauncherWindow::checkForUpdates()
