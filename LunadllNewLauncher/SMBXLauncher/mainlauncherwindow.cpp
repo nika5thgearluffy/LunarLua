@@ -621,6 +621,7 @@ void MainLauncherWindow::warnError(const QString &msg)
 
 void MainLauncherWindow::internalRunSMBX(const QString &smbxExeFile, const QList<QString> &args)
 {
+    QProcess smbx;
     QFileInfo exeFileInfo(smbxExeFile);
     if(!exeFileInfo.exists()){
         qWarning() << "SMBX file does not exist!";
@@ -636,10 +637,10 @@ void MainLauncherWindow::internalRunSMBX(const QString &smbxExeFile, const QList
         runArgs.push_front(smbxExeFile);
 
 #ifdef _WIN32
-        QProcess::start(loader, runArgs);
+        smbx.start(loader, runArgs);
 #else
         runArgs.push_front(loader);
-        QProcess::start("wine", runArgs);
+        smbx.start("wine", runArgs);
 #endif
 
         /*
@@ -656,10 +657,10 @@ void MainLauncherWindow::internalRunSMBX(const QString &smbxExeFile, const QList
     else
     {
 #ifdef _WIN32
-        QProcess::start(smbxExeFile, runArgs);
+        smbx.start(smbxExeFile, runArgs);
 #else
         runArgs.push_front(smbxExeFile);
-        QProcess::start("wine", runArgs);
+        smbx.start("wine", runArgs);
 #endif
     }
 
