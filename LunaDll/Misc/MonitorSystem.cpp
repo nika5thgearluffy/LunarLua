@@ -81,8 +81,10 @@ int MonitorSystem::GetScreenCenterXPosition(int monitorID)
     // Get window size
     auto windowSize = gWindowSizeHandler.getWindowSize();
 
-    int posx = monitorInformation[monitorID - 1].monitorWidth / 2 - (windowSize.x - monitorInformation[monitorID - 1].monitorLeft) / 2;
-    return posx;
+    int dupeCheckLeft = monitorInformation[monitorID - 1].monitorLeft - monitorInformation[monitorID - 1].monitorLeft;
+    int posX = monitorInformation[monitorID - 1].monitorWidth / 2 - (windowSize.x - dupeCheckLeft) / 2;
+
+    return monitorInformation[monitorID - 1].monitorLeft + posX;
 }
 
 int MonitorSystem::GetScreenCenterYPosition(int monitorID)
@@ -90,8 +92,10 @@ int MonitorSystem::GetScreenCenterYPosition(int monitorID)
     // Get window size
     auto windowSize = gWindowSizeHandler.getWindowSize();
 
-    int posy = monitorInformation[monitorID - 1].monitorHeight / 2 - (windowSize.y - monitorInformation[monitorID - 1].monitorTop) / 2;
-    return posy;
+    int dupeCheckTop = monitorInformation[monitorID - 1].monitorTop - monitorInformation[monitorID - 1].monitorTop;
+    int posY = monitorInformation[monitorID - 1].monitorHeight / 2 - (windowSize.y - dupeCheckTop) / 2;
+
+    return monitorInformation[monitorID - 1].monitorTop + posY;
 }
 
 int MonitorSystem::GetScreenResolutionWidth(int monitorID)
@@ -121,8 +125,8 @@ void MonitorSystem::CenterWindow(int monitorID)
     auto windowSize = gWindowSizeHandler.getWindowSize();
 
     int x, y;
-    x = monitorInformation[monitorID - 1].monitorWidth / 2 - (windowSize.x - monitorInformation[monitorID - 1].monitorLeft) / 2,
-    y = monitorInformation[monitorID - 1].monitorHeight / 2 - (windowSize.y - monitorInformation[monitorID - 1].monitorTop) / 2,
+    x = MonitorSystem::GetScreenCenterXPosition(monitorID);
+    y = MonitorSystem::GetScreenCenterYPosition(monitorID);
 
     // When getting everything set, center the window!
     SetWindowPos(gMainWindowHwnd, NULL, x, y, 0, 0, SWP_NOSIZE | SWP_NOZORDER | SWP_NOACTIVATE);
