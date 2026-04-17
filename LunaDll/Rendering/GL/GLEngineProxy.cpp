@@ -163,11 +163,16 @@ void GLEngineProxy::EndFrame(HDC hdcDest, bool isLoadScreen, bool redrawOnly, bo
     obj->mHdcDest = hdcDest;
     obj->mRedrawOnly = redrawOnly;
     obj->mResizeOverlay = resizeOverlay;
-    obj->mPauseOverlay = gMainWindowUnfocusOverlay;
-    gMainWindowUnfocusOverlay = false;
 
-    // If we're about to unfocus, force the frame to be rendered
-    obj->mForceDraw = gMainWindowUnfocusPending;
+    // If on, a pause overlay will render on the window when unfocused and paused.
+    if(gEpisodeSettings.showPauseOverlay)
+    {
+        obj->mPauseOverlay = gMainWindowUnfocusOverlay;
+        gMainWindowUnfocusOverlay = false;
+
+        // If we're about to unfocus, force the frame to be rendered
+        obj->mForceDraw = gMainWindowUnfocusPending;
+    }
 
     if (isLoadScreen || redrawOnly)
     {

@@ -154,3 +154,5 @@ int gSoundEffectCount = 0;
 int gMusicCountSpecial = 0;
 int gMusicCountOverworld = 0;
 int gMusicCountLevel = 0;
+
+bool gFirstBooted = false;

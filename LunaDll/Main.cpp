@@ -76,6 +76,69 @@ static DWORD __stdcall GetCurrentProcessorNumberXP(void)
     }
 }
 
+// "episode.ini" shenanigans, this loads right before the boot screen initiates
+static void Episode_SetEpisodeIni()
+{
+    std::string episodePathToIni = WStr2Str(gEpisodeSettings.episodeDirectory) + "\\episode.ini";
+    if(file_existsX(episodePathToIni))
+    {
+        IniProcessing episodeConfig(episodePathToIni);
+        if(episodeConfig.beginGroup("boot-settings"))
+        {
+            // The boot image to use for the episode.
+            std::string bootImageCheck = episodeConfig.value("boot-image", "").toString();
+            if(bootImageCheck.length() > 0)
+            {
+                gEpisodeSettings.episodeBootImage = Str2WStr(bootImageCheck);
+                gEpisodeSettings.usingCustomSplash = true;
+            }
+            else
+            {
+                gEpisodeSettings.usingCustomSplash = false;
+            }
+
+            // The boot sound for the episode.
+            int bootSoundIsANumber = episodeConfig.value("boot-sound", 0).toInt();
+
+            if (bootSoundIsANumber > 0)
+            {
+                gEpisodeSettings.episodeBootSoundID = episodeConfig.value("boot-sound", 1).toInt();
+            }
+            else if(bootSoundIsANumber == 0)
+            {
+                gEpisodeSettings.episodeBootSoundID = -1;
+                gEpisodeSettings.episodeBootSoundCustom = Str2WStr(episodeConfig.value("boot-sound", "").toString());
+            }
+        }
+        episodeConfig.endGroup();
+        if(episodeConfig.beginGroup("credits-settings"))
+        {
+            // Show the original 1.3 credits?
+            gEpisodeSettings.displayOriginalCredits = episodeConfig.value("show-original-credits", false).toBool();
+        }
+        episodeConfig.endGroup();
+        if(episodeConfig.beginGroup("episode-settings"))
+        {
+            // Can the player cheat and still save? If on, this will remove the GM_CHEATED part of the saving code, but the game will still think you cheated.
+            gEpisodeSettings.canCheatAndSave = episodeConfig.value("can-save-episode-while-cheating", false).toBool();
+            // The frame buffer width.
+            gEpisodeSettings.episodeWidth = episodeConfig.value("screen-width", 800).toInt();
+            // The frame buffer height.
+            gEpisodeSettings.episodeHeight = episodeConfig.value("screen-height", 600).toInt();
+            // (Resolution code will be on runtimeHookGeneral)
+
+            // Can the game, when unfocused, show a paused overlay on the middle of the window?
+            gEpisodeSettings.showPauseOverlay = episodeConfig.value("show-unfocused-pause-overlay", true).toBool();
+        }
+        episodeConfig.endGroup();
+    }
+}
+
+void ReadEpisodeIni()
+{
+    Episode_SetEpisodeIni();
+}
+
 // We don't call this directly from DLL_PROCESS_ATTACH because if we do things
 // can break when we're loaded via LoadLibrary
 // Instead this is called by LunaDLLInitHook, which is set up by
@@ -159,6 +222,9 @@ void LunaDLLInit()
         LunaMsgBox::ShowA(0, errmsg.c_str(), "Error", 0);
         exit(1);
     }
+
+    // Read the episode.ini file
+    ReadEpisodeIni();
 
     TrySkipPatch();
 

@@ -145,6 +145,12 @@ static void LoadThread(void)
         }
         fclose(theFile);
     }
+    
+    if (!gFirstBooted)
+    {
+        // We offically first booted on the first time the load screen has loaded
+        gFirstBooted = true;
+    }
 
     static lua_State* L = nullptr;
     if (L == nullptr)

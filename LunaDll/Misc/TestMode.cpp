@@ -18,6 +18,7 @@
 #include "LoadScreen.h"
 
 #include "../Episode/EpisodeMain.h"
+#include "../Main.h"
 
 #include "TestModeMenu.h"
 #include "TestMode.h"
@@ -380,6 +381,22 @@ json IPCTestLevel(const json& params)
 
     json::const_iterator filenameIt = params.find("filename");
     if ((filenameIt == params.cend()) || (!filenameIt.value().is_string())) throw IPCInvalidParams();
+
+    //Get the episode directory
+    std::string levelPathS = filenameIt.value();
+    std::string levelPathNoFileS = splitFilenameFromPath(levelPathS);
+    std::string levelPathNoFileResolvedS = replaceFowardSlashesWithBackSlashes(levelPathNoFileS);
+    
+    // Get the directory without the root path
+    std::string levelPathNoRootDir = levelPathNoFileResolvedS;
+    levelPathNoRootDir.erase(0, gAppPathUTF8.length());
+    
+    // Update the episode settings
+    gEpisodeSettings.episodeDirectory = Str2WStr(levelPathNoFileResolvedS);;
+    gEpisodeSettings.episodeDirectoryWithoutRoot = Str2WStr(levelPathNoRootDir);
+
+    // Read the episode ini again just in case
+    ReadEpisodeIni();
 
     // Default to the last settings for characters, if not changed by IPC
     // command

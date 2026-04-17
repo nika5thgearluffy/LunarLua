@@ -17,7 +17,7 @@ void __stdcall SMBXSaveFile::Save()
     SafeFPUControl fpuExceptionClear; // Make sure FPU exceptions are cleared when the function exits
 
     // Don't save if cheater set
-    if (SMBX13::Vars::Cheater) return;
+    if (SMBX13::Vars::Cheater && !gEpisodeSettings.canCheatAndSave) return;
 
     // Hook for saving the game
     if (gLunaLua.isValid()) {

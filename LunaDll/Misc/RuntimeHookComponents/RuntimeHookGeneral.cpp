@@ -1481,6 +1481,20 @@ LRESULT CALLBACK MsgHOOKProc(int nCode, WPARAM wParam, LPARAM lParam)
 
                 // Set initial window title right away, since we blocked what was causing VB to set it
                 SetWindowTextW(gMainWindowHwnd, GM_GAMETITLE_1.ptr);
+
+                // Finally, resize the window and resolution if the episode sets to do so
+                if(gEpisodeSettings.episodeWidth != 800 || gEpisodeSettings.episodeHeight != 600)
+                {
+                    auto obj = std::make_shared<GLEngineCmd_SetFramebufferSize>();
+                    obj->mWidth = gEpisodeSettings.episodeWidth;
+                    obj->mHeight = gEpisodeSettings.episodeHeight;
+
+                    // NOTE: This command is processed synchronously, avoiding the potential
+                    //       for race conditions.
+                    //       This does however mean that switching framebuffer size may cause
+                    //       a momentary hitch.
+                    g_GLEngine.QueueCmd(obj);
+                }
             }
         }
         break;
@@ -1550,6 +1564,19 @@ void ParseArgs(const std::vector<std::wstring>& args)
 
         if (levelPath.length() > 0)
         {
+            //Get the episode directory
+            std::string levelPathS = WStr2Str(levelPath);
+            std::string levelPathNoFileS = splitFilenameFromPath(levelPathS);
+            std::string levelPathNoFileResolvedS = replaceFowardSlashesWithBackSlashes(levelPathNoFileS);
+            
+            // Get the directory without the root path
+            std::string levelPathNoRootDir = levelPathNoFileResolvedS;
+            levelPathNoRootDir.erase(0, gAppPathUTF8.length());
+            
+            // Update the episode settings
+            gEpisodeSettings.episodeDirectory = Str2WStr(levelPathNoFileResolvedS);;
+            gEpisodeSettings.episodeDirectoryWithoutRoot = Str2WStr(levelPathNoRootDir);
+
             STestModeSettings settings;
             settings.levelPath = levelPath;
             settings.rawData = "";
@@ -1605,6 +1632,19 @@ void ParseArgs(const std::vector<std::wstring>& args)
 
         if (wldPath.length() > 0)
         {
+            //Get the episode directory
+            std::string wldPathS = WStr2Str(wldPath);
+            std::string wldPathNoFileS = splitFilenameFromPath(wldPathS);
+            std::string wldPathNoFileResolvedS = replaceFowardSlashesWithBackSlashes(wldPathNoFileS);
+            
+            // Get the directory without the root path
+            std::string wldPathNoRootDir = wldPathNoFileResolvedS;
+            wldPathNoRootDir.erase(0, gAppPathUTF8.length());
+            
+            // Update the episode settings
+            gEpisodeSettings.episodeDirectory = Str2WStr(wldPathNoFileResolvedS);;
+            gEpisodeSettings.episodeDirectoryWithoutRoot = Str2WStr(wldPathNoRootDir);
+
             gStartupSettings.epSettings.wldPath = wldPath;
             gStartupSettings.epSettings.enabled = true;
             gStartupSettings.patch = true;

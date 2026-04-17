@@ -258,15 +258,36 @@ void MusicManager::play(std::string alias) //Chunk will be played once, stream w
         if((chanID >= 0)&&(chanID <max_soundeffect_count))
         {
 			int realID = chanID + 1;
-			bool isCancelled = createSFXStartLuaEvent(realID, sounds[chanID].fullPath);
-			if (!isCancelled)
-			{
-				if (!PGE_Sounds::playOverrideForAlias(alias, sounds[chanID].channel))
-				{
+
+            if(chanID == 28 && !gFirstBooted)
+            {
+                if(gEpisodeSettings.episodeBootSoundID == -1)
+                {
+                    std::wstring fullPathWithFile = gEpisodeSettings.episodeDirectory + L"\\" + gEpisodeSettings.episodeBootSoundCustom;
+                    std::string file = WStr2Str(fullPathWithFile);
+                    Mix_Chunk* chunk = PGE_Sounds::SND_OpenSnd(file.c_str());
+                    if (chunk)
+                    {
+                        bool success = (Mix_PlayChannelTimedVolume(-1, chunk, 0, -1, MIX_MAX_VOLUME) != -1);
+                    }
+                }
+                else if(gEpisodeSettings.episodeBootSoundID > 0)
+                {
+                    int customSoundID = gEpisodeSettings.episodeBootSoundID - 1;
+                    sounds[customSoundID].play();
+                }
+            }
+
+            if(!PGE_Sounds::playOverrideForAlias(alias, sounds[chanID].channel) && gFirstBooted)
+            {
+                bool isCancelled = createSFXStartLuaEvent(realID, sounds[chanID].fullPath.c_str());
+
+                if(!isCancelled)
+                {
                     //Play it!
                     sounds[chanID].play();
-				}
-			}
+                }
+            }
         }
     } else {
         if (!seizedSections[curSection])

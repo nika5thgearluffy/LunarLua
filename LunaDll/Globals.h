@@ -148,6 +148,7 @@ extern bool            gLavaIsWeak;
 extern bool            gDidGameOver;
 
 extern StartupSettings gStartupSettings;
+extern EpisodeSettings gEpisodeSettings;
 
 /// General use globals - These are all defined in Globals.cpp ///
 extern int		gFrames;
@@ -265,3 +266,5 @@ extern int gSoundEffectCount;
 extern int gMusicCountSpecial;
 extern int gMusicCountOverworld;
 extern int gMusicCountLevel;
+
+extern bool gFirstBooted;

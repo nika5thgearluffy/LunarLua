@@ -2609,7 +2609,22 @@ static void drawReplacementSplashScreen(void)
 
     // Load splash image
     std::shared_ptr<LunaImage> splashReplacement = LunaImage::fromFile(L"graphics/hardcoded/hardcoded-30-4.png");
-    if (!splashReplacement) return;
+    
+    // Load custom splash image if found
+    if(gEpisodeSettings.usingCustomSplash)
+    {
+        if(gEpisodeSettings.episodeBootImage.length() > 0)
+        {
+            std::wstring customImage = gEpisodeSettings.episodeDirectory + L"\\" + gEpisodeSettings.episodeBootImage;
+            const wchar_t * customImageWCHAR = customImage.c_str();
+            splashReplacement = LunaImage::fromFile(customImageWCHAR);
+        }
+    }
+
+    if (!splashReplacement || splashReplacement == nullptr)
+    {
+        return;
+    }
 
     // Get image as HBITMAP
     HBITMAP splashBMP = splashReplacement->asHBITMAP();
