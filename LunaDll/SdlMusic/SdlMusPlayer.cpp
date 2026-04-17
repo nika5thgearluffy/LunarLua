@@ -596,7 +596,7 @@ Mix_Chunk *PGE_Sounds::SND_OpenSnd(const char *sndFile)
 bool PGE_Sounds::SND_isChunkInCache(Mix_Chunk *chunk)
 {
     // get the chunk's path and filename
-    const char* filePath = g_chunkCache.getChunkFilename(chunk);
+    /*const char* filePath = g_chunkCache.getChunkFilename(chunk);
     if(filePath != "")
     {
         return true;
@@ -604,12 +604,13 @@ bool PGE_Sounds::SND_isChunkInCache(Mix_Chunk *chunk)
     else
     {
         return false;
-    }    
+    }*/
+    return false;    
 }
 
 bool PGE_Sounds::SND_isSndInCache(std::string fileName)
 {
-    const char* finalFile = "";
+    /*const char* finalFile = "";
     CachedFileDataWeakPtr<ChunkStorage>::Entry* cacheEntry = g_chunkCache.get(Str2WStr(fileName));
     std::shared_ptr<ChunkStorage> cachePtr = cacheEntry->data.lock();
     if (cachePtr)
@@ -623,12 +624,13 @@ bool PGE_Sounds::SND_isSndInCache(std::string fileName)
     else
     {
         return false;
-    }
+    }*/
+    return false;
 }
 
 const char* PGE_Sounds::SND_findFilenameFromChunkData(Mix_Chunk *chunk)
 {
-    const char* filePath = g_chunkCache.getChunkFilename(chunk);
+    /*const char* filePath = g_chunkCache.getChunkFilename(chunk);
     if(filePath != "")
     {
         return filePath;
@@ -636,7 +638,8 @@ const char* PGE_Sounds::SND_findFilenameFromChunkData(Mix_Chunk *chunk)
     else
     {
         return "";
-    }
+    }*/
+    return "";
 }
 
 void PGE_Sounds::holdCached(bool isWorld)
