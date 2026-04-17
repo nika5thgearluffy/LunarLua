@@ -936,6 +936,10 @@ void CLunaLua::bindAll()
                 def("MusicGetPitch", (double(*)())&LuaProxy::Audio::MusicGetPitch),
                 def("MusicGetSpeed", (double(*)())&LuaProxy::Audio::MusicGetSpeed),
                 def("MusicGet", (std::string(*)())&LuaProxy::Audio::MusicGet),
+                def("MusicCount", &LuaProxy::Audio::MusicCount),
+                
+                def("__setOverrideForMusicAlias", LuaProxy::Audio::__setOverrideForMusicAlias),
+                def("__getMusicForAlias", LuaProxy::Audio::__getMusicForAlias),
 
                 //SFX
                 def("newMix_Chunk", (Mix_Chunk*(*)())&LuaProxy::Audio::newMix_Chunk),
@@ -960,6 +964,7 @@ void CLunaLua::bindAll()
                 def("SfxIsPaused", (int(*)(int))&LuaProxy::Audio::SfxIsPaused),
                 def("SfxIsFading", (int(*)(int))&LuaProxy::Audio::SfxIsFading),
                 def("SfxVolume", (int(*)(int, int))&LuaProxy::Audio::SfxVolume),
+                def("SfxCount", (int(*)())&LuaProxy::Audio::SfxCount),
 
                 def("SfxSetPanning", (int(*)(int, int, int))&LuaProxy::Audio::SfxSetPanning),
                 def("SfxSetDistance", (int(*)(int, int))&LuaProxy::Audio::SfxSetDistance),

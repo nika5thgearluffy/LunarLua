@@ -80,6 +80,38 @@ struct StartupSettings
     }
 };
 
+struct EpisodeSettings
+{
+    std::wstring episodeDirectory;
+    std::wstring episodeDirectoryWithoutRoot;
+    
+    bool usingCustomSplash;
+    std::wstring episodeBootImage;
+
+    std::wstring episodeBootSoundCustom;
+    int episodeBootSoundID;
+
+    bool displayOriginalCredits;
+
+    bool canCheatAndSave;
+    
+    int episodeWidth;
+    int episodeHeight;
+    
+    bool showPauseOverlay;
+    
+    EpisodeSettings() :
+        episodeDirectory(L""), episodeDirectoryWithoutRoot(L""),
+        usingCustomSplash(false), episodeBootImage(L""),
+        episodeBootSoundCustom(L""), episodeBootSoundID(29),
+        displayOriginalCredits(false),
+        canCheatAndSave(false),
+        episodeWidth(800), episodeHeight(600),
+        showPauseOverlay(true)
+    {
+    }
+};
+
 struct SMBXHUDSettings {
     bool              skip; // Skip the whole HUD drawing
     WORLD_HUD_CONTROL overworldHudState;
@@ -227,3 +259,9 @@ extern bool gEpisodeLoadedOnBoot;
 // Testing levels
 extern std::mutex g_testingLevelMutex;
 extern bool gIsTestingLevel;
+
+extern int gSoundEffectCount;
+
+extern int gMusicCountSpecial;
+extern int gMusicCountOverworld;
+extern int gMusicCountLevel;

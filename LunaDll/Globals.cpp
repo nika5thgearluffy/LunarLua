@@ -94,6 +94,7 @@ SavedVariableBank gSavedVarBank;
 MciEmulator gMciEmulator;
 
 StartupSettings gStartupSettings;
+EpisodeSettings gEpisodeSettings;
 
 HardcodedGraphicsManager gGraphManager;
 
@@ -147,3 +148,9 @@ Characters gPlayerStoredCharacters[] = {CHARACTER_MARIO,CHARACTER_MARIO,CHARACTE
 // Are we testing a level?
 std::mutex g_testingLevelMutex;
 bool gIsTestingLevel = false;
+
+int gSoundEffectCount = 0;
+
+int gMusicCountSpecial = 0;
+int gMusicCountOverworld = 0;
+int gMusicCountLevel = 0;

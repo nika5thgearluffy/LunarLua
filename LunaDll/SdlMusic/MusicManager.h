@@ -66,23 +66,28 @@ public:
     static void setVolumeOverride(int _volume);
     static std::string lenght();
     static std::string position();
+
+    static void update();
     
     static void loadCustomSounds(std::string episodePath, std::string levelCustomPath="");
     static void resetSoundsToDefault();
-    static void loadSounds(std::string path, std::string root);
-    static void loadMusics(std::string path, std::string root);
+    static void loadSounds(std::string path, std::string root, bool is_first_run);
+    static void loadMusics(std::string path, std::string root, bool is_first_run);
     static std::string SndRoot();
 
     static void resetSeizes();
     static void setSeized(int section, bool state);
     static void setCurrentSection(int section);
 
+    static std::string getCurrentMusic();
+
+    static std::string getMusicForAlias(const std::string& alias, int type);
     static Mix_Chunk *getChunkForAlias(const std::string& alias);
+
+    static bool setToChangeMusicAlias;
 
     static std::string curMusicAlias; //Current music alias
     static int currentMusicID; //Currently playing music ID
-
-    static std::string getCurrentMusic();
 
 private:
     static std::unordered_map<std::string, musicFile > registredFiles;
@@ -91,19 +96,31 @@ private:
     static std::string curRoot;//Current rood directory (episode or application dir)
 
     //Musics
-    static MusicEntry music_lvl[57];
-    static MusicEntry music_wld[16];
+    static int max_lvl_music_id; // Size of level music array
+    static int max_wld_music_id; // Size of world music array
+    static MusicEntry *music_lvl;
+    static MusicEntry *music_wld;
     static MusicEntry music_spc[4];
-    static std::string defaultMusList[75];//List of system default files
-    static std::string musAliasesList[75];//List of reserved aliases for sound effects
+    static const int defaultMusCount = 75; // Total number of world + level + special music in smbx 1.3
+    static const int defaultMusCountLvl = 56; // smbx 1.3 special music count
+    static const int defaultMusCountWld = 16; // smbx 1.3 special music count
+    static const int defaultMusCountSpc = 3;  // smbx 1.3 special music count
+    static std::string defaultMusList[defaultMusCount];//List of system default files
+    static std::string musAliasesList[defaultMusCount];//List of reserved aliases for sound effects
+
+    static void resizeMusicArrays(int new_max_lvl_music_id, int new_max_wld_music_id); // Change size of music ids
+    static void initArraysMusic(); // Populate music array based on default values
 
     //SFX
-    static ChunkEntry sounds[91];
-    static std::string defaultChunksList[91];//List of system default files
-    static std::string chunksAliasesList[91];//List of reserved aliases for sound effects
-    static int chunksChannelsList[91];//List of channel reservation by some files (-1 is allowing mixed playback)
-
-    static void initArrays();//Fill chinks and musics list with system default files
+    static int max_soundeffect_count; // Size of sound effect array
+    static const int defaultSoundCount = 91; // Total number of sound effects in smbx 1.3
+    static ChunkEntry *sounds;
+    static std::string defaultChunksList[defaultSoundCount];//List of system default files
+    static std::string chunksAliasesList[defaultSoundCount];//List of reserved aliases for sound effects
+    static int chunksChannelsList[defaultSoundCount];//List of channel reservation by some files (-1 is allowing mixed playback)
+    
+    static void resizeSoundArrays(int new_max_sound_id); // Change size of sound ids
+    static void initArraysSound(); // Populate sound array based on default values
     
     //INI Paths
     static std::string defaultSndINI;//Full path to global sounds.ini file

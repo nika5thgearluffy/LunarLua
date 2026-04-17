@@ -1489,6 +1489,8 @@ extern void __stdcall RenderLevelHook()
     Renderer::Get().StartFrameRender();
     g_EventHandler.hookLevelRenderStart();
 
+    MusicManager::update();
+
     short oldRenderDoneCameraUpdate = g_renderDoneCameraUpdate;
     g_renderDoneCameraUpdate = 0;
     RenderLevelReal();
@@ -1565,6 +1567,9 @@ extern void __stdcall RenderWorldHook()
     }
     g_EventHandler.hookWorldRenderStart();
     RenderWorldReal();
+
+    MusicManager::update();
+    
     if (g_GLEngine.IsEnabled() && !Renderer::IsAltThreadActive())
     {
         g_GLEngine.EndFrame(g_GLEngine.GetHDC());

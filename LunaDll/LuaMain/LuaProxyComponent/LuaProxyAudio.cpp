@@ -5,6 +5,7 @@
 #include "../LuaProxy.h"
 #include "../../Misc/MiscFuncs.h"
 #include "../../GlobalFuncs.h"
+#include "../../Globals.h"
 #include "../../MciEmulator/mciEmulator.h"
 #include "../../SMBXInternal/PlayerMOB.h"
 #include "../../SMBXInternal/Level.h"
@@ -348,6 +349,43 @@ void LuaProxy::Audio::musicFadeOut(int section, int fadeInDelayMs)
     changeMusic(section, 0, fadeInDelayMs);
 }
 
+static luabind::object getMusicCounts(lua_State *L)
+{
+    luabind::object e = luabind::newtable(L);
+    // Episode name
+    e[1] = gMusicCountSpecial;
+    // Episode path
+    e[2] = gMusicCountOverworld;
+    // Episode world file
+    e[3] = gMusicCountLevel;
+    
+    return e;
+}
+
+// returns a table of all music count values.
+luabind::object LuaProxy::Audio::MusicCount(lua_State *L)
+{
+    return getMusicCounts(L);
+}
+
+
+
+void LuaProxy::Audio::__setOverrideForMusicAlias(const std::string& alias, std::string chunk)
+{
+#ifndef NO_SDL
+    PGE_MusPlayer::setOverrideForMusicAlias(alias, chunk);
+#endif
+}
+
+std::string LuaProxy::Audio::__getMusicForAlias(const std::string& alias, int type)
+{
+#ifndef NO_SDL
+    return PGE_MusPlayer::getMusicForAlias(alias, type);
+#else
+    return "";
+#endif
+}
+
 
 
 Mix_Chunk* LuaProxy::Audio::newMix_Chunk()
@@ -623,6 +661,11 @@ int LuaProxy::Audio::GetMixedSfxVolume()
 int LuaProxy::Audio::SetMixedSfxVolume(int vlm)
 {
     return Mix_MasterVolume(vlm);
+}
+
+int LuaProxy::Audio::SfxCount()
+{
+    return gSoundEffectCount;
 }
 
 double LuaProxy::Audio::AudioClock()

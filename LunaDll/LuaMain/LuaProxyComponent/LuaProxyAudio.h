@@ -2,8 +2,11 @@
 #ifndef LuaProxyAudio_H
 #define LuaProxyAudio_H
 
+#include "../LuaProxy.h"
+
 #include <string>
 #include <memory>
+
 struct Mix_Chunk;
 class MciEmulator;
 struct lua_State;
@@ -54,6 +57,10 @@ namespace LuaProxy
         double  MusicGetPitch();
         double  MusicGetSpeed();
         std::string MusicGet();
+        luabind::object MusicCount(lua_State *L);
+
+        void __setOverrideForMusicAlias(const std::string& alias, std::string chunk);
+        std::string __getMusicForAlias(const std::string& alias, int type);
 
         //SFX
         Mix_Chunk* newMix_Chunk();
@@ -83,6 +90,7 @@ namespace LuaProxy
         int SfxReverseStereo(int channel, int flip);
         int GetMixedSfxVolume();
         int SetMixedSfxVolume(int vlm);
+        int SfxCount();
 
         std::string getSfxPath(const std::string& path);
         void setMciSection(int section);
