@@ -791,9 +791,6 @@ LRESULT CALLBACK HandleWndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lPara
                     suggestedRect->bottom = suggestedRect->top + sz.cx;
                 }
 
-                // Resetup monitors
-                MonitorSystem::SetupMonitors();
-
                 // Update window size/position
                 isResizeFromDpiChange = true; // <- Trigger repaint
                 SetWindowPos(gMainWindowHwnd, nullptr, suggestedRect->left, suggestedRect->top, suggestedRect->right - suggestedRect->left, suggestedRect->bottom - suggestedRect->top, SWP_NOZORDER | SWP_NOACTIVATE);

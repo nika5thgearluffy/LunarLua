@@ -36,6 +36,8 @@ using std::max;
 #include "Misc/LoadScreen.h"
 #include "../LunaLoader/LunaLoaderPatch.h"
 
+#include "Misc/MonitorSystem.h"
+
 static bool LevelCustomSounds = false;
 
 /*!
@@ -380,9 +382,8 @@ void OnLevelHUDDraw(int cameraIdx) {
 }
 
 
-// TEST CODE - This code will run every frame everywhere, making for easy testing
+// This code will run every frame everywhere, making for easy testing
 void TestFrameCode() {
-
     /// DEBUG STUFF//
 
     //- Uncomment to test variable bank
