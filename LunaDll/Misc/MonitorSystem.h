@@ -52,12 +52,19 @@ namespace MonitorSystem{
     int GetScreenXPosition();
     int GetScreenYPosition();
     int GetScreenCenterXPosition(int monitorID);
+    int GetScreenCenterXPosition();
     int GetScreenCenterYPosition(int monitorID);
+    int GetScreenCenterYPosition();
     
     int GetScreenResolutionWidth(int monitorID);
+    int GetScreenResolutionWidth();
     int GetScreenResolutionHeight(int monitorID);
+    int GetScreenResolutionHeight();
+
     int GetScreenX(int monitorID);
+    int GetScreenX();
     int GetScreenY(int monitorID);
+    int GetScreenY();
 
     void CenterWindow(int monitorID);
     void CenterWindow();

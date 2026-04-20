@@ -87,6 +87,12 @@ int MonitorSystem::GetScreenCenterXPosition(int monitorID)
     return monitorInformation[monitorID - 1].monitorLeft + posX;
 }
 
+int MonitorSystem::GetScreenCenterXPosition()
+{
+    // Without a monitor arg, use the default monitor (1)
+    return MonitorSystem::GetScreenCenterXPosition(1);
+}
+
 int MonitorSystem::GetScreenCenterYPosition(int monitorID)
 {
     // Get window size
@@ -98,9 +104,21 @@ int MonitorSystem::GetScreenCenterYPosition(int monitorID)
     return monitorInformation[monitorID - 1].monitorTop + posY;
 }
 
+int MonitorSystem::GetScreenCenterYPosition()
+{
+    // Without a monitor arg, use the default monitor (1)
+    return MonitorSystem::GetScreenCenterYPosition(1);
+}
+
 int MonitorSystem::GetScreenResolutionWidth(int monitorID)
 {
     return monitorInformation[monitorID - 1].monitorWidth;
+}
+
+int MonitorSystem::GetScreenResolutionWidth()
+{
+    // Without a monitor arg, use the default monitor (1)
+    return monitorInformation[0].monitorWidth;
 }
 
 int MonitorSystem::GetScreenResolutionHeight(int monitorID)
@@ -108,14 +126,32 @@ int MonitorSystem::GetScreenResolutionHeight(int monitorID)
     return monitorInformation[monitorID - 1].monitorHeight;
 }
 
+int MonitorSystem::GetScreenResolutionHeight()
+{
+    // Without a monitor arg, use the default monitor (1)
+    return monitorInformation[0].monitorHeight;
+}
+
 int MonitorSystem::GetScreenX(int monitorID)
 {
     return monitorInformation[monitorID - 1].monitorX;
 }
 
+int MonitorSystem::GetScreenX()
+{
+    // Without a monitor arg, use the default monitor (1)
+    return monitorInformation[0].monitorX;
+}
+
 int MonitorSystem::GetScreenY(int monitorID)
 {
     return monitorInformation[monitorID - 1].monitorY;
+}
+
+int MonitorSystem::GetScreenY()
+{
+    // Without a monitor arg, use the default monitor (1)
+    return monitorInformation[0].monitorY;
 }
 
 // This will center the window to the screen. Useful for auto-moving the window to the center if you want to reset where X2 was when starting up the engine. monitorID will center to that specific monitor.

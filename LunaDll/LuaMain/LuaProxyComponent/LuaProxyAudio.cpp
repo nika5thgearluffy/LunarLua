@@ -536,9 +536,7 @@ int LuaProxy::Audio::SfxFadeInChTimedVol(int channel, Mix_Chunk *chunk, int loop
     bool isCancelled = createSFXStartLuaEvent(-1, chunkFilename);
     if(!isCancelled)
     {
-        int result = Mix_FadeInChannelTimedVolume(channel, chunk, loops, ms, ticks, volume);
-        chunkFilename = nullptr;
-        return result;
+        return Mix_FadeInChannelTimedVolume(channel, chunk, loops, ms, ticks, volume);
     }
     else
     {

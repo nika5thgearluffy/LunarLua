@@ -1030,16 +1030,22 @@ void CLunaLua::bindAll()
                 def("y", (int(*)())&MonitorSystem::GetScreenYPosition),
                 // Monitor.centerX(monitorID) - Gets the X window position where the window would be at if it was centered.
                 def("centerX", (int(*)(int))&MonitorSystem::GetScreenCenterXPosition),
+                def("centerX", (int(*)())&MonitorSystem::GetScreenCenterXPosition),
                 // Monitor.centerY(monitorID) - Gets the Y window position where the window would be at if it was centered.
                 def("centerY", (int(*)(int))&MonitorSystem::GetScreenCenterYPosition),
+                def("centerY", (int(*)())&MonitorSystem::GetScreenCenterYPosition),
                 // Monitor.screenX(monitorID) - Gets the specific monitor's X position.
                 def("screenX", (int(*)(int))&MonitorSystem::GetScreenX),
+                def("screenX", (int(*)())&MonitorSystem::GetScreenX),
                 // Monitor.screenY(monitorID) - Gets the specific monitor's Y position.
                 def("screenY", (int(*)(int))&MonitorSystem::GetScreenY),
+                def("screenY", (int(*)())&MonitorSystem::GetScreenY),
                 // Monitor.screenWidth() - Gets the specific monitor's width.
                 def("screenWidth", (int(*)(int))&MonitorSystem::GetScreenResolutionWidth),
+                def("screenWidth", (int(*)())&MonitorSystem::GetScreenResolutionWidth),
                 // Monitor.screenHeight() - Gets the specific monitor's height.
                 def("screenHeight", (int(*)(int))&MonitorSystem::GetScreenResolutionHeight),
+                def("screenHeight", (int(*)())&MonitorSystem::GetScreenResolutionHeight),
                 // Monitor.setWindowPosition(x, y) - Sets the window position of the game.
                 def("setWindowPosition", (void(*)(int, int))&MonitorSystem::SetWindowPosition),
                 // Monitor.setWindowSize(width, height) - Sets the window size of the game.
