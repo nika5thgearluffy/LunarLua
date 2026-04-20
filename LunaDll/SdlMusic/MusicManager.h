@@ -98,12 +98,13 @@ private:
     //Musics
     static int max_lvl_music_id; // Size of level music array
     static int max_wld_music_id; // Size of world music array
+    static int max_spe_music_id; // Size of special music array
     static MusicEntry *music_lvl;
     static MusicEntry *music_wld;
     static MusicEntry music_spc[4];
     static const int defaultMusCount = 75; // Total number of world + level + special music in smbx 1.3
-    static const int defaultMusCountLvl = 56; // smbx 1.3 special music count
-    static const int defaultMusCountWld = 16; // smbx 1.3 special music count
+    static const int defaultMusCountLvl = 56; // smbx 1.3 level music count
+    static const int defaultMusCountWld = 16; // smbx 1.3 world music count
     static const int defaultMusCountSpc = 3;  // smbx 1.3 special music count
     static std::string defaultMusList[defaultMusCount];//List of system default files
     static std::string musAliasesList[defaultMusCount];//List of reserved aliases for sound effects

@@ -105,6 +105,7 @@ std::string MusicManager::curRoot="";
 
 int MusicManager::max_lvl_music_id = 0;
 int MusicManager::max_wld_music_id = 0;
+int MusicManager::max_spe_music_id = 0;
 
 int MusicManager::max_soundeffect_count = 0;
 
