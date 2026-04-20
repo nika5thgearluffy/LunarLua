@@ -467,60 +467,6 @@ void PGE_MusPlayer::DeferralLock::Unlock()
 
 
 
-void PGE_MusPlayer::setOverrideForMusicAlias(const std::string& alias, std::string chunk)
-{
-    MusicOverrideSettings settings = { "" };
-    if(overrideArrayIsUsed)
-    {
-        auto it = overrideSettings.find(alias);
-        if (it != overrideSettings.end())
-        {
-            settings = it->second;
-        }
-    }
-    settings.fullPath = chunk;
-    overrideSettings[alias] = settings;
-    overrideArrayIsUsed=true;
-    MusicManager::setToChangeMusicAlias = true;
-}
-
-std::string PGE_MusPlayer::getMusicForAlias(const std::string& alias, int type)
-{
-    if (overrideArrayIsUsed)
-    {
-        auto it = overrideSettings.find(alias);
-        if (it != overrideSettings.end() && it->second.fullPath != "")
-        {
-            return it->second.fullPath;
-        }
-    }
-    return MusicManager::getMusicForAlias(alias, type);
-}
-
-bool PGE_MusPlayer::playOverrideForMusicAlias(const std::string& alias)
-{
-    if(!overrideArrayIsUsed)
-        return false; //Don't wait if overriding array is empty
-
-    auto it = overrideSettings.find(alias);
-    if (it != overrideSettings.end())
-    {
-        MusicOverrideSettings settings = it->second;
-        if(settings.fullPath == "") return false;
-        
-        std::string musFileS = settings.fullPath;
-        const char *musFileMix = musFileS.c_str();
-        Mix_Music *new_mus = Mix_LoadMUS(musFileMix);
-        play_mus = new_mus;
-        if(play_mus)
-        {
-            MUS_playMusic();
-            return true;
-        }
-    }
-    return false;
-}
-
 
 /***********************************PGE_Sounds********************************************/
 
@@ -596,7 +542,7 @@ Mix_Chunk *PGE_Sounds::SND_OpenSnd(const char *sndFile)
 bool PGE_Sounds::SND_isChunkInCache(Mix_Chunk *chunk)
 {
     // get the chunk's path and filename
-    /*const char* filePath = g_chunkCache.getChunkFilename(chunk);
+    const char* filePath = g_chunkCache.getChunkFilename(chunk);
     if(filePath != "")
     {
         return true;
@@ -604,13 +550,13 @@ bool PGE_Sounds::SND_isChunkInCache(Mix_Chunk *chunk)
     else
     {
         return false;
-    }*/
+    }
     return false;    
 }
 
 bool PGE_Sounds::SND_isSndInCache(std::string fileName)
 {
-    /*const char* finalFile = "";
+    const char* finalFile = "";
     CachedFileDataWeakPtr<ChunkStorage>::Entry* cacheEntry = g_chunkCache.get(Str2WStr(fileName));
     std::shared_ptr<ChunkStorage> cachePtr = cacheEntry->data.lock();
     if (cachePtr)
@@ -624,13 +570,13 @@ bool PGE_Sounds::SND_isSndInCache(std::string fileName)
     else
     {
         return false;
-    }*/
+    }
     return false;
 }
 
 const char* PGE_Sounds::SND_findFilenameFromChunkData(Mix_Chunk *chunk)
 {
-    /*const char* filePath = g_chunkCache.getChunkFilename(chunk);
+    const char* filePath = g_chunkCache.getChunkFilename(chunk);
     if(filePath != "")
     {
         return filePath;
@@ -638,7 +584,7 @@ const char* PGE_Sounds::SND_findFilenameFromChunkData(Mix_Chunk *chunk)
     else
     {
         return "";
-    }*/
+    }
     return "";
 }
 

@@ -51,10 +51,6 @@ public:
 
     static unsigned __int64 sampleCount();
     static unsigned __int64 MUS_sampleCount();
-    
-    static void setOverrideForMusicAlias(const std::string& alias, std::string chunk);
-    static std::string getMusicForAlias(const std::string& alias, int type);
-    static bool playOverrideForMusicAlias(const std::string& alias);
 
 private:
     static void MUS_StartDeferring();
@@ -123,11 +119,11 @@ public:
 	class ChunkStorage {
     public:
         Mix_Chunk* mChunk;
-		//const char* mFilePath;
+		const char* mFilePath;
 
         ChunkStorage(Mix_Chunk* chunk, const char* mFilePath) :
-            mChunk(chunk)
-            //mFilePath("")
+            mChunk(chunk),
+            mFilePath("")
         {
             // Only increment memory usage if we successfully opened something
             if (chunk) {
@@ -142,7 +138,7 @@ public:
             {
                 PGE_Sounds::memUsage -= mChunk->alen;
                 Mix_FreeChunk(mChunk);
-                //mFilePath = "";
+                mFilePath = nullptr;
                 mChunk = nullptr;
             }
         }

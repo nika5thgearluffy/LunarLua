@@ -370,22 +370,6 @@ luabind::object LuaProxy::Audio::MusicCount(lua_State *L)
 
 
 
-void LuaProxy::Audio::__setOverrideForMusicAlias(const std::string& alias, std::string chunk)
-{
-#ifndef NO_SDL
-    PGE_MusPlayer::setOverrideForMusicAlias(alias, chunk);
-#endif
-}
-
-std::string LuaProxy::Audio::__getMusicForAlias(const std::string& alias, int type)
-{
-#ifndef NO_SDL
-    return PGE_MusPlayer::getMusicForAlias(alias, type);
-#else
-    return "";
-#endif
-}
-
 
 
 Mix_Chunk* LuaProxy::Audio::newMix_Chunk()
@@ -552,7 +536,9 @@ int LuaProxy::Audio::SfxFadeInChTimedVol(int channel, Mix_Chunk *chunk, int loop
     bool isCancelled = createSFXStartLuaEvent(-1, chunkFilename);
     if(!isCancelled)
     {
-        return Mix_FadeInChannelTimedVolume(channel, chunk, loops, ms, ticks, volume);
+        int result = Mix_FadeInChannelTimedVolume(channel, chunk, loops, ms, ticks, volume);
+        chunkFilename = nullptr;
+        return result;
     }
     else
     {

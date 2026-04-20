@@ -56,7 +56,6 @@ public:
     };
     static void initAudioEngine();
     static void rebuildSoundCache();
-    static void setMusicAlias(std::string alias);
     static void addSound(std::string alias, std::string fileName);
     static void close();
     static void play(std::string alias); //Chunk will be played once, stream will be played with loop
@@ -67,7 +66,7 @@ public:
     static std::string lenght();
     static std::string position();
 
-    static void update();
+    static void setMusicAlias(std::string alias);
     
     static void loadCustomSounds(std::string episodePath, std::string levelCustomPath="");
     static void resetSoundsToDefault();
