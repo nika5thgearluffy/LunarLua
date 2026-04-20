@@ -121,9 +121,6 @@ int MonitorSystem::GetScreenY(int monitorID)
 // This will center the window to the screen. Useful for auto-moving the window to the center if you want to reset where X2 was when starting up the engine. monitorID will center to that specific monitor.
 void MonitorSystem::CenterWindow(int monitorID)
 {
-    // Get window size
-    auto windowSize = gWindowSizeHandler.getWindowSize();
-
     int x, y;
     x = MonitorSystem::GetScreenCenterXPosition(monitorID);
     y = MonitorSystem::GetScreenCenterYPosition(monitorID);
