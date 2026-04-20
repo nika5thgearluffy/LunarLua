@@ -329,6 +329,7 @@
     <ClInclude Include="SMBXInternal\WorldLevel.h" />
     <ClInclude Include="version.h" />
     <ClInclude Include="Misc\MonitorSystem.h" />
+    <ClInclude Include="Misc\KeyboardMouseSystem.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\LunaLoader\LunaLoaderPatch.cpp" />
@@ -571,6 +572,7 @@
     <ClCompile Include="SMBXInternal\WorldLevel.cpp" />
     <ClCompile Include="VersionString.cpp" />
     <ClCompile Include="Misc\MonitorSystem.cpp" />
+    <ClCompile Include="Misc\KeyboardMouseSystem.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Misc\scrappedcode.txt" />

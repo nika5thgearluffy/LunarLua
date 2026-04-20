@@ -668,6 +668,11 @@ int LuaProxy::Audio::SfxCount()
     return gSoundEffectCount;
 }
 
+std::string LuaProxy::Audio::SfxGetFilenameFromChunk(Mix_Chunk *chunk)
+{
+    return PGE_Sounds::SND_findFilenameFromChunkData(chunk);
+}
+
 double LuaProxy::Audio::AudioClock()
 {
 #ifndef NO_SDL

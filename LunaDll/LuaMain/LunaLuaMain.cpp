@@ -38,6 +38,7 @@
 #include "../Rendering/WindowSizeHandler.h"
 
 #include "../Misc/MonitorSystem.h"
+#include "../Misc/KeyboardMouseSystem.h"
 
 /*static*/ DWORD CLunaFFILock::currentLockTlsIdx = TlsAlloc();
 
@@ -964,7 +965,9 @@ void CLunaLua::bindAll()
                 def("SfxIsPaused", (int(*)(int))&LuaProxy::Audio::SfxIsPaused),
                 def("SfxIsFading", (int(*)(int))&LuaProxy::Audio::SfxIsFading),
                 def("SfxVolume", (int(*)(int, int))&LuaProxy::Audio::SfxVolume),
+
                 def("SfxCount", (int(*)())&LuaProxy::Audio::SfxCount),
+                def("SfxGetFilenameFromChunk", (std::string(*)(Mix_Chunk*))&LuaProxy::Audio::SfxGetFilenameFromChunk),
 
                 def("SfxSetPanning", (int(*)(int, int, int))&LuaProxy::Audio::SfxSetPanning),
                 def("SfxSetDistance", (int(*)(int, int))&LuaProxy::Audio::SfxSetDistance),
