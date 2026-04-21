@@ -8,6 +8,7 @@ namespace SMBX13 {
         extern bool _enablePowerupPowerdownPositionFixes;
 
         void __stdcall PlayerEffects(int16_t& A);
+        void __stdcall KillPlayer(int16_t& A);
     }
 }
 

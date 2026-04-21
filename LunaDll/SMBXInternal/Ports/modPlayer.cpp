@@ -7,8 +7,9 @@
 #include "../../Misc/RuntimeHookComponents/CharacterIdExtension.h"
 #include "../../Misc/SafeFPUControl.h"
 
-// Forward declare a hook we use, don't want the whole header
+// Forward declare hooks we use, don't want the whole header
 void __stdcall runtimeHookWarpPipeDoorInternal(short* playerIdx);
+bool __stdcall runtimeHookPlayerDie(short* playerIdxPtr);
 
 // Fix enablement
 bool SMBX13::Ports::_enablePowerupPowerdownPositionFixes = true;
@@ -1210,6 +1211,88 @@ void __stdcall SMBX13::Ports::PlayerEffects(int16_t& A) {
         if (_.Effect == 0) {
             if ((nPlay.Online == true) && (A == (nPlay.MySlot + 1))) {
                 // Netplay.sendData Netplay.PutPlayerControls(nPlay.MySlot) & "1c" & A & "|" & Player(A).Effect & "|" & Player(A).Effect2 & LB & "1h" & A & "|" & Player(A).State & LB
+            }
+        }
+    }
+    #pragma warning( pop )
+}
+
+// This is an automatically translated copy of KillPlayer(A) from modPlayer.bas
+// It accounts for:
+// - Cancelling the function for killing the player when the player death tally is above 200
+void __stdcall SMBX13::Ports::KillPlayer(int16_t& A) {
+    using namespace SMBX13::Types;
+    using namespace SMBX13::Vars;
+    using namespace SMBX13::Functions;
+    #pragma warning( push )
+    #pragma warning( disable: 4244 ) // Disable loss of precision warning
+    Location_t tempLocation = {};
+    bool shouldntDie = runtimeHookPlayerDie(&A);
+    if (!shouldntDie)
+    {
+        auto& _ = Player[A];
+        _.Location.SpeedX = 0;
+        _.Location.SpeedY = 0;
+        _.State = 1;
+        _.Stoned = false;
+        _.Pinched1 = 0;
+        _.Pinched2 = 0;
+        _.Pinched3 = 0;
+        _.Pinched4 = 0;
+        _.NPCPinched = 0;
+        _.TimeToLive = 0;
+        _.Direction = 1;
+        _.Frame = 1;
+        _.Mount = 0;
+        _.Dead = true;
+        _.Location.X = 0;
+        _.Location.Y = 0;
+        _.Location.Width = Physics.PlayerWidth[_.State][_.Character];
+        _.Location.Height = Physics.PlayerHeight[_.State][_.Character];
+        if (_.HoldingNPC > 0) {
+            if (NPC[_.HoldingNPC].Type == 272) { NPC[_.HoldingNPC].Projectile = true; }
+        }
+        _.HoldingNPC = 0;
+        if (BattleMode == true) {
+            if (BattleLives[A] <= 0) {
+                if (BattleOutro == 0) {
+                    BattleOutro = 1;
+                    PlaySound(52);
+                    StopMusic();
+                }
+                if (BattleWinner == 0) {
+                    if (A == 1) {
+                        BattleWinner = 2;
+                    }
+                    else {
+                        BattleWinner = 1;
+                    }
+                }
+            }
+            if ((A == BattleWinner) || (BattleWinner == 0)) {
+                if (BattleLives[A] > 0) { BattleLives[A] = (BattleLives[A] - 1); }
+                PlaySound(34);
+                _.Frame = 1;
+                _.Location.SpeedX = 0;
+                _.Location.SpeedY = 0;
+                _.Mount = 0;
+                _.State = 2;
+                _.Hearts = 2;
+                _.Effect = 0;
+                _.Location.Width = Physics.PlayerWidth[_.State][_.Character];
+                _.Location.Height = Physics.PlayerHeight[_.State][_.Character];
+                _.Location.X = ((PlayerStart[A].X + (PlayerStart[A].Width * 0.5)) - (_.Location.Width * 0.5));
+                _.Location.Y = ((PlayerStart[A].Y + PlayerStart[A].Height) - _.Location.Height);
+                _.Direction = 1;
+                _.Dead = false;
+                CheckSection(A);
+                if ((_.Location.X + (_.Location.Width / 2)) > (level[_.Section].X + ((level[_.Section].Width - level[_.Section].X) / 2))) { _.Direction = -1; }
+                _.Immune = 300;
+                tempLocation.Width = 32;
+                tempLocation.Height = 32;
+                tempLocation.X = ((_.Location.X + (_.Location.Width / 2)) - (tempLocation.Width / 2));
+                tempLocation.Y = ((_.Location.Y + (_.Location.Height / 2)) - (tempLocation.Height / 2));
+                NewEffect(131, tempLocation);
             }
         }
     }

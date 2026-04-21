@@ -4516,6 +4516,20 @@ void __stdcall runtimeHookPlayerKill(short* playerIdxPtr)
     }
 }
 
+bool __stdcall runtimeHookPlayerDie(short* playerIdxPtr)
+{
+    if (gLunaLua.isValid())
+    {
+        std::shared_ptr<Event> playerDieEvent = std::make_shared<Event>("onPlayerDie", true);
+        playerDieEvent->setDirectEventName("onPlayerDie");
+        playerDieEvent->setLoopable(false);
+        gLunaLua.callEvent(playerDieEvent, *playerIdxPtr);
+
+        return playerDieEvent->native_cancelled();
+    }
+    return false;
+}
+
 static int __stdcall runtimeHookWarpEnterInternal(short* playerIdx, int warpIdx)
 {
     if (gLunaLua.isValid()) {

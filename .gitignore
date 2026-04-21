@@ -281,3 +281,10 @@ compile_commands.json
 !/CrossCompilation/winsdk/Include/v7.1A/um/.gitkeep
 !/CrossCompilation/winsdk/Lib/v7.1A/ucrt/x86/.gitkeep
 !/CrossCompilation/winsdk/Lib/v7.1A/um/x86/.gitkeep
+
+# These files are related to the VB parser script.
+Analysis/vb_parser/__pycache__/VisualBasic6ParserListener.cpython-311.pyc
+Analysis/vb_parser/__pycache__/VisualBasic6Parser.cpython-311.pyc
+Analysis/vb_parser/__pycache__/VisualBasic6Lexer.cpython-311.pyc
+Analysis/vb_parser/__pycache__/smbx_vb_tools.cpython-311.pyc
+Analysis/vb_parser/test_func.bas
