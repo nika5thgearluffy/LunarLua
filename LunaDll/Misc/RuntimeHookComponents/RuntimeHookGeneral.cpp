@@ -552,14 +552,16 @@ static void SendLuaRawKeyEventRepeated(uint32_t virtKey, bool isDown, int keyboa
 
 static void SendLuaRawKeyEvent(uint32_t virtKey, bool isDown, int keyboardIdx)
 {
-    if (gLunaLua.isValid() && !LunaMsgBox::IsActive())
-    {
-        std::shared_ptr<Event> keyboardReleaseEvent = std::make_shared<Event>(isDown ? "onKeyboardKeyDown" : "onKeyboardKeyUp", false);
+    if (gLunaLua.isValid() && !LunaMsgBox::IsActive()) {
+        std::shared_ptr<Event> keyboardReleaseEvent = std::make_shared<Event>(isDown ? "onKeyboardKeyPress" : "onKeyboardKeyRelease", false);
         auto cKey = MapVirtualKeyA(virtKey, MAPVK_VK_TO_CHAR);
         std::string blank = "";
-        if (cKey != 0) {
+        if (cKey != 0)
+        {
             gLunaLua.callEvent(keyboardReleaseEvent, static_cast<int>(virtKey), std::string(1, cKey & 0b01111111), keyboardIdx + 1);
-        } else {
+        }
+        else
+        {
             gLunaLua.callEvent(keyboardReleaseEvent, static_cast<int>(virtKey), blank, keyboardIdx + 1);
         }
     }
