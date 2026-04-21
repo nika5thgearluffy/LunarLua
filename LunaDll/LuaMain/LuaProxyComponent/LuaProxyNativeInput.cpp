@@ -5,8 +5,6 @@
 
 #pragma warning(disable: 4800)
 
-
-
 LuaProxy::InputConfig::InputConfig(unsigned short index) : m_index(index)
 {}
 

@@ -47,6 +47,8 @@
 #include "../../Episode/EpisodeMain.h"
 #include "../../SMBXInternal/Overworld.h"
 
+#include "../../Misc/KeyboardMouseSystem.h"
+
 void CheckIPCQuitRequest();
 
 extern HHOOK HookWnd;
@@ -5281,7 +5283,12 @@ _declspec(naked) void __stdcall runtimeHookFixLinkFairyClowncar3()
 // Function to retore GeyKeyState call to functionality if it's one we care about
 SHORT __stdcall runtimeHookGetKeyStateRetore(int vk)
 {
-    return (gKeyState[vk] & 0x80) ? 0xF000 : 0;
+    SHORT state = 0x00;
+    for(int i = 0; i <= HID_GetKeyboardCount(); i++)
+    {
+        state = (gKeyState[i][vk] & 0x80) ? 0xF000 : 0;
+    }
+    return state;
 }
 
 // close the game

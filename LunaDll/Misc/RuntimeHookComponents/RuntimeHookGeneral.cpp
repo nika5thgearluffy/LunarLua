@@ -379,17 +379,24 @@ static void ProcessPasteKeystroke()
     }
 }
 
-static void ProcessRawKeyPress(uint32_t virtKey, uint32_t scanCode, bool repeated)
+static void ProcessRawKeyPress(uint32_t virtKey, uint32_t scanCode, bool repeated, int keyboardIdx)
 {
     static WCHAR unicodeData[32] = { 0 };
-    bool ctrlPressed = (gKeyState[VK_CONTROL] & 0x80) != 0;
-    bool altPressed = (gKeyState[VK_MENU] & 0x80) != 0;
+
+    bool ctrlPressed = (gKeyState[keyboardIdx - 1][VK_CONTROL] & 0x80) != 0;
+    bool altPressed = (gKeyState[keyboardIdx - 1][VK_MENU] & 0x80) != 0;
     bool plainPress = (!repeated) && (!altPressed) && (!ctrlPressed);
     
-    // Notify game controller manager
+    // Notify game controller manager and player input overhaul system
     if (!repeated)
     {
         gLunaGameControllerManager.notifyKeyboardPress(virtKey);
+
+        // Dumb fix for the test mode pause menu when using the player keys recode
+        //if(TestModeIsEnabled() && gDisablePlayerKeysLegacy && virtKey == VK_ESCAPE && !testModeMenuIsSkipTickPending())
+        //{
+            //testModePauseMenu(true, false);
+        //}
     }
 
     // Notify Lua code
@@ -400,15 +407,16 @@ static void ProcessRawKeyPress(uint32_t virtKey, uint32_t scanCode, bool repeate
         ) {
         std::shared_ptr<Event> keyboardPressEvent = std::make_shared<Event>("onKeyboardPress", false);
 
-        int unicodeRet = ToUnicode(virtKey, scanCode, gKeyState, unicodeData, 32, 0);
+        int unicodeRet = ToUnicode(virtKey, scanCode, gKeyState[keyboardIdx - 1], unicodeData, 32, 0);
+
         if (unicodeRet > 0)
         {
             std::string charStr = WStr2Str(std::wstring(unicodeData, unicodeRet));
-            gLunaLua.callEvent(keyboardPressEvent, static_cast<int>(virtKey), repeated, charStr);
+            gLunaLua.callEvent(keyboardPressEvent, static_cast<int>(virtKey), repeated, charStr, keyboardIdx);
         }
         else
         {
-            gLunaLua.callEvent(keyboardPressEvent, static_cast<int>(virtKey), repeated);
+            gLunaLua.callEvent(keyboardPressEvent, static_cast<int>(virtKey), repeated, "", keyboardIdx);
         }
     }
 
@@ -514,21 +522,176 @@ static void ProcessRawKeyPress(uint32_t virtKey, uint32_t scanCode, bool repeate
     // Process F4 key for letterbox toggle
     if ((virtKey == VK_F4) && plainPress && g_GLEngine.IsEnabled())
     {
+        if(gLunaLua.isValid())
+        {
+            std::shared_ptr<Event> letterboxEvent = std::make_shared<Event>("onLetterboxToggle", false);
+            letterboxEvent->setDirectEventName("onLetterboxToggle");
+            letterboxEvent->setLoopable(false);
+            gLunaLua.callEvent(letterboxEvent, !gGeneralConfig.getRendererUseLetterbox());
+        }
         gGeneralConfig.setRendererUseLetterbox(!gGeneralConfig.getRendererUseLetterbox());
         gWindowSizeHandler.Recalculate(); // Recalculate framebuffer position in window
         gGeneralConfig.save();
     }
 }
 
-static void SendLuaRawKeyEvent(uint32_t virtKey, bool isDown)
+static void SendLuaRawKeyEventRepeated(uint32_t virtKey, bool isDown, int keyboardIdx)
 {
-    if (gLunaLua.isValid() && !LunaMsgBox::IsActive()) {
-        std::shared_ptr<Event> keyboardReleaseEvent = std::make_shared<Event>(isDown ? "onKeyboardKeyPress" : "onKeyboardKeyRelease", false);
+    if (gLunaLua.isValid() && !LunaMsgBox::IsActive())
+    {
+        std::shared_ptr<Event> keyboardReleaseEvent = std::make_shared<Event>(isDown ? "onKeyboardKeyDown" : "onKeyboardKeyUp", false);
         auto cKey = MapVirtualKeyA(virtKey, MAPVK_VK_TO_CHAR);
+        std::string blank = "";
         if (cKey != 0) {
-            gLunaLua.callEvent(keyboardReleaseEvent, static_cast<int>(virtKey), std::string(1, cKey & 0b01111111));
+            gLunaLua.callEvent(keyboardReleaseEvent, static_cast<int>(virtKey), std::string(1, cKey & 0b01111111), keyboardIdx + 1);
         } else {
-            gLunaLua.callEvent(keyboardReleaseEvent, static_cast<int>(virtKey));
+            gLunaLua.callEvent(keyboardReleaseEvent, static_cast<int>(virtKey), blank, keyboardIdx + 1);
+        }
+    }
+}
+
+static void SendLuaRawKeyEvent(uint32_t virtKey, bool isDown, int keyboardIdx)
+{
+    if (gLunaLua.isValid() && !LunaMsgBox::IsActive())
+    {
+        std::shared_ptr<Event> keyboardReleaseEvent = std::make_shared<Event>(isDown ? "onKeyboardKeyDown" : "onKeyboardKeyUp", false);
+        auto cKey = MapVirtualKeyA(virtKey, MAPVK_VK_TO_CHAR);
+        std::string blank = "";
+        if (cKey != 0) {
+            gLunaLua.callEvent(keyboardReleaseEvent, static_cast<int>(virtKey), std::string(1, cKey & 0b01111111), keyboardIdx + 1);
+        } else {
+            gLunaLua.callEvent(keyboardReleaseEvent, static_cast<int>(virtKey), blank, keyboardIdx + 1);
+        }
+    }
+}
+
+int GetKeyboardIDListing(int id)
+{
+    for(int i = 1; i <= HID_GetKeyboardCount(); i++)
+    {
+        if(keyboardDeviceList[i - 1].keyboardID == id)
+        {
+            return i;
+        }
+    }
+    return -1;
+}
+
+int GetKeyboardToPressKeysWith(HANDLE hDevice)
+{
+    int finalKey = -1;
+    int hDeviceInt = (int)hDevice;
+    for(int i = 1; i <= HID_GetKeyboardCount(); i++)
+    {
+        if(keyboardDeviceList[i - 1].keyboardID == hDeviceInt)
+        {
+            finalKey = keyboardDeviceList[i - 1].keyboardID;
+        }
+    }
+    return finalKey;
+}
+
+static void ProcessRawInput_OrigFunc(uint16_t vkey, uint16_t scanCode, uint8_t prefixFlag, int keyboardID, int keyboardIdx, bool keyDown, bool haveFocus)
+{
+    // Handle left/right keys
+    // We get passed them with the non-distinct virtual key code
+    // So let's make it distinct
+    switch (vkey)
+    {
+        case VK_CONTROL:
+            if (prefixFlag == 0)
+            {
+                gKeyState[keyboardIdx - 1][VK_LCONTROL] = -1;
+                vkey = VK_LCONTROL;
+            }
+            else if (prefixFlag == RI_KEY_E0)
+            {
+                gKeyState[keyboardIdx - 1][VK_RCONTROL] = -1;
+                vkey = VK_RCONTROL;
+            }
+            break;
+        case VK_MENU:
+            if (prefixFlag == 0)
+            {
+                gKeyState[keyboardIdx - 1][VK_LMENU] = -1;
+                vkey = VK_LMENU;
+            }
+            else if (prefixFlag == RI_KEY_E0)
+            {
+                gKeyState[keyboardIdx - 1][VK_RMENU] = -1;
+                vkey = VK_RMENU;
+            }
+            break;
+        case VK_SHIFT:
+            if ((scanCode == 0x2a) && (prefixFlag == 0))
+            {
+                gKeyState[keyboardIdx - 1][VK_LSHIFT] = -1;
+                vkey = VK_LSHIFT;
+            }
+            else if ((scanCode == 0x36) && (prefixFlag == 0))
+            {
+                gKeyState[keyboardIdx - 1][VK_RSHIFT] = -1;
+                vkey = VK_RSHIFT;
+            }
+            break;
+        default:
+            break;
+    }
+    
+    // Generate previous key state and repeat flags
+    bool keyWasDown = (gKeyState[keyboardIdx - 1][vkey]) & 0x80 != 0;
+    bool repeated = keyDown && keyWasDown;
+
+    // Update key state
+    uint8_t u8NewState = keyDown ? 0x80 : 0x00;
+    if ((vkey == VK_CAPITAL) || (vkey == VK_NUMLOCK) || (vkey == VK_SCROLL))
+    {
+        // Special case to keep track of toggle state
+        // Note: Theoretically we should be able to use gKeyState[keyboardIdx - 1][vkey] instead of
+        //       GetKeyState(vkey) as long as we initilize the toggle state when first running
+        //       however let's just use GetKeyState(vkey) to avoid needing to do that and maybe
+        //       avoid a risk of getting out of sync (though I don't think it'd be possible)
+        u8NewState |= (GetKeyState(vkey) & 1);
+        // Compensate for how this runs before the GetKeyState state is updated
+        u8NewState ^= (keyDown && !repeated) ? 0x01 : 0x00;
+    }
+    gKeyState[keyboardIdx - 1][vkey] = (int)(u8NewState);
+
+    // For key states that should or go together from left and right, handle that
+    switch (vkey)
+    {
+        case VK_LCONTROL:
+        case VK_RCONTROL:
+            gKeyState[keyboardIdx - 1][VK_CONTROL] = COMBOOL((gKeyState[keyboardIdx - 1][VK_LCONTROL] || gKeyState[keyboardIdx - 1][VK_RCONTROL]));
+            break;
+        case VK_LMENU:
+        case VK_RMENU:
+            gKeyState[keyboardIdx - 1][VK_MENU] = COMBOOL((gKeyState[keyboardIdx - 1][VK_LMENU] || vkey == gKeyState[keyboardIdx - 1][VK_RMENU]));
+            break;
+        case VK_LSHIFT:
+        case VK_RSHIFT:
+            gKeyState[keyboardIdx - 1][VK_SHIFT] = COMBOOL((gKeyState[keyboardIdx - 1][VK_LSHIFT] || gKeyState[keyboardIdx - 1][VK_RSHIFT]));
+            break;
+        default:
+            break;
+    }
+
+    // Send lua onRawKeyPress/Release events
+    if (!repeated)
+    {
+        SendLuaRawKeyEvent(vkey, keyDown, keyboardIdx);
+    }
+    else
+    {
+        // Send lua onRawKeyDown/Up events
+        SendLuaRawKeyEventRepeated(vkey, keyDown, keyboardIdx);
+    }
+    // If window is focused, and key is down, run keypress handling
+    if (haveFocus)
+    {
+        if (keyDown)
+        {
+            ProcessRawKeyPress(vkey, scanCode, repeated, keyboardIdx);
         }
     }
 }
@@ -564,6 +727,7 @@ static void ProcessRawInput(HWND hwnd, HRAWINPUT hRawInput, bool haveFocus)
     uint16_t scanCode = rawKbd.MakeCode;
     uint8_t prefixFlag = (rawKbd.Flags & (RI_KEY_E0 | RI_KEY_E1));
     bool keyDown = ((rawKbd.Flags & RI_KEY_BREAK) == 0);
+    HANDLE hDevice = rawInput.header.hDevice;
 
     // Out of range
     if (vkey > 0xFF)
@@ -571,104 +735,17 @@ static void ProcessRawInput(HWND hwnd, HRAWINPUT hRawInput, bool haveFocus)
         return;
     }
 
-    // Handle left/right keys
-    // We get passed them with the non-distinct virtual key code
-    // So let's make it distinct
-    switch (vkey)
+    int keyboardID = GetKeyboardToPressKeysWith(hDevice);
+    int keyboardIdx = GetKeyboardIDListing(keyboardID);
+    int hDeviceInt = (int)hDevice;
+    
+    if(hDeviceInt == keyboardID)
     {
-        case VK_CONTROL:
-            if (prefixFlag == 0)
-            {
-                vkey = VK_LCONTROL;
-            }
-            else if (prefixFlag == RI_KEY_E0)
-            {
-                vkey = VK_RCONTROL;
-            }
-            else
-            {
-                return;
-            }
-            break;
-        case VK_MENU:
-            if (prefixFlag == 0)
-            {
-                vkey = VK_LMENU;
-            }
-            else if (prefixFlag == RI_KEY_E0)
-            {
-                vkey = VK_RMENU;
-            }
-            else
-            {
-                return;
-            }
-            break;
-        case VK_SHIFT:
-            if ((scanCode == 0x2a) && (prefixFlag == 0))
-            {
-                vkey = VK_LSHIFT;
-            }
-            else if ((scanCode == 0x36) && (prefixFlag == 0))
-            {
-                vkey = VK_RSHIFT;
-            }
-            else
-            {
-                return;
-            }
-            break;
-        default:
-            break;
+        ProcessRawInput_OrigFunc(vkey, scanCode, prefixFlag, keyboardID, keyboardIdx, keyDown, haveFocus);
     }
-
-    // Generate previous key state and repeat flags
-    bool keyWasDown = (gKeyState[vkey] & 0x80) != 0;
-    bool repeated = keyDown && keyWasDown;
-
-    // Update key state
-    uint8_t u8NewState = keyDown ? 0x80 : 0x00;
-    if ((vkey == VK_CAPITAL) || (vkey == VK_NUMLOCK) || (vkey == VK_SCROLL))
+    else
     {
-        // Special case to keep track of toggle state
-        // Note: Theoretically we should be able to use gKeyState[vkey] instead of
-        //       GetKeyState(vkey) as long as we initilize the toggle state when first running
-        //       however let's just use GetKeyState(vkey) to avoid needing to do that and maybe
-        //       avoid a risk of getting out of sync (though I don't think it'd be possible)
-        u8NewState |= (GetKeyState(vkey) & 1);
-        // Compensate for how this runs before the GetKeyState state is updated
-        u8NewState ^= (keyDown && !repeated) ? 0x01 : 0x00;
-    }
-    gKeyState[vkey] = u8NewState;
-
-    // For key states that should or together left and right, handle that
-    switch (vkey)
-    {
-        case VK_LCONTROL:
-        case VK_RCONTROL:
-            gKeyState[VK_CONTROL] = gKeyState[VK_LCONTROL] | gKeyState[VK_RCONTROL];
-            break;
-        case VK_LMENU:
-        case VK_RMENU:
-            gKeyState[VK_MENU] = gKeyState[VK_LMENU] | gKeyState[VK_RMENU];
-            break;
-        case VK_LSHIFT:
-        case VK_RSHIFT:
-            gKeyState[VK_SHIFT] = gKeyState[VK_LSHIFT] | gKeyState[VK_RSHIFT];
-            break;
-        default:
-            break;
-    }
-
-    // Send lua onRawKeyPress/Release events
-    if (!repeated) {
-        SendLuaRawKeyEvent(vkey, keyDown);
-    }
-    // If window is focused, and key is down, run keypress handling
-    if (haveFocus) {
-        if (keyDown) {
-            ProcessRawKeyPress(vkey, scanCode, repeated);
-        }
+        ProcessRawInput_OrigFunc(vkey, scanCode, prefixFlag, 0, 0, keyDown, haveFocus);
     }
 }
 
@@ -717,6 +794,20 @@ static int UpdateWindowSizeForDPI(int currentDpi, int newDpi, SIZE* pSize)
     }
 
     return newDpi;
+}
+
+static HANDLE getTheHandleForWndProc(HRAWINPUT lParam)
+{
+    HRAWINPUT hRawInput = reinterpret_cast<HRAWINPUT>(lParam);
+    UINT dwSize;
+    static std::vector<BYTE> rawBuffer(sizeof(RAWINPUT));
+    if (dwSize > rawBuffer.size())
+    {
+        rawBuffer.resize(dwSize);
+    }
+    GetRawInputData(hRawInput, RID_INPUT, rawBuffer.data(), &dwSize, sizeof(RAWINPUTHEADER));
+    const RAWINPUT& rawInput = *reinterpret_cast<const RAWINPUT*>(rawBuffer.data());
+    return rawInput.header.hDevice;
 }
 
 static WNDPROC gMainWindowProc;
@@ -904,8 +995,13 @@ LRESULT CALLBACK HandleWndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lPara
             }
             case WM_SIZING:
             {
+                // We'll need to do some additional stuff just to get the keyboardIdx for gKeyState
+                HANDLE hDevice = getTheHandleForWndProc(reinterpret_cast<HRAWINPUT>(lParam));
+                int keyboardID = GetKeyboardToPressKeysWith(hDevice);
+                int keyboardIdx = GetKeyboardIDListing(keyboardID);
+
                 // Allow free sizing when CTRL is held
-                if ((gKeyState[VK_CONTROL] & 0x80) != 0)
+                if ((gKeyState[keyboardIdx - 1][VK_CONTROL] & 0x80) != 0)
                 {
                     break;
                 }
