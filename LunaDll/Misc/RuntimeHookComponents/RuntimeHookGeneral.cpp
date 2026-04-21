@@ -747,7 +747,10 @@ static void ProcessRawInput(HWND hwnd, HRAWINPUT hRawInput, bool haveFocus)
     }
     else
     {
-        ProcessRawInput_OrigFunc(vkey, scanCode, prefixFlag, 0, 0, keyDown, haveFocus);
+        for(int i = 1; i <= HID_GetKeyboardCount(); i++)
+        {
+            ProcessRawInput_OrigFunc(vkey, scanCode, prefixFlag, i, i, keyDown, haveFocus);
+        }
     }
 }
 
