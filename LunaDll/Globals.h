@@ -268,3 +268,5 @@ extern int gMusicCountOverworld;
 extern int gMusicCountLevel;
 
 extern bool gFirstBooted;
+
+extern bool gWarpingToLevelFromMap;

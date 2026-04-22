@@ -39,6 +39,29 @@ struct EpisodeList
 
 extern EpisodeList g_episodeList[32767];
 
+struct EpisodeWorldWarpToLevelState
+{
+    int powerup;
+    int mount;
+    int mountColor;
+
+    // Constructor
+    EpisodeWorldWarpToLevelState()
+    {
+        Reset();
+    }
+
+    // Reset function
+    void Reset()
+    {
+        powerup = 1;
+        mount = 0;
+        mountColor = 0;
+    }
+};
+
+extern EpisodeWorldWarpToLevelState g_episodeWorldWarpToLevelStates[199];
+
 class EpisodeMain {
     public:
         void LaunchEpisode(std::wstring wldPathWS, int saveSlot, int playerCount, Characters firstCharacter, Characters secondCharacter);

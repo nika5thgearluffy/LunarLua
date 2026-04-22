@@ -149,10 +149,15 @@ Characters gPlayerStoredCharacters[] = {CHARACTER_MARIO,CHARACTER_MARIO,CHARACTE
 std::mutex g_testingLevelMutex;
 bool gIsTestingLevel = false;
 
+// Music/SFX counts
 int gSoundEffectCount = 0;
 
 int gMusicCountSpecial = 0;
 int gMusicCountOverworld = 0;
 int gMusicCountLevel = 0;
 
+// Have we first booted the engine?
 bool gFirstBooted = false;
+
+// If this is true, onPlayerDie won't be called
+bool gWarpingToLevelFromMap = false;

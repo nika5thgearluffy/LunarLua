@@ -1707,6 +1707,8 @@ void __stdcall runtimeHookGameMenu()
 
 void __stdcall runtimeHookLoadLevel(VB6StrPtr* filename)
 {
+    using namespace SMBX13;
+
     if (GM_CREDITS_MODE == 0)
     {
         for (int i = 1; i <= min(GM_PLAYERS_COUNT, (WORD)4); i++) {
@@ -1719,6 +1721,23 @@ void __stdcall runtimeHookLoadLevel(VB6StrPtr* filename)
     // Shut down Lua stuff before level loading just in case
     gLunaLua.exitContext();
     gCachedFileMetadata.purge();
+
+    // Set this back to false so that LunaLua can call "onPlayerDie" again
+    if (gWarpingToLevelFromMap)
+    {
+        // Make sure the states are reapplied here
+        for (int i = 1; i <= Vars::numPlayers; i++)
+        {
+            auto p = Vars::Player[i];
+
+            p.State = g_episodeWorldWarpToLevelStates[i - 1].powerup;
+            p.Mount = g_episodeWorldWarpToLevelStates[i - 1].mount;
+            p.MountType = g_episodeWorldWarpToLevelStates[i - 1].mountColor;
+        }
+
+        // Now set this false
+        gWarpingToLevelFromMap = false;
+    }
 
     if (testModeLoadLevelHook(filename))
     {
@@ -4534,7 +4553,7 @@ void __stdcall runtimeHookPlayerKill(short* playerIdxPtr)
 
 bool __stdcall runtimeHookPlayerDie(short* playerIdxPtr)
 {
-    if (gLunaLua.isValid())
+    if (gLunaLua.isValid() && !gWarpingToLevelFromMap)
     {
         std::shared_ptr<Event> playerDieEvent = std::make_shared<Event>("onPlayerDie", true);
         playerDieEvent->setDirectEventName("onPlayerDie");

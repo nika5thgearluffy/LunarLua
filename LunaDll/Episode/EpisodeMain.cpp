@@ -39,6 +39,8 @@ bool EpisodeMain_SaveFileExists = false;
 
 EpisodeList g_episodeList[32767];
 
+EpisodeWorldWarpToLevelState g_episodeWorldWarpToLevelStates[199];
+
 // The big one. This will load an episode anywhere in the engine. This is also used when booting the engine.
 void EpisodeMain::LaunchEpisode(std::wstring wldPathWS, int saveSlot, int playerCount, Characters firstCharacter, Characters secondCharacter)
 {
@@ -740,41 +742,46 @@ bool EpisodeMain::CheckCollision(SMBX13::Types::Location_t momentumA, SMBX13::Ty
 // Loads a level on the world map.
 void EpisodeMain::LoadWorldMapLevel(std::string levelName, int warpIdx)
 {
-    using namespace SMBX13::Types;
-    using namespace SMBX13::Vars;
-    using namespace SMBX13::Functions;
+    using namespace SMBX13;
     
     // Get the full path of the level
     std::string fullPathS = WStr2Str(gEpisodeSettings.episodeDirectory + L"\\") + levelName;
     VB6StrPtr fullPathVB6 = fullPathS.c_str();
-    
+
+    // The file should exist so the player can warp to the level
     if (fileExists(Str2WStr(fullPathS)))
     {
-        // modMain.bas, starting at line 7264
+        // Before doing anything, set the states of the player onto g_episodeWorldWarpToLevelStates
+        for (int i = 1; i <= Vars::numPlayers; i++)
+        {
+            auto p = Vars::Player[i];
+
+            g_episodeWorldWarpToLevelStates[i - 1].powerup = p.State;
+            g_episodeWorldWarpToLevelStates[i - 1].mount = p.Mount;
+            g_episodeWorldWarpToLevelStates[i - 1].mountColor = p.MountType;
+        }
+
+        // Set the next level here
+        Vars::GoToLevel = levelName.c_str();
 
         // Set start warp
-        StartWarp = warpIdx; // -- StartWarp = WorldLevel(A).StartWarp (Line 7264) --
-
-        // Stop the music
-        StopMusic(); // -- StopMusic (Line 7265) --
-
-        // -- PlaySound 28 (Line 7266) --
-        // -- SoundPause(26) = 200 (Line 7267) --
-        // -- curWorldLevel = A (Line 7268) --
+        Vars::StartWarp = warpIdx;
 
         // We aren't on the map anymore
-        LevelSelect = false; // -- LevelSelect = False (Line 7269) --
+        Vars::LevelSelect = false;
 
-        // Do game thing
-        GameThing(); // -- GameThing (Line 7270) --
+        // Should set this true so that LunaLua doesn't call the onPlayerDie event
+        gWarpingToLevelFromMap = true;
 
-        // Clear level if it exists
-        ClearLevel(); // -- ClearLevel (Line 7271) --
+        // Since the players are expected to die so we can warp to the level, automatically set the timer to 200 which kills them off
+        for (int i = 1; i <= Vars::numPlayers; i++)
+        {
+            auto& p = Vars::Player[i];
+            p.TimeToLive = 200;
+        }
 
-        // -- Sleep 1000 (Line 7272) --
-
-        // Now open the level itself
-        OpenLevel(fullPathVB6); // -- OpenLevel SelectWorld(selWorld).WorldPath & WorldLevel(A).FileName (Line 7273) --
+        // Increase the life count so it's like the player never lost any lives
+        Vars::Lives = Vars::Lives + 1;
     }
 }
 
