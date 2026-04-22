@@ -662,11 +662,11 @@ void MainLauncherWindow::internalRunSMBX(const QString &smbxExeFile, const QList
 #endif
     }
 
-    hide();
-    smbx.waitForStarted(-1);
+    //hide();
+    //smbx.waitForStarted(-1);
 
-    if(smbx.waitForFinished(-1))
-    {
-        show();
-    }
+    //if(smbx.waitForFinished(-1))
+    //{
+        //show();
+    //}
 }
