@@ -10,6 +10,7 @@
 // Forward declare hooks we use, don't want the whole header
 void __stdcall runtimeHookWarpPipeDoorInternal(short* playerIdx);
 bool __stdcall runtimeHookPlayerDie(short* playerIdxPtr);
+void __stdcall runtimeHookBattleModeWin(int playerIdx);
 
 // Fix enablement
 bool SMBX13::Ports::_enablePowerupPowerdownPositionFixes = true;
@@ -1220,6 +1221,7 @@ void __stdcall SMBX13::Ports::PlayerEffects(int16_t& A) {
 // This is an automatically translated copy of KillPlayer(A) from modPlayer.bas
 // It accounts for:
 // - Cancelling the function for killing the player when the player death tally is above 200
+// - Running an event when battle mode is complete and there's a winner
 void __stdcall SMBX13::Ports::KillPlayer(int16_t& A) {
     using namespace SMBX13::Types;
     using namespace SMBX13::Vars;
@@ -1255,6 +1257,8 @@ void __stdcall SMBX13::Ports::KillPlayer(int16_t& A) {
         _.HoldingNPC = 0;
         if (BattleMode == true) {
             if (BattleLives[A] <= 0) {
+                // Run the battle mode complete LunaLua event
+                runtimeHookBattleModeWin(A);
                 if (BattleOutro == 0) {
                     BattleOutro = 1;
                     PlaySound(52);

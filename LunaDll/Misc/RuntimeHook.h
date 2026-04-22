@@ -634,6 +634,8 @@ void __stdcall runtimeHookPlayerHarm(void);
 void __stdcall runtimeHookPlayerKill(short* playerIdxPtr);
 bool __stdcall runtimeHookPlayerDie(short* playerIdxPtr);
 
+void __stdcall runtimeHookBattleModeWin(int playerIdx);
+
 void __stdcall runtimeHookWarpEnter(void);
 void __stdcall runtimeHookWarpInstant(void);
 void __stdcall runtimeHookWarpPipe(void);

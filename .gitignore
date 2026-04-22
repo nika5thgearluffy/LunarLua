@@ -288,3 +288,5 @@ Analysis/vb_parser/__pycache__/VisualBasic6Parser.cpython-311.pyc
 Analysis/vb_parser/__pycache__/VisualBasic6Lexer.cpython-311.pyc
 Analysis/vb_parser/__pycache__/smbx_vb_tools.cpython-311.pyc
 Analysis/vb_parser/test_func.bas
+Analysis/vb_parser/test_func2.bas
+Analysis/vb_parser/modPlayer_UpdatePlayer.cpp

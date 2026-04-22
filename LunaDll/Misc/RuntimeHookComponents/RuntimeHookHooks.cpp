@@ -4530,6 +4530,16 @@ bool __stdcall runtimeHookPlayerDie(short* playerIdxPtr)
     return false;
 }
 
+void __stdcall runtimeHookBattleModeWin(int playerIdx)
+{
+    if (gLunaLua.isValid()) {
+        std::shared_ptr<Event> battleModeWin = std::make_shared<Event>("onBattleModeWin", false);
+        battleModeWin->setDirectEventName("onBattleModeWin");
+        battleModeWin->setLoopable(false);
+        gLunaLua.callEvent(battleModeWin, playerIdx);
+    }
+}
+
 static int __stdcall runtimeHookWarpEnterInternal(short* playerIdx, int warpIdx)
 {
     if (gLunaLua.isValid()) {
