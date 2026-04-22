@@ -20,6 +20,7 @@
 #include "../Misc/MiscFuncs.h"
 #include "../Misc/ResourceFileMapper.h"
 #include "../Misc/RuntimeHook.h"
+#include "../Misc/TestMode.h"
 
 #include "../FileManager/SMBXFileManager.h"
 
@@ -746,23 +747,10 @@ void EpisodeMain::LoadWorldMapLevel(std::string levelName, int warpIdx)
     // Get the full path of the level
     std::string fullPathS = WStr2Str(gEpisodeSettings.episodeDirectory + L"\\") + levelName;
     VB6StrPtr fullPathVB6 = fullPathS.c_str();
-
-    bool levelExists = false;
-
-    if(fileExists(Str2WStr(fullPathS)))
-    {
-        levelExists = true;
-    }
     
-    if (levelExists)
+    if (fileExists(Str2WStr(fullPathS)))
     {
-        // If paused, set the game to unpause
-        GamePaused = false;
-
-        // Clear the world next
-        ClearWorld();
-
-        // Next code is from modMain.bas, starting at line 7264
+        // modMain.bas, starting at line 7264
 
         // Set start warp
         StartWarp = warpIdx; // -- StartWarp = WorldLevel(A).StartWarp (Line 7264) --

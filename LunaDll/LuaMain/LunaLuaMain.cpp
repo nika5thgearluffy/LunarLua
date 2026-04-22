@@ -1201,11 +1201,6 @@ void CLunaLua::bindAll()
                     def("activateOverworldHud", &LuaProxy::Graphics::activateOverworldHud),
                     def("getOverworldHudState", &LuaProxy::Graphics::getOverworldHudState)
                 ],
-                
-                namespace_("WorldLevel")[
-                    def("load", (void(*)(std::string))&LuaProxy::Level::worldLoad),
-                    def("load", (void(*)(std::string, int))&LuaProxy::Level::worldLoad)
-                ],
 
                 LUAHELPER_DEF_CLASS(World)
                 .property("playerX", &LuaProxy::World::playerX, &LuaProxy::World::setPlayerX)
@@ -1301,7 +1296,9 @@ void CLunaLua::bindAll()
                         def("getByName", &LuaProxy::LevelObject::getByName),
                         def("getByFilename", &LuaProxy::LevelObject::getByFilename),
                         def("findByName", &LuaProxy::LevelObject::findByName),
-                        def("findByFilename", &LuaProxy::LevelObject::findByFilename)
+                        def("findByFilename", &LuaProxy::LevelObject::findByFilename),
+                        def("load", (void(*)(std::string))&LuaProxy::Level::worldLoad),
+                        def("load", (void(*)(std::string, int))&LuaProxy::Level::worldLoad)
                 ]
                 .def("__eq", LUAPROXY_DEFUSERDATAINEDXCOMPARE(LuaProxy::LevelObject, m_index))
                 .property("idx", &LuaProxy::LevelObject::idx)
