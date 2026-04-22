@@ -880,6 +880,7 @@ void CLunaLua::bindAll()
                 def("getLevelData", &LuaProxy::Formats::getLevelData),
                 def("openWorld", &LuaProxy::Formats::openWorld),
                 def("openWorldHeader", &LuaProxy::Formats::openWorldHeader),
+                def("getWorldData", &LuaProxy::Formats::getWorldData),
                 def("openNpcConfig", &LuaProxy::Formats::openNpcConfig)
             ],
             /*************************FileFormats*end*************************/
@@ -1208,13 +1209,15 @@ void CLunaLua::bindAll()
                 .property("playerWalkingTimer", &LuaProxy::World::currentWalkingTimer, &LuaProxy::World::setCurrentWalkingTimer)
                 .property("playerWalkingFrame", &LuaProxy::World::currentWalkingFrame, &LuaProxy::World::setCurrentWalkingFrame)
                 .property("playerWalkingFrameTimer", &LuaProxy::World::currentWalkingFrameTimer, &LuaProxy::World::setCurrentWalkingFrameTimer)
+                .property("playerJustFinishedWalking", &LuaProxy::World::justFinishedWalking, &LuaProxy::World::setJustFinishedWalking)
                 .property("playerIsCurrentWalking", &LuaProxy::World::playerIsCurrentWalking)
                 .property("levelTitle", &LuaProxy::World::levelTitle)
                 .property("levelObj", &LuaProxy::World::levelObj)
                 .property("playerCurrentDirection", &LuaProxy::World::getCurrentDirection)
                 .property("playerPowerup", &LuaProxy::World::playerPowerup, &LuaProxy::World::setPlayerPowerup)
                 .def("mem", static_cast<void (LuaProxy::World::*)(int, LuaProxy::L_FIELDTYPE, const luabind::object &, lua_State*)>(&LuaProxy::World::mem))
-                .def("mem", static_cast<luabind::object(LuaProxy::World::*)(int, LuaProxy::L_FIELDTYPE, lua_State*) const>(&LuaProxy::World::mem)),
+                .def("mem", static_cast<luabind::object(LuaProxy::World::*)(int, LuaProxy::L_FIELDTYPE, lua_State*) const>(&LuaProxy::World::mem))
+                .def("playMusic", &LuaProxy::overworldStartMusic),
 
                 LUAHELPER_DEF_CLASS(Tile)
                 .scope[ //static functions

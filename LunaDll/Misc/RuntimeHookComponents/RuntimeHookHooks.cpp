@@ -2253,6 +2253,7 @@ static _declspec(naked) void __stdcall loadWorld_OrigFunc(VB6StrPtr* filename)
     }
 }
 
+WorldData& getCurrentWorldData();
 void __stdcall runtimeHookLoadWorld(VB6StrPtr* filename)
 {
     // This only occurs when first loading the episode...
@@ -2261,7 +2262,22 @@ void __stdcall runtimeHookLoadWorld(VB6StrPtr* filename)
     // Clear the autostart patch at this point
     GameAutostart::ClearAutostartPatch();
 
-    loadWorld_OrigFunc(filename);
+    // check if we're loading into a wldx file...
+    std::wstring lowerName = *filename;
+    std::transform(lowerName.begin(), lowerName.end(), lowerName.begin(), towlower);
+    bool loadWldX = (lowerName.rfind(L".wldx") == (lowerName.size() - 5));
+    
+    if (loadWldX)
+    {
+        // wldx format
+        SMBXWorldFileBase base;
+        base.ReadFile(static_cast<std::wstring>(*filename), getCurrentWorldData());
+    }
+    else
+    {
+        // wld format
+        loadWorld_OrigFunc(filename);
+    }
 }
 
 static _declspec(naked) void __stdcall cleanupWorld_OrigFunc()

@@ -1505,6 +1505,9 @@
     <ClCompile Include="SMBXInternal\Ports\modPlayer.cpp">
       <Filter>SMBXInternal\Ports</Filter>
     </ClCompile>
+    <ClCompile Include="FileManager\LoadFile_World.cpp">
+      <Filter>FileManager</Filter>
+    </ClCompile>
     <ClCompile Include="Misc\Win32PathUtils.cpp">
       <Filter>Misc</Filter>
     </ClCompile>

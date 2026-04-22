@@ -72,8 +72,7 @@ QVariant SMBXConfig::getDataForEpisode(const QString& episodeDirPath, const QStr
 {
 
     QStringList wldFileFilter;
-    // Note: For now we don't support wldx, but when we do add << "*.wldx" below
-    wldFileFilter << "*.wld";
+    wldFileFilter << "*.wld" << "*.wldx";
     QDir episodeDir(episodeDirPath);
     QMap<QString, QVariant> ret;
     WorldData worldData;
