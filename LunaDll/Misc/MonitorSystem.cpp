@@ -171,17 +171,61 @@ void MonitorSystem::CenterWindow()
     MonitorSystem::CenterWindow(1);
 }
 
+// Raw function for SetWindowPos
+static void SetWindowPos(int x, int y, int width, int height)
+{
+    SetWindowPos(gMainWindowHwnd, NULL, x, y, width, height, SWP_NOZORDER | SWP_NOACTIVATE | SWP_NOCOPYBITS | SWP_NOREDRAW);
+}
+
 // Sets the window position of the game.
 void MonitorSystem::SetWindowPosition(int x, int y)
 {
-    SetWindowPos(gMainWindowHwnd, NULL, x, y, 0, 0, SWP_NOSIZE | SWP_NOZORDER | SWP_NOACTIVATE);
+    SetWindowPos(x, y, MonitorSystem::getWindowWidth(), MonitorSystem::getWindowHeight());
 }
 
 // Sets the window size of the game.
 void MonitorSystem::setWindowSize(int width, int height)
 {
+    SetWindowPos(MonitorSystem::GetScreenXPosition(), MonitorSystem::GetScreenYPosition(), width, height);
     gWindowSizeHandler.SetWindowSize(width, height);
+    gWindowSizeHandler.Recalculate();
 }
+
+// Sets the window scale of the game.
+void MonitorSystem::setWindowScale(int scale)
+{
+    gWindowSizeHandler.SetNewWindowScale(scale);
+    gWindowSizeHandler.Recalculate();
+}
+
+// Get the window width of the game.
+int MonitorSystem::getWindowWidth()
+{
+    RECT rect;
+    if(GetWindowRect(gMainWindowHwnd, &rect))
+    {
+        int width = rect.right - rect.left;
+        int height = rect.bottom - rect.top;
+
+        return width;
+    }
+    return 0;
+}
+
+// Get the window height of the game.
+int MonitorSystem::getWindowHeight()
+{
+    RECT rect;
+    if(GetWindowRect(gMainWindowHwnd, &rect))
+    {
+        int width = rect.right - rect.left;
+        int height = rect.bottom - rect.top;
+
+        return height;
+    }
+    return 0;
+}
+
 
 static luabind::object getMonitorInfo(int monitorID, lua_State *L)
 {

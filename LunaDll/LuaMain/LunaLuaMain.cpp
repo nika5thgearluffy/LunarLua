@@ -1028,6 +1028,10 @@ void CLunaLua::bindAll()
                 def("x", (int(*)())&MonitorSystem::GetScreenXPosition),
                 // Monitor.y() - Gets the current Y window position.
                 def("y", (int(*)())&MonitorSystem::GetScreenYPosition),
+                // Monitor.width() - Gets the window width of the game.
+                def("width", (int(*)())&MonitorSystem::getWindowWidth),
+                // Monitor.height() - Gets the window height of the game.
+                def("height", (int(*)())&MonitorSystem::getWindowHeight),
                 // Monitor.centerX(monitorID) - Gets the X window position where the window would be at if it was centered.
                 def("centerX", (int(*)(int))&MonitorSystem::GetScreenCenterXPosition),
                 def("centerX", (int(*)())&MonitorSystem::GetScreenCenterXPosition),
@@ -1049,7 +1053,9 @@ void CLunaLua::bindAll()
                 // Monitor.setWindowPosition(x, y) - Sets the window position of the game.
                 def("setWindowPosition", (void(*)(int, int))&MonitorSystem::SetWindowPosition),
                 // Monitor.setWindowSize(width, height) - Sets the window size of the game.
-                def("setWindowSize", (void(*)(int, int))&MonitorSystem::setWindowSize)
+                def("setWindowSize", (void(*)(int, int))&MonitorSystem::setWindowSize),
+                // Monitor.setWindowScale(scale) - Sets the window scale of the game.
+                def("setWindowScale", (void(*)(int))&MonitorSystem::setWindowScale)
             ],
 
             namespace_("Keyboard")[

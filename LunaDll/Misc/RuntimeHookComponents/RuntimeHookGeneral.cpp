@@ -611,6 +611,10 @@ static void ProcessRawInput_OrigFunc(uint16_t vkey, uint16_t scanCode, uint8_t p
                 gKeyState[keyboardIdx - 1][VK_RCONTROL] = -1;
                 vkey = VK_RCONTROL;
             }
+            else
+            {
+                return;
+            }
             break;
         case VK_MENU:
             if (prefixFlag == 0)
@@ -623,6 +627,10 @@ static void ProcessRawInput_OrigFunc(uint16_t vkey, uint16_t scanCode, uint8_t p
                 gKeyState[keyboardIdx - 1][VK_RMENU] = -1;
                 vkey = VK_RMENU;
             }
+            else
+            {
+                return;
+            }
             break;
         case VK_SHIFT:
             if ((scanCode == 0x2a) && (prefixFlag == 0))
@@ -634,6 +642,10 @@ static void ProcessRawInput_OrigFunc(uint16_t vkey, uint16_t scanCode, uint8_t p
             {
                 gKeyState[keyboardIdx - 1][VK_RSHIFT] = -1;
                 vkey = VK_RSHIFT;
+            }
+            else
+            {
+                return;
             }
             break;
         default:
@@ -664,15 +676,15 @@ static void ProcessRawInput_OrigFunc(uint16_t vkey, uint16_t scanCode, uint8_t p
     {
         case VK_LCONTROL:
         case VK_RCONTROL:
-            gKeyState[keyboardIdx - 1][VK_CONTROL] = COMBOOL((gKeyState[keyboardIdx - 1][VK_LCONTROL] || gKeyState[keyboardIdx - 1][VK_RCONTROL]));
+            gKeyState[keyboardIdx - 1][VK_CONTROL] = (gKeyState[keyboardIdx - 1][VK_LCONTROL] || gKeyState[keyboardIdx - 1][VK_RCONTROL]);
             break;
         case VK_LMENU:
         case VK_RMENU:
-            gKeyState[keyboardIdx - 1][VK_MENU] = COMBOOL((gKeyState[keyboardIdx - 1][VK_LMENU] || vkey == gKeyState[keyboardIdx - 1][VK_RMENU]));
+            gKeyState[keyboardIdx - 1][VK_MENU] = (gKeyState[keyboardIdx - 1][VK_LMENU] || vkey == gKeyState[keyboardIdx - 1][VK_RMENU]);
             break;
         case VK_LSHIFT:
         case VK_RSHIFT:
-            gKeyState[keyboardIdx - 1][VK_SHIFT] = COMBOOL((gKeyState[keyboardIdx - 1][VK_LSHIFT] || gKeyState[keyboardIdx - 1][VK_RSHIFT]));
+            gKeyState[keyboardIdx - 1][VK_SHIFT] = (gKeyState[keyboardIdx - 1][VK_LSHIFT] || gKeyState[keyboardIdx - 1][VK_RSHIFT]);
             break;
         default:
             break;
@@ -749,7 +761,7 @@ static void ProcessRawInput(HWND hwnd, HRAWINPUT hRawInput, bool haveFocus)
     {
         for(int i = 1; i <= HID_GetKeyboardCount(); i++)
         {
-            ProcessRawInput_OrigFunc(vkey, scanCode, prefixFlag, i, i, keyDown, haveFocus);
+            ProcessRawInput_OrigFunc(vkey, scanCode, prefixFlag, GetKeyboardIDListing(i), i, keyDown, haveFocus);
         }
     }
 }
