@@ -390,6 +390,7 @@ void MainLauncherWindow::runSMBX()
     argList << QString("--saveslot=%1").arg(config.saveSlot());
 
     internalRunSMBX(m_smbxExe, argList);
+    close();
 }
 
 void MainLauncherWindow::runSMBXEditor()
@@ -635,10 +636,10 @@ void MainLauncherWindow::internalRunSMBX(const QString &smbxExeFile, const QList
         runArgs.push_front(smbxExeFile);
 
 #ifdef _WIN32
-        smbx.start(loader, runArgs);
+        smbx.startDetached(loader, runArgs);
 #else
         runArgs.push_front(loader);
-        smbx.start("wine", runArgs);
+        smbx.startDetached("wine", runArgs);
 #endif
 
         /*
@@ -655,10 +656,10 @@ void MainLauncherWindow::internalRunSMBX(const QString &smbxExeFile, const QList
     else
     {
 #ifdef _WIN32
-        smbx.start(smbxExeFile, runArgs);
+        smbx.startDetached(smbxExeFile, runArgs);
 #else
         runArgs.push_front(smbxExeFile);
-        smbx.start("wine", runArgs);
+        smbx.startDetached("wine", runArgs);
 #endif
     }
 
