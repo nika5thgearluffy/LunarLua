@@ -187,8 +187,6 @@ void MonitorSystem::SetWindowPosition(int x, int y)
 void MonitorSystem::setWindowSize(int width, int height)
 {
     SetWindowPos(MonitorSystem::GetScreenXPosition(), MonitorSystem::GetScreenYPosition(), width, height);
-    gWindowSizeHandler.SetWindowSize(width, height);
-    gWindowSizeHandler.Recalculate();
 }
 
 // Sets the window scale of the game.
