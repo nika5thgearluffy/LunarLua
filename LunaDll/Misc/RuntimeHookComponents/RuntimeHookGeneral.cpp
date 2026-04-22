@@ -676,15 +676,15 @@ static void ProcessRawInput_OrigFunc(uint16_t vkey, uint16_t scanCode, uint8_t p
     {
         case VK_LCONTROL:
         case VK_RCONTROL:
-            gKeyState[keyboardIdx - 1][VK_CONTROL] = (gKeyState[keyboardIdx - 1][VK_LCONTROL] || gKeyState[keyboardIdx - 1][VK_RCONTROL]);
+            gKeyState[keyboardIdx - 1][VK_CONTROL] = COMBOOL((gKeyState[keyboardIdx - 1][VK_LCONTROL] || gKeyState[keyboardIdx - 1][VK_RCONTROL]));
             break;
         case VK_LMENU:
         case VK_RMENU:
-            gKeyState[keyboardIdx - 1][VK_MENU] = (gKeyState[keyboardIdx - 1][VK_LMENU] || vkey == gKeyState[keyboardIdx - 1][VK_RMENU]);
+            gKeyState[keyboardIdx - 1][VK_MENU] = COMBOOL((gKeyState[keyboardIdx - 1][VK_LMENU] || vkey == gKeyState[keyboardIdx - 1][VK_RMENU]));
             break;
         case VK_LSHIFT:
         case VK_RSHIFT:
-            gKeyState[keyboardIdx - 1][VK_SHIFT] = (gKeyState[keyboardIdx - 1][VK_LSHIFT] || gKeyState[keyboardIdx - 1][VK_RSHIFT]);
+            gKeyState[keyboardIdx - 1][VK_SHIFT] = COMBOOL((gKeyState[keyboardIdx - 1][VK_LSHIFT] || gKeyState[keyboardIdx - 1][VK_RSHIFT]));
             break;
         default:
             break;
