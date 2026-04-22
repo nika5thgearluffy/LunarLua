@@ -139,7 +139,7 @@ void EpisodeMain::LaunchEpisode(std::wstring wldPathWS, int saveSlot, int player
             _exit(1);
         }
 
-        if(wldData.meta.RecentFormat != WorldData::SMBX64)
+        if(wldData.meta.RecentFormat != WorldData::SMBX64 && wldData.meta.RecentFormat != WorldData::PGEX)
         {
             std::wstring path = L"The world map file is in the wrong format. It must be saved in SMBX64 format.\n\nPath:\n" + fullPathWS;
             MessageBoxW(0, path.c_str(), L"SMBX could not load world map", MB_ICONERROR);
