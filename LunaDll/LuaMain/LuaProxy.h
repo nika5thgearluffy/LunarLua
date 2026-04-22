@@ -897,6 +897,8 @@ namespace LuaProxy {
     namespace Level{
         std::string filename();
         std::string name();
+        void worldLoad(std::string fileName, int warpIdx);
+        void worldLoad(std::string fileName);
     }
 
     namespace Misc{

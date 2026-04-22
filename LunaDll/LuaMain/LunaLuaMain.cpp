@@ -1201,6 +1201,11 @@ void CLunaLua::bindAll()
                     def("activateOverworldHud", &LuaProxy::Graphics::activateOverworldHud),
                     def("getOverworldHudState", &LuaProxy::Graphics::getOverworldHudState)
                 ],
+                
+                namespace_("WorldLevel")[
+                    def("load", (void(*)(std::string))&LuaProxy::Level::worldLoad),
+                    def("load", (void(*)(std::string, int))&LuaProxy::Level::worldLoad)
+                ],
 
                 LUAHELPER_DEF_CLASS(World)
                 .property("playerX", &LuaProxy::World::playerX, &LuaProxy::World::setPlayerX)

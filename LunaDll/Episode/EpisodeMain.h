@@ -51,6 +51,8 @@ class EpisodeMain {
         int GetEpisodeIdx();
 
         bool CheckCollision(SMBX13::Types::Location_t momentumA, SMBX13::Types::Location_t momentumB);
+        
+        void LoadWorldMapLevel(std::string levelName, int warpIdx);
 };
 
 extern EpisodeMain gEpisodeMain;

@@ -736,4 +736,58 @@ bool EpisodeMain::CheckCollision(SMBX13::Types::Location_t momentumA, SMBX13::Ty
             (momentumA.X + momentumA.Width >= momentumB.X));
 }
 
+// Loads a level on the world map.
+void EpisodeMain::LoadWorldMapLevel(std::string levelName, int warpIdx)
+{
+    using namespace SMBX13::Types;
+    using namespace SMBX13::Vars;
+    using namespace SMBX13::Functions;
+    
+    // Get the full path of the level
+    std::string fullPathS = WStr2Str(gEpisodeSettings.episodeDirectory + L"\\") + levelName;
+    VB6StrPtr fullPathVB6 = fullPathS.c_str();
+
+    bool levelExists = false;
+
+    if(fileExists(Str2WStr(fullPathS)))
+    {
+        levelExists = true;
+    }
+    
+    if (levelExists)
+    {
+        // If paused, set the game to unpause
+        GamePaused = false;
+
+        // Clear the world next
+        ClearWorld();
+
+        // Next code is from modMain.bas, starting at line 7264
+
+        // Set start warp
+        StartWarp = warpIdx; // -- StartWarp = WorldLevel(A).StartWarp (Line 7264) --
+
+        // Stop the music
+        StopMusic(); // -- StopMusic (Line 7265) --
+
+        // -- PlaySound 28 (Line 7266) --
+        // -- SoundPause(26) = 200 (Line 7267) --
+        // -- curWorldLevel = A (Line 7268) --
+
+        // We aren't on the map anymore
+        LevelSelect = false; // -- LevelSelect = False (Line 7269) --
+
+        // Do game thing
+        GameThing(); // -- GameThing (Line 7270) --
+
+        // Clear level if it exists
+        ClearLevel(); // -- ClearLevel (Line 7271) --
+
+        // -- Sleep 1000 (Line 7272) --
+
+        // Now open the level itself
+        OpenLevel(fullPathVB6); // -- OpenLevel SelectWorld(selWorld).WorldPath & WorldLevel(A).FileName (Line 7273) --
+    }
+}
+
 EpisodeMain gEpisodeMain;
