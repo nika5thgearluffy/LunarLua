@@ -60,7 +60,7 @@ struct EpisodeWorldWarpToLevelState
     }
 };
 
-extern EpisodeWorldWarpToLevelState g_episodeWorldWarpToLevelStates[199];
+extern EpisodeWorldWarpToLevelState g_episodeWorldWarpToLevelStates[200];
 
 class EpisodeMain {
     public:

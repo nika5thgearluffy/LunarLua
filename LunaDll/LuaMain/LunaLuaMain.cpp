@@ -35,8 +35,13 @@
 
 #include "../FileManager/SMBXFileManager.h"
 
+#include "../SMBXInternal/Functions.h"
+#include "../SMBXInternal/Types.h"
+#include "../SMBXInternal/Variables.h"
+
 #include "../Rendering/WindowSizeHandler.h"
 
+#include "../Episode/EpisodeMain.h"
 #include "../Misc/MonitorSystem.h"
 #include "../Misc/KeyboardMouseSystem.h"
 

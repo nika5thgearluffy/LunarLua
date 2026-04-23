@@ -1552,10 +1552,16 @@ static void __declspec(naked) __stdcall RenderWorldReal()
 
 extern void __stdcall RenderWorldHook()
 {
-    if (TestModeIsLoadPending()) return;
+    if (TestModeIsLoadPending())
+    {
+        return;
+    }
+
     LunaLoadScreenKill();
+
     PerfTrackerState state(PerfTracker::PERF_DRAWING);
     Renderer::Get().StartFrameRender();
+
     if (g_GLEngine.IsEnabled() && !Renderer::IsAltThreadActive())
     {
         // Set camera 0 (primary framebuffer)
@@ -1566,6 +1572,19 @@ extern void __stdcall RenderWorldHook()
         g_GLEngine.QueueCmd(cmd);
     }
     g_EventHandler.hookWorldRenderStart();
+
+    // We're missing the level-related things on wldx, so reimplement that
+    if (gInWldx)
+    {
+        // For reimplementing things, that'll be done using Lua, so add this event
+        if (gLunaLua.isValid()) {
+            std::shared_ptr<Event> onDrawOverworld = std::make_shared<Event>("_onDrawOverworld", false);
+            onDrawOverworld->setDirectEventName("_onDrawOverworld");
+            onDrawOverworld->setLoopable(false);
+            gLunaLua.callEvent(onDrawOverworld);
+        }
+    }
+
     RenderWorldReal();
     
     if (g_GLEngine.IsEnabled() && !Renderer::IsAltThreadActive())
@@ -1722,23 +1741,6 @@ void __stdcall runtimeHookLoadLevel(VB6StrPtr* filename)
     gLunaLua.exitContext();
     gCachedFileMetadata.purge();
 
-    // Set this back to false so that LunaLua can call "onPlayerDie" again
-    if (gWarpingToLevelFromMap)
-    {
-        // Make sure the states are reapplied here
-        for (int i = 1; i <= Vars::numPlayers; i++)
-        {
-            auto p = Vars::Player[i];
-
-            p.State = g_episodeWorldWarpToLevelStates[i - 1].powerup;
-            p.Mount = g_episodeWorldWarpToLevelStates[i - 1].mount;
-            p.MountType = g_episodeWorldWarpToLevelStates[i - 1].mountColor;
-        }
-
-        // Now set this false
-        gWarpingToLevelFromMap = false;
-    }
-
     if (testModeLoadLevelHook(filename))
     {
         // If handled by testModeLoadLevelHook, skip
@@ -1754,6 +1756,23 @@ void __stdcall runtimeHookLoadLevel(VB6StrPtr* filename)
             SMBXLevelFileBase base;
             base.ReadFile(static_cast<std::wstring>(*filename), getCurrentLevelData());
         }
+    }
+    
+    // Set this back to false so that LunaLua can call "onPlayerDie" again
+    if (gWarpingToLevelFromMap)
+    {
+        // Make sure the states are reapplied here
+        for (int i = 1; i <= Vars::numPlayers; i++)
+        {
+            auto p = Vars::Player[i];
+
+            p.State = g_episodeWorldWarpToLevelStates[i].powerup;
+            p.Mount = g_episodeWorldWarpToLevelStates[i].mount;
+            p.MountType = g_episodeWorldWarpToLevelStates[i].mountColor;
+        }
+
+        // Now set this false
+        gWarpingToLevelFromMap = false;
     }
 }
 

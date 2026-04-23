@@ -39,7 +39,7 @@ bool EpisodeMain_SaveFileExists = false;
 
 EpisodeList g_episodeList[32767];
 
-EpisodeWorldWarpToLevelState g_episodeWorldWarpToLevelStates[199];
+EpisodeWorldWarpToLevelState g_episodeWorldWarpToLevelStates[200];
 
 // The big one. This will load an episode anywhere in the engine. This is also used when booting the engine.
 void EpisodeMain::LaunchEpisode(std::wstring wldPathWS, int saveSlot, int playerCount, Characters firstCharacter, Characters secondCharacter)
@@ -154,6 +154,15 @@ void EpisodeMain::LaunchEpisode(std::wstring wldPathWS, int saveSlot, int player
         std::wstring path = L"SMBX could not find the world map file \"" + fullPathWS + L"\"";
         MessageBoxW(0, path.c_str(), L"SMBX could not load world map", MB_ICONERROR);
         _exit(1);
+    }
+
+    if (wldData.meta.RecentFormat == WorldData::SMBX64)
+    {
+        gInWldx = false;
+    }
+    else
+    {
+        gInWldx = true;
     }
 
     // when the episode has loaded successfully after boot, we'll need to do some extra things in order for this to work
@@ -756,10 +765,13 @@ void EpisodeMain::LoadWorldMapLevel(std::string levelName, int warpIdx)
         {
             auto p = Vars::Player[i];
 
-            g_episodeWorldWarpToLevelStates[i - 1].powerup = p.State;
-            g_episodeWorldWarpToLevelStates[i - 1].mount = p.Mount;
-            g_episodeWorldWarpToLevelStates[i - 1].mountColor = p.MountType;
+            g_episodeWorldWarpToLevelStates[i].powerup = p.State;
+            g_episodeWorldWarpToLevelStates[i].mount = p.Mount;
+            g_episodeWorldWarpToLevelStates[i].mountColor = p.MountType;
         }
+
+        // Should set this true so that LunaLua doesn't call the onPlayerDie event, and to reapply player states when loading the level
+        gWarpingToLevelFromMap = true;
 
         // Set the next level here
         Vars::GoToLevel = levelName.c_str();
@@ -769,9 +781,6 @@ void EpisodeMain::LoadWorldMapLevel(std::string levelName, int warpIdx)
 
         // We aren't on the map anymore
         Vars::LevelSelect = false;
-
-        // Should set this true so that LunaLua doesn't call the onPlayerDie event
-        gWarpingToLevelFromMap = true;
 
         // Since the players are expected to die so we can warp to the level, automatically set the timer to 200 which kills them off
         for (int i = 1; i <= Vars::numPlayers; i++)

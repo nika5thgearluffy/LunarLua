@@ -161,3 +161,6 @@ bool gFirstBooted = false;
 
 // If this is true, onPlayerDie won't be called
 bool gWarpingToLevelFromMap = false;
+
+// True if the episode is a wldx
+bool gInWldx = false;
