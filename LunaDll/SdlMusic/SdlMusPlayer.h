@@ -103,6 +103,7 @@ public:
     static bool SND_isSndInCache(std::string fileName);
     static bool SND_isChunkInCache(Mix_Chunk *chunk);
     static const char* SND_findFilenameFromChunkData(Mix_Chunk *chunk);
+    static void clearSFXFromMemory(std::string fileName);
     static bool SND_PlaySnd(const char *sndFile);
     static void clearSoundBuffer();
     static Mix_Chunk *SND_OpenSnd(const char *sndFile);

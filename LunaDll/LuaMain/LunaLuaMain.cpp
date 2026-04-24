@@ -765,9 +765,7 @@ void CLunaLua::bindAll()
                 def("__disablePerfTracker", &LuaProxy::Misc::__disablePerfTracker),
                 def("__getPerfTrackerData", &LuaProxy::Misc::__getPerfTrackerData),
                 def("__getNPCPropertyTableAddress", &NPC::GetPropertyTableAddress),
-                def("__getBlockPropertyTableAddress", &Blocks::GetPropertyTableAddress),
-                def("getOSLanguage", &GetOSLanguage),
-                def("getFileSize", (double(*)(std::string))&GetFileSize)
+                def("__getBlockPropertyTableAddress", &Blocks::GetPropertyTableAddress)
             ],
 
             namespace_("FileFormats")[
@@ -971,6 +969,8 @@ void CLunaLua::bindAll()
 
                 def("SfxCount", (int(*)())&LuaProxy::Audio::SfxCount),
                 def("SfxGetFilenameFromChunk", (std::string(*)(Mix_Chunk*))&LuaProxy::Audio::SfxGetFilenameFromChunk),
+                def("SfxClear", (void(*)(std::string))&LuaProxy::Audio::SfxClear),
+                def("SfxInCache", (bool(*)(std::string))&LuaProxy::Audio::SfxInCache),
 
                 def("SfxSetPanning", (int(*)(int, int, int))&LuaProxy::Audio::SfxSetPanning),
                 def("SfxSetDistance", (int(*)(int, int))&LuaProxy::Audio::SfxSetDistance),
@@ -1076,6 +1076,14 @@ void CLunaLua::bindAll()
                 def("count", (int(*)())&HID_GetMouseCount),
                 // Mouse.get(index) - Returns mouse information that's on the idx specified. Note that invalid mouses and anything higher than 10 will return an invalid table.
                 def("get", (luabind::object(*)(int, lua_State*))&HID_GetMouseInfoFromIdx)
+            ],
+            
+            namespace_("File")[
+                def("getSize", (double(*)(std::string))&GetFileSize)
+            ],
+
+            namespace_("Language")[
+                def("get", &GetOSLanguage)
             ],
 
             namespace_("Editor")[
@@ -1628,6 +1636,8 @@ void CLunaLua::bindAllDeprecated()
 
 void CLunaLua::triggerOnStart()
 {
+    using namespace SMBX13;
+
     GLEngineProxy::CheckRendererInit();
 
     //If the lua module is not valid anyway, then just return
@@ -1647,6 +1657,25 @@ void CLunaLua::triggerOnStart()
         for (int i = 1; i <= GM_PLAYERS_COUNT; i++) {
             gLunaLua.queuePlayerSectionChangeEvent(i);
         }
+    
+        // Set this back to false so that LunaLua can call "onPlayerDie" again
+        // (This is set here because level loading on the map doesn't update the player states properly unless we're later into the level)
+        if (gWarpingToLevelFromMap)
+        {
+            // Make sure the states are reapplied here
+            for (int i = 1; i <= Vars::numPlayers; i++)
+            {
+                auto p = Vars::Player[i];
+
+                p.State = g_episodeWorldWarpToLevelStates[i].powerup;
+                p.Mount = g_episodeWorldWarpToLevelStates[i].mount;
+                p.MountType = g_episodeWorldWarpToLevelStates[i].mountColor;
+            }
+
+            // Now set this false
+            gWarpingToLevelFromMap = false;
+        }
+
         // execute onStart event
         std::shared_ptr<Event> onStartEvent = std::make_shared<Event>("onStart", false);
         onStartEvent->setLoopable(false);

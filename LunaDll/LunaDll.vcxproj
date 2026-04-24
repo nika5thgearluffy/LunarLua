@@ -284,6 +284,7 @@
     <ClInclude Include="Misc\Playground.h" />
     <ClInclude Include="GlobalFuncs.h" />
     <ClInclude Include="Globals.h" />
+    <ClInclude Include="Globals2.h" />
     <ClInclude Include="HardcodedGraphics\HardcodedGraphicsManager.h" />
     <ClInclude Include="CustomSprites\Hitbox\Hitbox.h" />
     <ClInclude Include="Input\Input.h" />
@@ -531,6 +532,7 @@
     <ClCompile Include="Autocode\Commands\GenComp.cpp" />
     <ClCompile Include="GlobalFuncs.cpp" />
     <ClCompile Include="Globals.cpp" />
+    <ClCompile Include="Globals2.cpp" />
     <ClCompile Include="HardcodedGraphics\HardcodedGraphicsManager.cpp" />
     <ClCompile Include="CustomSprites\Hitbox\Hitbox.cpp" />
     <ClCompile Include="Input\Input.cpp" />

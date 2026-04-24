@@ -92,6 +92,8 @@ namespace LuaProxy
         int SetMixedSfxVolume(int vlm);
         int SfxCount();
         std::string SfxGetFilenameFromChunk(Mix_Chunk *chunk);
+        void SfxClear(std::string fileName);
+        bool SfxInCache(std::string fileName);
 
         std::string getSfxPath(const std::string& path);
         void setMciSection(int section);

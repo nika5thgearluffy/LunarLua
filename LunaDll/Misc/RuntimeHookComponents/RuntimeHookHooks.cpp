@@ -1757,23 +1757,6 @@ void __stdcall runtimeHookLoadLevel(VB6StrPtr* filename)
             base.ReadFile(static_cast<std::wstring>(*filename), getCurrentLevelData());
         }
     }
-    
-    // Set this back to false so that LunaLua can call "onPlayerDie" again
-    if (gWarpingToLevelFromMap)
-    {
-        // Make sure the states are reapplied here
-        for (int i = 1; i <= Vars::numPlayers; i++)
-        {
-            auto p = Vars::Player[i];
-
-            p.State = g_episodeWorldWarpToLevelStates[i].powerup;
-            p.Mount = g_episodeWorldWarpToLevelStates[i].mount;
-            p.MountType = g_episodeWorldWarpToLevelStates[i].mountColor;
-        }
-
-        // Now set this false
-        gWarpingToLevelFromMap = false;
-    }
 }
 
 void __stdcall runtimeHookLoadLevelHeader(SMBX_Warp* warp, wchar_t* filename)
@@ -4580,6 +4563,20 @@ bool __stdcall runtimeHookPlayerDie(short* playerIdxPtr)
         gLunaLua.callEvent(playerDieEvent, *playerIdxPtr);
 
         return playerDieEvent->native_cancelled();
+    }
+    return false;
+}
+
+bool __stdcall runtimeHookAllPlayersDead(void)
+{
+    if (gLunaLua.isValid())
+    {
+        std::shared_ptr<Event> playersAllDeadEvent = std::make_shared<Event>("onPlayersDead", true);
+        playersAllDeadEvent->setDirectEventName("onPlayersDead");
+        playersAllDeadEvent->setLoopable(false);
+        gLunaLua.callEvent(playersAllDeadEvent);
+
+        return playersAllDeadEvent->native_cancelled();
     }
     return false;
 }

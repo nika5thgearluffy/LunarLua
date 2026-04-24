@@ -633,6 +633,7 @@ void __stdcall runtimeHookLevelPauseCheck(void);
 void __stdcall runtimeHookPlayerHarm(void);
 void __stdcall runtimeHookPlayerKill(short* playerIdxPtr);
 bool __stdcall runtimeHookPlayerDie(short* playerIdxPtr);
+bool __stdcall runtimeHookAllPlayersDead(void);
 
 void __stdcall runtimeHookBattleModeWin(int playerIdx);
 

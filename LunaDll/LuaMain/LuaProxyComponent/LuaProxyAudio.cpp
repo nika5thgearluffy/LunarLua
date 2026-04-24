@@ -657,6 +657,16 @@ std::string LuaProxy::Audio::SfxGetFilenameFromChunk(Mix_Chunk *chunk)
     return PGE_Sounds::SND_findFilenameFromChunkData(chunk);
 }
 
+void LuaProxy::Audio::SfxClear(std::string fileName)
+{
+    return PGE_Sounds::clearSFXFromMemory(fileName);
+}
+
+bool LuaProxy::Audio::SfxInCache(std::string fileName)
+{
+    return PGE_Sounds::SND_isSndInCache(fileName);
+}
+
 double LuaProxy::Audio::AudioClock()
 {
 #ifndef NO_SDL

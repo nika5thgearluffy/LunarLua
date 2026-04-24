@@ -8,6 +8,7 @@
 #include "Shlwapi.h"
 #include "UserSaves/UserSaving.h"
 #include "GlobalFuncs.h"
+#include "Globals2.h"
 
 HINSTANCE gHInstance;
 
@@ -94,7 +95,6 @@ SavedVariableBank gSavedVarBank;
 MciEmulator gMciEmulator;
 
 StartupSettings gStartupSettings;
-EpisodeSettings gEpisodeSettings;
 
 HardcodedGraphicsManager gGraphManager;
 

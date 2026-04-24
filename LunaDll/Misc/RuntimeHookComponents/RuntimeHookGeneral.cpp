@@ -2463,6 +2463,9 @@ void TrySkipPatch()
     
     // Replace KillPlayer function
     PATCH(SMBX13::modPlayer::_KillPlayer_ptr).JMP(&SMBX13::Ports::KillPlayer).NOP_PAD_TO_SIZE<6>().Apply();
+    
+    // Replace EveryonesDead function
+    PATCH(SMBX13::modPlayer::_EveryonesDead_ptr).JMP(&SMBX13::Ports::EveryonesDead).NOP_PAD_TO_SIZE<6>().Apply();
 
     // Restore GetKeyState for some pause related calls
     // GameLoop:

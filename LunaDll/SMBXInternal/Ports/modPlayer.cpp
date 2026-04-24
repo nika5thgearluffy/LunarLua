@@ -7,10 +7,14 @@
 #include "../../Misc/RuntimeHookComponents/CharacterIdExtension.h"
 #include "../../Misc/SafeFPUControl.h"
 
+#include "../../Globals2.h"
+
 // Forward declare hooks we use, don't want the whole header
 void __stdcall runtimeHookWarpPipeDoorInternal(short* playerIdx);
 bool __stdcall runtimeHookPlayerDie(short* playerIdxPtr);
 void __stdcall runtimeHookBattleModeWin(int playerIdx);
+void __stdcall runtimeHookGameover();
+bool __stdcall runtimeHookAllPlayersDead(void);
 
 // Fix enablement
 bool SMBX13::Ports::_enablePowerupPowerdownPositionFixes = true;
@@ -1300,5 +1304,62 @@ void __stdcall SMBX13::Ports::KillPlayer(int16_t& A) {
             }
         }
     }
+    #pragma warning( pop )
+}
+
+// This is an automatically translated copy of EveryonesDead() from modPlayer.bas
+// It accounts for:
+// - Cancelling if code says to do some
+// - Using the episode settings for lives when doing a game over
+void __stdcall SMBX13::Ports::EveryonesDead() {
+    using namespace SMBX13::Types;
+    using namespace SMBX13::Vars;
+    using namespace SMBX13::Functions;
+    #pragma warning( push )
+    #pragma warning( disable: 4244 ) // Disable loss of precision warning
+    int16_t A = 0;
+    bool allDeadCancelled = runtimeHookAllPlayersDead();
+    if (BattleMode == true || allDeadCancelled) { return; }
+    LevelMacro = 0;
+    FreezeNPCs = false;
+    StopMusic();
+    //BitBlt(myBackBuffer, 0, 0, ScreenW, ScreenH, 0, 0, 0, vbWhiteness);
+    //BitBlt(frmMain.hdc, 0, 0, frmMain.ScaleWidth, frmMain.ScaleHeight, 0, 0, 0, vbWhiteness);
+    if (MagicHand == true) {
+        //BitBlt(frmLevelWindow.vScreen[1].hdc, 0, 0, frmLevelWindow.vScreen[1].ScaleWidth, frmLevelWindow.vScreen[1].ScaleHeight, 0, 0, 0, vbWhiteness);
+    }
+    //Sleep(500);
+    Lives = (Lives - 1);
+    if (Lives >= 0) {
+        LevelMacro = 0;
+        LevelMacroCounter = 0;
+        ClearLevel();
+        if (RestartLevel == true) {
+            OpenLevel(FullFileName);
+            LevelSelect = false;
+            SetupPlayers();
+        }
+        else {
+            LevelSelect = true;
+        }
+    }
+    // no more lives
+    else {
+        // Eventually when a lot more source code ports are made, the episode.ini system will have the ability to set the default life counter
+        // Though for right now, it can't be set atm but I added it anyway for in the future
+        Lives = gEpisodeSettings.defaultLifeCount;
+        Coins = 0;
+        SaveGame();
+        LevelMacro = 0;
+        LevelMacroCounter = 0;
+        ClearLevel();
+        // Run the game over hook
+        runtimeHookGameover();
+        /*LevelSelect = true;
+        GameMenu = true;
+        MenuMode = 0;
+        MenuCursor = 0;*/
+    }
+    //DoEvents();
     #pragma warning( pop )
 }

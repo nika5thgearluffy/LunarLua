@@ -25,6 +25,7 @@
 #include "GameConfig/GeneralLunaConfig.h"
 #include "EventStateMachine.h"
 #include "Input/LunaGameController.h"
+#include "Globals2.h"
 
 class RenderOverrideManager;
 
@@ -80,38 +81,6 @@ struct StartupSettings
     }
 };
 
-struct EpisodeSettings
-{
-    std::wstring episodeDirectory;
-    std::wstring episodeDirectoryWithoutRoot;
-    
-    bool usingCustomSplash;
-    std::wstring episodeBootImage;
-
-    std::wstring episodeBootSoundCustom;
-    int episodeBootSoundID;
-
-    bool displayOriginalCredits;
-
-    bool canCheatAndSave;
-    
-    int episodeWidth;
-    int episodeHeight;
-    
-    bool showPauseOverlay;
-    
-    EpisodeSettings() :
-        episodeDirectory(L""), episodeDirectoryWithoutRoot(L""),
-        usingCustomSplash(false), episodeBootImage(L""),
-        episodeBootSoundCustom(L""), episodeBootSoundID(29),
-        displayOriginalCredits(false),
-        canCheatAndSave(false),
-        episodeWidth(800), episodeHeight(600),
-        showPauseOverlay(true)
-    {
-    }
-};
-
 struct SMBXHUDSettings {
     bool              skip; // Skip the whole HUD drawing
     WORLD_HUD_CONTROL overworldHudState;
@@ -148,7 +117,6 @@ extern bool            gLavaIsWeak;
 extern bool            gDidGameOver;
 
 extern StartupSettings gStartupSettings;
-extern EpisodeSettings gEpisodeSettings;
 
 /// General use globals - These are all defined in Globals.cpp ///
 extern int		gFrames;

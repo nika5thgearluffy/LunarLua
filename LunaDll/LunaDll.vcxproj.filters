@@ -461,6 +461,7 @@
     <ClInclude Include="Defines.h" />
     <ClInclude Include="GlobalFuncs.h" />
     <ClInclude Include="Globals.h" />
+    <ClInclude Include="Globals2.h" />
     <ClInclude Include="httprequest.h" />
     <ClInclude Include="Main.h" />
     <ClInclude Include="version.h" />
@@ -1139,6 +1140,7 @@
     </ClCompile>
     <ClCompile Include="GlobalFuncs.cpp" />
     <ClCompile Include="Globals.cpp" />
+    <ClCompile Include="Globals2.cpp" />
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="EventStateMachine.cpp" />
     <ClCompile Include="Misc\PerfTracker.cpp">

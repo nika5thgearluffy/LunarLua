@@ -104,8 +104,6 @@ void __stdcall SMBX13::Ports::UpdateMacro() {
             EndLevel = true;
             LevelMacro = 0;
             LevelMacroCounter = 0;
-            BitBlt(myBackBuffer, 0, 0, ScreenW, ScreenH, 0, 0, 0, vbWhiteness);
-            BitBlt(frmMain.hdc, 0, 0, frmMain.ScaleWidth, frmMain.ScaleHeight, 0, 0, 0, vbWhiteness);
         }
     }
     // SMW Keyhole
@@ -129,8 +127,6 @@ void __stdcall SMBX13::Ports::UpdateMacro() {
         EndLevel = true;
         LevelMacro = 0;
         LevelMacroCounter = 0;
-        BitBlt(myBackBuffer, 0, 0, ScreenW, ScreenH, 0, 0, 0, vbWhiteness);
-        BitBlt(frmMain.hdc, 0, 0, frmMain.ScaleWidth, frmMain.ScaleHeight, 0, 0, 0, vbWhiteness);
     }
     // SMB2 Orb
     else if (LevelMacro == 4) {
@@ -155,8 +151,6 @@ void __stdcall SMBX13::Ports::UpdateMacro() {
             EndLevel = true;
             LevelMacro = 0;
             LevelMacroCounter = 0;
-            BitBlt(myBackBuffer, 0, 0, ScreenW, ScreenH, 0, 0, 0, vbWhiteness);
-            BitBlt(frmMain.hdc, 0, 0, frmMain.ScaleWidth, frmMain.ScaleHeight, 0, 0, 0, vbWhiteness);
         }
     }
     // Game End
@@ -191,8 +185,6 @@ void __stdcall SMBX13::Ports::UpdateMacro() {
                 MenuMode = 0;
                 MenuCursor = 0;
             }
-            BitBlt(myBackBuffer, 0, 0, ScreenW, ScreenH, 0, 0, 0, vbWhiteness);
-            BitBlt(frmMain.hdc, 0, 0, frmMain.ScaleWidth, frmMain.ScaleHeight, 0, 0, 0, vbWhiteness);
         }
     }
     // Star Exit

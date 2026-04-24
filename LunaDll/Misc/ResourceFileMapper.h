@@ -139,7 +139,8 @@ public:
             }
         }
     }
-    
+
+    // Finds a filename from a chunk, iterating through the cache.
     const char* CachedFileDataWeakPtr::getChunkFilename(Mix_Chunk *chunk)
     {
         const char* finalFile = "";
@@ -162,6 +163,53 @@ public:
             }
         }
         return finalFile;
+    }
+
+    // Basically same as last, but reversed
+    Mix_Chunk* CachedFileDataWeakPtr::getFilenameChunk(const char* fileName)
+    {
+        Mix_Chunk* finalChunk;
+        for (auto&& cacheEntry = mCache.begin(); cacheEntry != mCache.end();)
+        {
+            std::shared_ptr<T> cachePtr = cacheEntry->second.data.lock();
+            if (cachePtr)
+            {
+                Mix_Chunk* memoryChunk = cachePtr->mFilePath;
+                if(chunk == memoryChunk)
+                {
+                    finalChunk = cachePtr->mChunk;
+                    return finalChunk;
+                }
+                cacheEntry++;
+            }
+            else
+            {
+                cacheEntry++;
+            }
+        }
+        return finalFile;
+    }
+
+    // Clears a SFX from the cache. Note that if you try to use the SFX again, it'll not exist, so you'll need to reopen it first!!
+    void CachedFileDataWeakPtr::clearSoundFromMemory(const char* fileName)
+    {
+        for (auto&& cacheEntry = mCache.begin(); cacheEntry != mCache.end();)
+        {
+            std::shared_ptr<T> cachePtr = cacheEntry->second.data.lock();
+            if (cachePtr)
+            {
+                if (cachePtr->mFilePath == fileName)
+                {
+                    cachePtr.reset();
+                    return;
+                }
+                cacheEntry++;
+            }
+            else
+            {
+                cacheEntry++;
+            }
+        }
     }
 
     Entry* CachedFileDataWeakPtr::get(const NormalizedPath<std::wstring>& filePath)

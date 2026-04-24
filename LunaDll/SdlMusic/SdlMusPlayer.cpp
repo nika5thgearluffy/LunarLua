@@ -588,6 +588,12 @@ const char* PGE_Sounds::SND_findFilenameFromChunkData(Mix_Chunk *chunk)
     return "";
 }
 
+void PGE_Sounds::clearSFXFromMemory(std::string fileName)
+{
+    // Clear the SFX from memory, uninitalizing it
+    g_chunkCache.clearSoundFromMemory(fileName.c_str());
+}
+
 void PGE_Sounds::holdCached(bool isWorld)
 {
     g_chunkCache.hold(isWorld);
