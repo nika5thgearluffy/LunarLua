@@ -8,6 +8,7 @@
 #include "../../Misc/SafeFPUControl.h"
 
 #include "../../Globals2.h"
+#include "../../Misc/LoadScreen.h"
 
 // Forward declare hooks we use, don't want the whole header
 void __stdcall runtimeHookWarpPipeDoorInternal(short* playerIdx);
@@ -1309,7 +1310,7 @@ void __stdcall SMBX13::Ports::KillPlayer(int16_t& A) {
 
 // This is an automatically translated copy of EveryonesDead() from modPlayer.bas
 // It accounts for:
-// - Cancelling if code says to do some
+// - Cancelling if code says to do so
 // - Using the episode settings for lives when doing a game over
 void __stdcall SMBX13::Ports::EveryonesDead() {
     using namespace SMBX13::Types;
@@ -1335,9 +1336,13 @@ void __stdcall SMBX13::Ports::EveryonesDead() {
         LevelMacroCounter = 0;
         ClearLevel();
         if (RestartLevel == true) {
+            // Let Lua do the loadscreen as we reload the level
+            LunaLoadScreenStart();
             OpenLevel(FullFileName);
             LevelSelect = false;
             SetupPlayers();
+            // Kill off the loadscreen afterwards
+            LunaLoadScreenKill();
         }
         else {
             LevelSelect = true;
@@ -1345,7 +1350,8 @@ void __stdcall SMBX13::Ports::EveryonesDead() {
     }
     // no more lives
     else {
-        // Eventually when a lot more source code ports are made, the episode.ini system will have the ability to set the default life counter
+        // Eventually when a lot more source code ports are made, the episode.ini system will have
+        // the ability to set the default beginning life counter
         // Though for right now, it can't be set atm but I added it anyway for in the future
         Lives = gEpisodeSettings.defaultLifeCount;
         Coins = 0;

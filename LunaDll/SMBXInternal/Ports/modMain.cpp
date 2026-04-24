@@ -21,6 +21,7 @@ void SMBX13::Ports::MacroTimer_SMB3ExitEnd_Set(int val)
     MacroTimer_SMB3ExitEnd = val;
 }
 
+// This is an automatically translated copy of UpdateMacro() from modMain.bas
 // This accounts for:
 // - Changing timers of ending macros to whatever you want
 void __stdcall SMBX13::Ports::UpdateMacro() {
@@ -73,7 +74,7 @@ void __stdcall SMBX13::Ports::UpdateMacro() {
         }
         if (OnScreen == false) {
             LevelMacroCounter = (LevelMacroCounter + 1);
-            if (LevelMacroCounter >= MacroTimer_SMB3ExitEnd) {
+            if (LevelMacroCounter >= 100) {
                 LevelBeatCode = 1;
                 LevelMacro = 0;
                 LevelMacroCounter = 0;
