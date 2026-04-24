@@ -36,6 +36,8 @@ struct EpisodeSettings
 
     // Default life count when starting the episode for the first time/getting a game over
     int defaultLifeCount;
+    // Should we decrease lives after death?
+    bool decreaseLivesAfterDeath;
     
     EpisodeSettings() :
         episodeDirectory(L""), episodeDirectoryWithoutRoot(L""),
@@ -45,7 +47,7 @@ struct EpisodeSettings
         canCheatAndSave(false),
         episodeWidth(800), episodeHeight(600),
         showPauseOverlay(true),
-        defaultLifeCount(3)
+        defaultLifeCount(3), decreaseLivesAfterDeath(true)
     {
     }
 };

@@ -131,6 +131,9 @@ static void Episode_SetEpisodeIni()
 
             // Can the game, when unfocused, show a paused overlay on the middle of the window?
             gEpisodeSettings.showPauseOverlay = episodeConfig.value("show-unfocused-pause-overlay", true).toBool();
+
+            // If this is set to false, lives won't decrease after the player dies. Useful for removing lives in an episode.
+            gEpisodeSettings.decreaseLivesAfterDeath = episodeConfig.value("decrease-lives-after-death", true).toBool();
         }
         episodeConfig.endGroup();
     }

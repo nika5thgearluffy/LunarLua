@@ -1330,7 +1330,11 @@ void __stdcall SMBX13::Ports::EveryonesDead() {
         //BitBlt(frmLevelWindow.vScreen[1].hdc, 0, 0, frmLevelWindow.vScreen[1].ScaleWidth, frmLevelWindow.vScreen[1].ScaleHeight, 0, 0, 0, vbWhiteness);
     }
     //Sleep(500);
-    Lives = (Lives - 1);
+    // Should we decrease lives after dying? This can be useful for remaking the life system or removing lives in an episode
+    if (gEpisodeSettings.decreaseLivesAfterDeath)
+    {
+        Lives = (Lives - 1);
+    }
     if (Lives >= 0) {
         LevelMacro = 0;
         LevelMacroCounter = 0;
