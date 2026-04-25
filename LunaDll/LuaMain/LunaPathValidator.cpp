@@ -41,6 +41,12 @@ void LunaPathValidator::SetPaths()
         mMatchingEpisodePath += L"\\";
     }
     std::transform(mMatchingEpisodePath.begin(), mMatchingEpisodePath.end(), mMatchingEpisodePath.begin(), towlower);
+    mMatchingUserFilesPath = NormalizedPath<std::wstring>(gUserFilesPathWCHAR);
+    if ((mMatchingUserFilesPath.size() > 0) && (mMatchingUserFilesPath[mMatchingUserFilesPath.size() - 1] != L'\\'))
+    {
+        mMatchingUserFilesPath += L"\\";
+    }
+    std::transform(mMatchingUserFilesPath.begin(), mMatchingUserFilesPath.end(), mMatchingUserFilesPath.begin(), towlower);
 }
 
 LunaPathValidator::Result* LunaPathValidator::CheckPath(const char* path)
@@ -78,6 +84,11 @@ LunaPathValidator::Result* LunaPathValidator::CheckPath(const char* path)
         bool canWrite = ((wNormalPath.substr(mMatchingEnginePath.size(), 5) == L"logs\\") ||
                          (wNormalPath.substr(mMatchingEnginePath.size(), std::wstring::npos) == L"worlds\\mario challenge\\data.json"));
         mResult = { mNormalPath.c_str(), mNormalPath.length(), canWrite };
+    }
+    else if ((mMatchingUserFilesPath.size() > 0) && (mMatchingUserFilesPath == wNormalPath.substr(0, mMatchingUserFilesPath.size())))
+    {
+        // If user files path matches
+        mResult = { mNormalPath.c_str(), mNormalPath.length(), true };
     }
     else
     {

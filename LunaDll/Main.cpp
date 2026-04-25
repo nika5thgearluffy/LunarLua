@@ -121,11 +121,11 @@ static void Episode_SetEpisodeIni()
         episodeConfig.endGroup();
         if(episodeConfig.beginGroup("episode-settings"))
         {
-            // Can the player cheat and still save? If on, this will remove the GM_CHEATED part of the saving code, but the game will still think you cheated.
+            // Can the player cheat and still save? If on, this will remove the GM_CHEATED part of the saving code
             gEpisodeSettings.canCheatAndSave = episodeConfig.value("can-save-episode-while-cheating", false).toBool();
-            // The frame buffer width.
+            // The window width when starting the game. This can be set later in Lua using the Monitor class
             gEpisodeSettings.episodeWidth = episodeConfig.value("screen-width", 800).toInt();
-            // The frame buffer height.
+            // The window height when starting the game. This can be set later in Lua using the Monitor class
             gEpisodeSettings.episodeHeight = episodeConfig.value("screen-height", 600).toInt();
             // (Resolution code will be on runtimeHookGeneral)
 

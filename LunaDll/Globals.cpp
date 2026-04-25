@@ -164,3 +164,7 @@ bool gWarpingToLevelFromMap = false;
 
 // True if the episode is a wldx
 bool gInWldx = false;
+
+// The user files directory.
+std::string gUserFilesPathUTF8;
+std::wstring gUserFilesPathWCHAR;

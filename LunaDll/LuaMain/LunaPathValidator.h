@@ -24,6 +24,7 @@ private:
     std::string mEnginePath;
     std::wstring mMatchingEnginePath;
     std::wstring mMatchingEpisodePath;
+    std::wstring mMatchingUserFilesPath;
 
     std::string mNormalPath;
     Result mResult;

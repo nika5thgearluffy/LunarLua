@@ -331,6 +331,7 @@
     <ClInclude Include="version.h" />
     <ClInclude Include="Misc\MonitorSystem.h" />
     <ClInclude Include="Misc\KeyboardMouseSystem.h" />
+    <ClInclude Include="Misc\FileSystem.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\LunaLoader\LunaLoaderPatch.cpp" />
@@ -576,6 +577,7 @@
     <ClCompile Include="VersionString.cpp" />
     <ClCompile Include="Misc\MonitorSystem.cpp" />
     <ClCompile Include="Misc\KeyboardMouseSystem.cpp" />
+    <ClCompile Include="Misc\FileSystem.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Misc\scrappedcode.txt" />

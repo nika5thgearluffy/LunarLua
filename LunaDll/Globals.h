@@ -240,3 +240,6 @@ extern bool gFirstBooted;
 extern bool gWarpingToLevelFromMap;
 
 extern bool gInWldx;
+
+extern std::string gUserFilesPathUTF8;
+extern std::wstring gUserFilesPathWCHAR;

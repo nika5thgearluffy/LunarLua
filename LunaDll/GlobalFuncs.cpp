@@ -20,6 +20,7 @@
 #include <fstream>
 #include <mutex>
 #include <cstddef>
+#include <experimental/filesystem>
 
 #include "Misc/MiscFuncs.h"
 #include "Input/Input.h"
@@ -428,6 +429,10 @@ void initAppPaths()
 
     // Set cwd to app path
     SetCurrentDirectoryW(gAppPathWCHAR.c_str());
+
+    // Redefine the user files paths
+    gUserFilesPathUTF8 = getParentDirectory(gAppPathUTF8) + "\\!user-files";
+    gUserFilesPathWCHAR = Str2WStr(gUserFilesPathUTF8);
 }
 
 /// INIT GLOBALS
@@ -1254,10 +1259,11 @@ double GetOSLanguage()
 
 
 
-// Retrieves the size of a file
-double GetFileSize(std::string file)
+// Gets the current directory away from a directory
+// In others words, it's the directory you go to when you "cd .." on a terminal/CMD
+std::string getParentDirectory(std::string str)
 {
-    std::wstring path = Str2WStr(file);
-    std::wifstream theFile(path, std::ios::binary| std::ios::ate);
-    return theFile.tellg();
+    std::experimental::filesystem::path pathToUse = str;
+    std::experimental::filesystem::path finalStr = pathToUse.parent_path();
+    return finalStr.string();
 }

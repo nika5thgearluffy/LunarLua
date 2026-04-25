@@ -761,6 +761,9 @@
     <ClInclude Include="Misc\KeyboardMouseSystem.h">
       <Filter>Misc</Filter>
     </ClInclude>
+    <ClInclude Include="Misc\FileSystem.h">
+      <Filter>Misc</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="LuaMain\LuaHelper.cpp">
@@ -1496,6 +1499,9 @@
       <Filter>Misc</Filter>
     </ClCompile>
     <ClCompile Include="Misc\KeyboardMouseSystem.cpp">
+      <Filter>Misc</Filter>
+    </ClCompile>
+    <ClCompile Include="Misc\FileSystem.cpp">
       <Filter>Misc</Filter>
     </ClCompile>
     <ClCompile Include="Misc\Gameover.cpp">

@@ -44,6 +44,7 @@
 #include "../Episode/EpisodeMain.h"
 #include "../Misc/MonitorSystem.h"
 #include "../Misc/KeyboardMouseSystem.h"
+#include "../Misc/FileSystem.h"
 
 /*static*/ DWORD CLunaFFILock::currentLockTlsIdx = TlsAlloc();
 
@@ -752,6 +753,8 @@ void CLunaLua::bindAll()
                 def("loadEpisode", (bool(*)(std::string, int, int))&LuaProxy::Misc::loadEpisode),
                 // Episode name, save slot, number of players, and other player IDs in case
                 def("loadEpisode", (bool(*)(std::string, int, int, int))&LuaProxy::Misc::loadEpisode),
+                // Gets the user files directory for globally every episode
+                def("userFilesDirectory", (std::string(*)())&LuaProxy::Misc::userFilesDirectory),
                 def("pause", (void(*)(void))&LuaProxy::Misc::pause),
                 def("pause", (void(*)(bool))&LuaProxy::Misc::pause),
                 def("unpause", &LuaProxy::Misc::unpause),
@@ -1079,7 +1082,9 @@ void CLunaLua::bindAll()
             ],
             
             namespace_("File")[
-                def("getSize", (double(*)(std::string))&GetFileSize)
+                def("getSize", (double(*)(std::string))&FileSystem::GetFileSize),
+                def("copy", (void(*)(std::string, std::string))&FileSystem::CopyFile),
+                def("openDialogAndGetFilepath", (std::string(*)())&FileSystem::OpenDialogAndGetFilepath)
             ],
 
             namespace_("Language")[

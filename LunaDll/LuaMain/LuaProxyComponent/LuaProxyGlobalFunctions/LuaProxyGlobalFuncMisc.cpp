@@ -380,6 +380,12 @@ std::string LuaProxy::Misc::showRichDialog(const std::string& title, const std::
     return dialog.getRtfText();
 }
 
+// Returns the user files directory.
+std::string LuaProxy::Misc::userFilesDirectory()
+{
+    return gUserFilesPathUTF8 + "\\";
+}
+
 // Internal use profiler functions
 void LuaProxy::Misc::__enablePerfTracker()
 {

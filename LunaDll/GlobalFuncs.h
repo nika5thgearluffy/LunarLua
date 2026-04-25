@@ -190,4 +190,5 @@ void removeFilePathA(char*path, int length);
 
 bool createSFXStartLuaEvent(int id, std::string path);
 double GetOSLanguage();
-double GetFileSize(std::string file);
+
+std::string getParentDirectory(std::string str);
