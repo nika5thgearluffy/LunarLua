@@ -1030,7 +1030,7 @@ void CLunaLua::bindAll()
                 // Episode.filename() - Gets the current episode filename.
                 def("filename", (std::string(*)())&LuaProxy::Episode::filename),
                 // Episode.count() - Gets the total count of all episodes
-                def("count", (std::string(*)())&LuaProxy::Episode::count),
+                def("count", (int(*)())&LuaProxy::Episode::count),
                 // Episode.changeEpisodeDirectory(id) - Changes the episode directory to the one the ID specifies.
                 def("changeEpisodeDirectory", (void(*)(int))&LuaProxy::Episode::changeEpisodeDirectory)
             ],
