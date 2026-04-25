@@ -795,12 +795,14 @@ void EpisodeMain::LoadWorldMapLevel(std::string levelName, int warpIdx)
 // When called, the episode directory is changed so that levels can be loaded on a different episode. This is used for the Mario Challenge so that it warps the player to any episode.
 void EpisodeMain::ChangeEpisodeDirectory(int id)
 {
+    int actualID = id - 1;
+
     // Set the episode idx
     EpisodeMain_EpisodeIdx = id;
 
     // Rewrite the legacy episode entry
     WorldData wldData;
-    gEpisodeMain.WriteLegacyEpisodeEntry(g_episodeList[id].episodeName, g_episodeList[id].episodePath, g_episodeList[id].episodeWorldFile, wldData, false);
+    gEpisodeMain.WriteLegacyEpisodeEntry(g_episodeList[actualID].episodeName, g_episodeList[actualID].episodePath, g_episodeList[actualID].episodeWorldFile, wldData, false);
 }
 
 EpisodeMain gEpisodeMain;
