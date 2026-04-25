@@ -551,8 +551,11 @@ void MusicManager::loadMusics(std::string path, std::string root, bool is_first_
         int new_max_wld_music_id = MusicManager::defaultMusCountWld;
 
         //Read new max values from ini, if defined
-        musicList.read("total-level", new_max_lvl_music_id, new_max_lvl_music_id);
-        musicList.read("total-world", new_max_wld_music_id, new_max_wld_music_id);
+        if(musicList.beginGroup("music-main"))
+        {
+            musicList.read("total-level", new_max_lvl_music_id, new_max_lvl_music_id);
+            musicList.read("total-world", new_max_wld_music_id, new_max_wld_music_id);
+        }
 
         resizeMusicArrays(new_max_lvl_music_id, new_max_wld_music_id);
     }
