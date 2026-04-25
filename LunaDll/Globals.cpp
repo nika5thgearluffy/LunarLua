@@ -139,7 +139,7 @@ void printBoxA(const char *fmt, ...)
 }
 
 // Editor entity
-std::string gEditorPlacedItem = "nil";
+std::string gEditorPlacedItem = "";
 std::mutex g_editorIPCMutex;
 
 bool gEpisodeLoadedOnBoot = false;
