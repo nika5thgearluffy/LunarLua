@@ -1020,6 +1020,7 @@ namespace LuaProxy {
         std::string name();
         std::string path();
         std::string filename();
+        void changeEpisodeDirectory(int id);
     }
 
     //Non-Member-Constructors:

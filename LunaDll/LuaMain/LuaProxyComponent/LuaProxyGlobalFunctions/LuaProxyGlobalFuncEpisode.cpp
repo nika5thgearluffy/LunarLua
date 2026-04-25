@@ -67,3 +67,8 @@ std::string LuaProxy::Episode::filename()
 {
     return WStr2Str(g_episodeList[gEpisodeMain.GetEpisodeIdx()].episodeWorldFile);
 }
+
+void LuaProxy::Episode::changeEpisodeDirectory(int id)
+{
+    gEpisodeMain.ChangeEpisodeDirectory(id);
+}

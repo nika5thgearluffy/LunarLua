@@ -1019,12 +1019,18 @@ void CLunaLua::bindAll()
             /*************************Audio*end*************************/
             
             namespace_("Episode")[
+                // Episode.list() - Gets the list of episodes in thw worlds folder.
                 def("list", &LuaProxy::Episode::list),
+                // Episode.id() - Gets the current episode ID.
                 def("id", (int(*)())&LuaProxy::Episode::id),
-
+                // Episode.name() - Gets the current episode name.
                 def("name", (std::string(*)())&LuaProxy::Episode::name),
+                // Episode.path() - Gets the current episode path.
                 def("path", (std::string(*)())&LuaProxy::Episode::path),
-                def("filename", (std::string(*)())&LuaProxy::Episode::filename)
+                // Episode.filename() - Gets the current episode filename.
+                def("filename", (std::string(*)())&LuaProxy::Episode::filename),
+                // Episode.changeEpisodeDirectory(id) - Changes the episode directory to the one the ID specifies.
+                def("changeEpisodeDirectory", (void(*)(int))&LuaProxy::Episode::changeEpisodeDirectory)
             ],
 
             namespace_("Monitor")[
@@ -1082,16 +1088,21 @@ void CLunaLua::bindAll()
             ],
             
             namespace_("File")[
+                // File.getSize(filePath) - Returns a file's size, in bytes.
                 def("getSize", (double(*)(std::string))&FileSystem::GetFileSize),
+                // File.copy(fromFile, toFile) - Copies a file to the destination set.
                 def("copy", (void(*)(std::string, std::string))&FileSystem::CopyFile),
+                // File.openDialogAndGetFilepath() - Opens an "open file" dialog, which is used to select a file and get its filepath.
                 def("openDialogAndGetFilepath", (std::string(*)())&FileSystem::OpenDialogAndGetFilepath)
             ],
 
             namespace_("Language")[
+                // Language.get() - Gets a language code for use of detecting a default language on an episode.
                 def("get", &GetOSLanguage)
             ],
 
             namespace_("Editor")[
+                // Editor.getItem() - Gets an item that is selected from the SMBX2R Editor. Only runs on the editor.
                 def("getItem", (std::string(*)()) &GetEditorPlacedItem)
             ],
 

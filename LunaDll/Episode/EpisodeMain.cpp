@@ -197,7 +197,7 @@ void EpisodeMain::LaunchEpisode(std::wstring wldPathWS, int saveSlot, int player
 	EpisodeMain_EpisodeIdx = findEpisodeIDFromWorldFileAndPath(wldPathS);
     
     // make sure that the old system still has an episode entry, otherwise we'll crash
-    gEpisodeMain.WriteLegacyEpisodeEntry(worldNameVB6, fullPthNoWorldFileWithEndSlashVB6, fullWorldFileNoPthVB6, wldData, true);
+    gEpisodeMain.WriteLegacyEpisodeEntry(worldNameVB6, fullPthNoWorldFileWithEndSlashVB6, fullWorldFileNoPthVB6, wldData, false);
 
     // reset cheat status
     Vars::Cheater = false;
@@ -219,9 +219,6 @@ void EpisodeMain::LaunchEpisode(std::wstring wldPathWS, int saveSlot, int player
 
     // this NEEDS to be set, otherwise the engine will just crash loading the episode
     Vars::selWorld = 1;
-
-    // overwrite the legacy episode entry at idx 1
-    gEpisodeMain.WriteLegacyEpisodeEntry(worldNameVB6, fullPthNoWorldFileWithEndSlashVB6, fullWorldFileNoPthVB6, wldData, false);
 
     //--BEGIN MAIN RECODE--
 
@@ -792,6 +789,17 @@ void EpisodeMain::LoadWorldMapLevel(std::string levelName, int warpIdx)
         // Increase the life count so it's like the player never lost any lives
         Vars::Lives = Vars::Lives + 1;
     }
+}
+
+// When called, the episode directory is changed so that levels can be loaded on a different episode. This is used for the Mario Challenge so that it warps the player to any episode.
+void EpisodeMain::ChangeEpisodeDirectory(int id)
+{
+    // Set the episode idx
+    EpisodeMain_EpisodeIdx = id;
+
+    // Rewrite the legacy episode entry
+    WorldData wldData;
+    gEpisodeMain.WriteLegacyEpisodeEntry(g_episodeList[id].episodeName, g_episodeList[id].episodePath, g_episodeList[id].episodeWorldFile, wldData, false);
 }
 
 EpisodeMain gEpisodeMain;
