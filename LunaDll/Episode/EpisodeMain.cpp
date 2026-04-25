@@ -36,8 +36,9 @@ extern "C" void __cdecl LunaLuaSetGameData(const char* dataPtr, int dataLen);
 int EpisodeMain_EpisodeCount = 0;
 int EpisodeMain_EpisodeIdx = 0;
 bool EpisodeMain_SaveFileExists = false;
+int EpisodeMain_MaxWorldCount = 32766;
 
-EpisodeList g_episodeList[32767];
+EpisodeList g_episodeList[32766];
 
 EpisodeWorldWarpToLevelState g_episodeWorldWarpToLevelStates[200];
 

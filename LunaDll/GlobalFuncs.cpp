@@ -35,6 +35,8 @@
 #include "SMBXInternal/Variables.h"
 #include "SMBXInternal/Functions.h"
 
+#include "Episode/EpisodeMain.h"
+
 void splitStr(std::vector<std::string>& dest, const std::string& str, const char* separator)
 {
     dest.clear();
@@ -1131,10 +1133,9 @@ int findEpisodeIDFromWorldFileAndPath(std::string worldName)
     using namespace SMBX13;
 
     int id = 0;
-    for (int i = 0; i <= Vars::NumSelectWorld; i++)
+    for (int i = 0; i <= EpisodeMain_MaxWorldCount; i++)
     {
-        auto& ep = Vars::SelectWorld[i + 1];
-        if(worldName == std::string(ep.WorldPath) + std::string(ep.WorldFile))
+        if(worldName == WStr2Str(g_episodeList[i].episodePath + g_episodeList[i].episodeWorldFile))
         {
             id = i + 1;
             break;
@@ -1149,12 +1150,11 @@ std::string findEpisodeWorldPathFromName(std::string name)
 
     std::string finalWldPath = "";
 
-    for (int i = 0; i <= Vars::NumSelectWorld; i++)
+    for (int i = 0; i <= EpisodeMain_MaxWorldCount; i++)
     {
-        auto& ep = Vars::SelectWorld[i + 1];
-        if(name == std::string(ep.WorldName))
+        if(name == WStr2Str(g_episodeList[i].episodeName))
         {
-            finalWldPath = std::string(ep.WorldPath) + std::string(ep.WorldFile);
+            finalWldPath = WStr2Str(g_episodeList[i].episodePath + g_episodeList[i].episodeWorldFile);
             break;
         }
         else
@@ -1171,12 +1171,11 @@ std::string findNameFromEpisodeWorldPath(std::string wldPath)
 
     std::string finalName = "";
 
-    for (int i = 0; i <= Vars::NumSelectWorld; i++)
+    for (int i = 0; i <= EpisodeMain_MaxWorldCount; i++)
     {
-        auto& ep = Vars::SelectWorld[i + 1];
-        if(wldPath == std::string(ep.WorldPath) + std::string(ep.WorldFile))
+        if(wldPath == WStr2Str(g_episodeList[i].episodePath + g_episodeList[i].episodeWorldFile))
         {
-            finalName = std::string(ep.WorldName);
+            finalName = WStr2Str(g_episodeList[i].episodeName);
             break;
         }
         else

@@ -14,6 +14,7 @@
 extern int EpisodeMain_EpisodeCount;
 extern int EpisodeMain_EpisodeIdx;
 extern bool EpisodeMain_SaveFileExists;
+extern int EpisodeMain_MaxWorldCount;
 
 struct EpisodeList
 {
@@ -37,7 +38,7 @@ struct EpisodeList
     }
 };
 
-extern EpisodeList g_episodeList[32767];
+extern EpisodeList g_episodeList[32766];
 
 struct EpisodeWorldWarpToLevelState
 {
