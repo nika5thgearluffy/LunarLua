@@ -78,11 +78,8 @@ int MonitorSystem::GetScreenYPosition()
 
 int MonitorSystem::GetScreenCenterXPosition(int monitorID)
 {
-    // Get window size
-    auto windowSize = gWindowSizeHandler.getWindowSize();
-
     int dupeCheckLeft = monitorInformation[monitorID - 1].monitorLeft - monitorInformation[monitorID - 1].monitorLeft;
-    int posX = monitorInformation[monitorID - 1].monitorWidth / 2 - (windowSize.x - dupeCheckLeft) / 2;
+    int posX = monitorInformation[monitorID - 1].monitorWidth / 2 - (MonitorSystem::getWindowWidth() - dupeCheckLeft) / 2;
 
     return monitorInformation[monitorID - 1].monitorLeft + posX;
 }
@@ -95,11 +92,8 @@ int MonitorSystem::GetScreenCenterXPosition()
 
 int MonitorSystem::GetScreenCenterYPosition(int monitorID)
 {
-    // Get window size
-    auto windowSize = gWindowSizeHandler.getWindowSize();
-
     int dupeCheckTop = monitorInformation[monitorID - 1].monitorTop - monitorInformation[monitorID - 1].monitorTop;
-    int posY = monitorInformation[monitorID - 1].monitorHeight / 2 - (windowSize.y - dupeCheckTop) / 2;
+    int posY = monitorInformation[monitorID - 1].monitorHeight / 2 - (MonitorSystem::getWindowHeight() - dupeCheckTop) / 2;
 
     return monitorInformation[monitorID - 1].monitorTop + posY;
 }
