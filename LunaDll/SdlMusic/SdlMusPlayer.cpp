@@ -389,6 +389,16 @@ unsigned __int64 PGE_MusPlayer::MUS_sampleCount()
     return musSCount;
 }
 
+void PGE_MusPlayer::MUS_musicChangeIndex(int type, int index, std::string fileName)
+{
+    MusicManager::changeMusicIndex(type, index, fileName);
+}
+
+std::string PGE_MusPlayer::MUS_musicGetIndex(int type, int index)
+{
+    return MusicManager::getMusicIndex(type, index);
+}
+
 void PGE_MusPlayer::MUS_StartDeferring()
 {
     if (deferringMusic) return;

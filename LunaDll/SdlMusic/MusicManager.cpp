@@ -308,7 +308,7 @@ void MusicManager::play(std::string alias) //Chunk will be played once, stream w
                 int musID = std::atoi(musIDs.c_str()) - 1;
                 if(musID>=0 && musID<max_wld_music_id)
                     currentMusicID = musID;
-                if(musID>=0 && musID<16)
+                if(musID>=0 && musID<max_wld_music_id)
                 {
                     music_wld[musID].play();
                 }
@@ -317,7 +317,7 @@ void MusicManager::play(std::string alias) //Chunk will be played once, stream w
                 int musID = std::atoi(musIDs.c_str()) - 1;
                 if(musID>=0 && musID<max_lvl_music_id)
                     currentMusicID = musID;
-                if(musID>=0 && musID<57)
+                if(musID>=0 && musID<max_lvl_music_id)
                 {
                     music_lvl[musID].play();
                 }
@@ -558,6 +558,10 @@ void MusicManager::loadMusics(std::string path, std::string root, bool is_first_
         }
 
         resizeMusicArrays(new_max_lvl_music_id, new_max_wld_music_id);
+
+        // Set the music count for level and world files
+        gMusicCountLevel = new_max_lvl_music_id;
+        gMusicCountOverworld = new_max_wld_music_id;
     }
 
     //World music
@@ -580,9 +584,8 @@ void MusicManager::loadMusics(std::string path, std::string root, bool is_first_
 
         if (file_existsX(root + clearTrackNumber(fileName) ))
         {
-            music_wld[i-1].setPath(root + fileName);
+            music_wld[i - 1].setPath(root + fileName);
         }
-        gMusicCountOverworld = max_wld_music_id;
     }
 
     //Special music
@@ -605,7 +608,7 @@ void MusicManager::loadMusics(std::string path, std::string root, bool is_first_
 
         if (file_existsX(root + clearTrackNumber(fileName)))
         {
-            music_spc[i-1].setPath(root + fileName);
+            music_spc[i - 1].setPath(root + fileName);
         }
         gMusicCountSpecial = MusicManager::defaultMusCountSpc;
     }
@@ -638,18 +641,74 @@ void MusicManager::loadMusics(std::string path, std::string root, bool is_first_
         {
             music_lvl[i - 1].setPath(root + fileName);
         }
-        gMusicCountLevel = max_lvl_music_id;
     }
 }
+
+// The rewritten music alias codes. This should be better since it only gets called once
+void MusicManager::changeMusicIndex(int type, int index, std::string fileName)
+{
+    // Don't do beyond/below the music types
+    if (type < 1 && type > 3)
+    {
+        return;
+    }
+
+    // World music
+    if (index == 1)
+    {
+        if (file_existsX(clearTrackNumber(fileName)))
+        {
+            music_wld[type - 1].setPath(fileName);
+        }
+    }
+    else if (index == 2) // Special music
+    {
+        if (file_existsX(clearTrackNumber(fileName)))
+        {
+            music_spc[type - 1].setPath(fileName);
+        }
+    }
+    else if (index == 3) // Level music
+    {
+        if (file_existsX(clearTrackNumber(fileName)))
+        {
+            music_lvl[type - 1].setPath(fileName);
+        }
+    }
+}
+
+std::string MusicManager::getMusicIndex(int type, int index)
+{
+    // Don't do beyond/below the music types
+    if (type < 1 && type > 3)
+    {
+        return "";
+    }
+
+    // World music
+    if (index == 1)
+    {
+        return music_wld[type - 1].fullPath;
+    }
+    else if (index == 2) // Special music
+    {
+        return music_spc[type - 1].fullPath;
+    }
+    else if (index == 3) // Level music
+    {
+        return music_lvl[type - 1].fullPath;
+    }
+}
+
 
 void MusicManager::loadCustomSounds(std::string episodePath, std::string levelCustomPath)
 {
     initArraysSound();
-    initArraysMusic();
     loadSounds(defaultSndINI, gAppPathUTF8 + "\\sound\\", false);
     loadSounds(episodePath+"\\sounds.ini", episodePath, false);
     if(!levelCustomPath.empty())
         loadSounds(levelCustomPath+"\\sounds.ini", levelCustomPath, false);
+    initArraysMusic();
     loadMusics(defaultMusINI, gAppPathUTF8, false);
     loadMusics(episodePath+"\\music.ini", episodePath, false);
     if(!levelCustomPath.empty())
@@ -661,8 +720,8 @@ void MusicManager::loadCustomSounds(std::string episodePath, std::string levelCu
 void MusicManager::resetSoundsToDefault()
 {
     initArraysSound();
-    initArraysMusic();
     loadSounds(defaultSndINI, gAppPathUTF8 + "\\", false);
+    initArraysMusic();
     loadMusics(defaultMusINI, gAppPathUTF8 + "\\", false);
     rebuildSoundCache();
 }
@@ -737,7 +796,7 @@ void MusicManager::resizeSoundArrays(int new_max_sound_id) {
 
 void MusicManager::initArraysMusic()
 {
-    curRoot = gAppPathUTF8 + "\\";
+    curRoot = PGE_SDL_Manager::appPath;
     for (int i = 0, j = 0, k = MusicEntry::MUS_WORLD; i < MusicManager::defaultMusCount; i++, j++)
     {
         switch (k)
@@ -745,7 +804,7 @@ void MusicManager::initArraysMusic()
         case MusicEntry::MUS_WORLD:
             music_wld[j].type = k;
             music_wld[j].id = j + 1;
-            music_wld[j].setPath(curRoot + defaultMusList[i]);
+            music_wld[j].setPath(PGE_SDL_Manager::appPath + defaultMusList[i]);
             if (j >= MusicManager::defaultMusCountWld - 1)
             {
                 j = -1; // next category
@@ -755,7 +814,7 @@ void MusicManager::initArraysMusic()
         case MusicEntry::MUS_SPECIAL:
             music_spc[j].type = k;
             music_spc[j].id = j + 1;
-            music_spc[j].setPath(curRoot + defaultMusList[i]);
+            music_spc[j].setPath(PGE_SDL_Manager::appPath + defaultMusList[i]);
             if (j >= MusicManager::defaultMusCountSpc - 1)
             {
                 j = -1; // next category
@@ -765,7 +824,7 @@ void MusicManager::initArraysMusic()
         case MusicEntry::MUS_LEVEL:
             music_lvl[j].type = k;
             music_lvl[j].id = j + 1;
-            music_lvl[j].setPath(curRoot + defaultMusList[i]);
+            music_lvl[j].setPath(PGE_SDL_Manager::appPath + defaultMusList[i]);
             break;
         }
     }

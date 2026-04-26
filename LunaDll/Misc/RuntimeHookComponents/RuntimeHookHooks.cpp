@@ -163,7 +163,7 @@ extern int __stdcall LoadWorld()
     if (!episodeStarted)
     {
         std::string wldPath = WStr2Str(GM_FULLDIR);
-        MusicManager::loadCustomSounds(wldPath + "\\");
+        MusicManager::loadCustomSounds(wldPath);
         episodeStarted = true;
     }
 #endif

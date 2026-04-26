@@ -48,6 +48,9 @@ public:
     static bool MUS_IsPlaying();
     static bool MUS_IsPaused();
     static bool MUS_IsFading();
+    
+    static void MUS_musicChangeIndex(int type, int index, std::string fileName);
+    static std::string MUS_musicGetIndex(int type, int index);
 
     static unsigned __int64 sampleCount();
     static unsigned __int64 MUS_sampleCount();

@@ -88,6 +88,9 @@ public:
     static std::string curMusicAlias; //Current music alias
     static int currentMusicID; //Currently playing music ID
 
+    static void changeMusicIndex(int type, int index, std::string fileName);
+    static std::string getMusicIndex(int type, int index);
+
 private:
     static std::unordered_map<std::string, musicFile > registredFiles;
     static std::unordered_map<std::string, chunkFile > chunksBuffer;

@@ -237,6 +237,24 @@ std::string LuaProxy::Audio::MusicGet()
 #endif
 }
 
+std::string LuaProxy::Audio::MusicGetIndex(int type, int index)
+{
+#ifndef NO_SDL
+    return PGE_MusPlayer::MUS_musicGetIndex(type, index);
+#else
+    return "";
+#endif
+}
+
+void LuaProxy::Audio::MusicChangeIndex(int type, int index, std::string fileName)
+{
+#ifndef NO_SDL
+    return PGE_MusPlayer::MUS_musicChangeIndex(type, index, fileName);
+#else
+    return "";
+#endif
+}
+
 
 
 void LuaProxy::Audio::seizeStream(int section)
@@ -353,9 +371,9 @@ static luabind::object getMusicCounts(lua_State *L)
 {
     luabind::object e = luabind::newtable(L);
     // Episode name
-    e[1] = gMusicCountSpecial;
+    e[1] = gMusicCountOverworld;
     // Episode path
-    e[2] = gMusicCountOverworld;
+    e[2] = gMusicCountSpecial;
     // Episode world file
     e[3] = gMusicCountLevel;
     

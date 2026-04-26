@@ -291,7 +291,7 @@ int OnLvlLoad() {
         if (wldPath != SndRoot) doSoundLoading = true;
     }
 
-    if (doSoundLoading) MusicManager::loadCustomSounds(wldPath + "\\", custPath);
+    if (doSoundLoading) MusicManager::loadCustomSounds(wldPath, custPath);
 
     // Start deferring music
     g_EventHandler.loadTimeDeferMusic();
