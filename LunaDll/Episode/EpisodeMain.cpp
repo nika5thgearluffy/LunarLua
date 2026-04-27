@@ -329,7 +329,7 @@ void EpisodeMain::LaunchEpisode(std::wstring wldPathWS, int saveSlot, int player
     Vars::numStars = 0; //--numStars = 0 (4984)--
     Vars::Coins = 0; //--Coins = 0 (line 4985)--
     Vars::Score = 0; //--Score = 0 (line 4986)--
-    Vars::Lives = 3; //--Lives = 3 (line 4987)--
+    Vars::Lives = gEpisodeSettings.defaultLifeCount; //--Lives = 3 (line 4987)--
     
     // set that we're on map
     Vars::LevelSelect = true; //--LevelSelect = True (line 4988)--
