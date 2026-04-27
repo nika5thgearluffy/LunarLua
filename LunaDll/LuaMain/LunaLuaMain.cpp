@@ -1109,6 +1109,7 @@ void CLunaLua::bindAll()
             namespace_("Editor")[
                 // Editor.getItem() - Gets an item that is selected from the SMBX2R Editor. Only runs on the editor.
                 def("getItem", (std::string(*)()) &GetEditorPlacedItem),
+                // Editor.open() - Opens the SMBX2R editor when executed. A return code is returned on Lua itself.
                 def("open", (int(*)())&StartSMBX2Editor)
             ],
 
