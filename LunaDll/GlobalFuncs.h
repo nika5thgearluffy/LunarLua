@@ -192,3 +192,5 @@ bool createSFXStartLuaEvent(int id, std::string path);
 double GetOSLanguage();
 
 std::string getParentDirectory(std::string str);
+
+extern int StartSMBX2Editor();

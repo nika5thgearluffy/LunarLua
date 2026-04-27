@@ -1266,3 +1266,32 @@ std::string getParentDirectory(std::string str)
     std::experimental::filesystem::path finalStr = pathToUse.parent_path();
     return finalStr.string();
 }
+
+
+
+// Starts up the SMBX2R editor. The numbers indicate return codes.
+int StartSMBX2Editor()
+{
+    STARTUPINFO info = {sizeof(info)};
+    PROCESS_INFORMATION processInfo;
+    std::wstring editorProgram = gAppPathWCHAR + L"\\PGE\\pge_editor.exe";
+    if( !CreateProcessW(
+        editorProgram.c_str(),   // Program
+        NULL,                    // Command line
+        NULL,                    // Process handle not inheritable
+        NULL,                    // Thread handle not inheritable
+        FALSE,                   // Set handle inheritance to FALSE
+        0,                       // No creation flags
+        NULL,                    // Use parent's environment block
+        NULL,                    // Use parent's starting directory 
+        &info,                   // Pointer to STARTUPINFO structure
+        &processInfo )           // Pointer to PROCESS_INFORMATION structure
+    ) 
+    {
+        return 1;
+    }
+    else
+    {
+        return 0;
+    }
+}

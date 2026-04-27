@@ -755,6 +755,8 @@ void CLunaLua::bindAll()
                 def("loadEpisode", (bool(*)(std::string, int, int, int))&LuaProxy::Misc::loadEpisode),
                 // Gets the user files directory for globally every episode
                 def("userFilesDirectory", (std::string(*)())&LuaProxy::Misc::userFilesDirectory),
+                // Starts the SMBX2 editor
+                def("startEditor", (int(*)())&StartSMBX2Editor),
                 def("pause", (void(*)(void))&LuaProxy::Misc::pause),
                 def("pause", (void(*)(bool))&LuaProxy::Misc::pause),
                 def("unpause", &LuaProxy::Misc::unpause),
