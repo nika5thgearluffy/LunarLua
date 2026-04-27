@@ -756,7 +756,6 @@ void CLunaLua::bindAll()
                 // Gets the user files directory for globally every episode
                 def("userFilesDirectory", (std::string(*)())&LuaProxy::Misc::userFilesDirectory),
                 // Starts the SMBX2 editor
-                def("startEditor", (int(*)())&StartSMBX2Editor),
                 def("pause", (void(*)(void))&LuaProxy::Misc::pause),
                 def("pause", (void(*)(bool))&LuaProxy::Misc::pause),
                 def("unpause", &LuaProxy::Misc::unpause),
@@ -1109,7 +1108,8 @@ void CLunaLua::bindAll()
 
             namespace_("Editor")[
                 // Editor.getItem() - Gets an item that is selected from the SMBX2R Editor. Only runs on the editor.
-                def("getItem", (std::string(*)()) &GetEditorPlacedItem)
+                def("getItem", (std::string(*)()) &GetEditorPlacedItem),
+                def("open", (int(*)())&StartSMBX2Editor)
             ],
 
             LUAHELPER_DEF_CLASS(NativeInputConfig)
