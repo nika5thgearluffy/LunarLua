@@ -166,7 +166,7 @@ void MonitorSystem::CenterWindow()
 }
 
 // Raw function for SetWindowPos
-static void SetWindowPos(int x, int y, int width, int height)
+static void SetWindowPosMS(int x, int y, int width, int height)
 {
     SetWindowPos(gMainWindowHwnd, NULL, x, y, width, height, SWP_NOZORDER | SWP_NOACTIVATE | SWP_NOCOPYBITS | SWP_NOREDRAW);
 }
@@ -174,13 +174,13 @@ static void SetWindowPos(int x, int y, int width, int height)
 // Sets the window position of the game.
 void MonitorSystem::SetWindowPosition(int x, int y)
 {
-    SetWindowPos(x, y, MonitorSystem::getWindowWidth(), MonitorSystem::getWindowHeight());
+    SetWindowPosMS(x, y, MonitorSystem::getWindowWidth(), MonitorSystem::getWindowHeight());
 }
 
 // Sets the window size of the game.
 void MonitorSystem::setWindowSize(int width, int height)
 {
-    SetWindowPos(MonitorSystem::GetScreenXPosition(), MonitorSystem::GetScreenYPosition(), width, height);
+    SetWindowPosMS(MonitorSystem::GetScreenXPosition(), MonitorSystem::GetScreenYPosition(), width, height);
 }
 
 // Sets the window scale of the game.
@@ -214,6 +214,19 @@ int MonitorSystem::getWindowHeight()
         int height = rect.bottom - rect.top;
 
         return height;
+    }
+    return 0;
+}
+
+// Finds what monitor the window is on.
+int MonitorSystem::FindWindowFromMonitor()
+{
+    for (int i = 0; i <= 9; i++)
+    {
+        if ((monitorInformation[i].monitorLeft <= MonitorSystem::GetScreenXPosition() && monitorInformation[i].monitorRight >= MonitorSystem::GetScreenXPosition()) && (monitorInformation[i].monitorTop <= MonitorSystem::GetScreenYPosition() && monitorInformation[i].monitorBottom >= MonitorSystem::GetScreenYPosition()))
+        {
+            return i + 1;
+        }
     }
     return 0;
 }

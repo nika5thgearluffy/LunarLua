@@ -75,6 +75,8 @@ namespace MonitorSystem{
 
     int getWindowWidth();
     int getWindowHeight();
+
+    int FindWindowFromMonitor();
     
     luabind::object GetMonitorInfo(int monitorID, lua_State *L);
 };
