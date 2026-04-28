@@ -134,6 +134,9 @@ static void Episode_SetEpisodeIni()
 
             // If this is set to false, lives won't decrease after the player dies. Useful for removing lives in an episode.
             gEpisodeSettings.decreaseLivesAfterDeath = episodeConfig.value("decrease-lives-after-death", true).toBool();
+
+            // If this is true, powering down will be easier and go from >= 3 to 2, then 2 to 1.
+            gEpisodeSettings.easierPowerdown = episodeConfig.value("easier-powerdown", false).toBool();
         }
         episodeConfig.endGroup();
     }

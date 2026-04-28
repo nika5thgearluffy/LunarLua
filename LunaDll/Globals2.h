@@ -38,7 +38,10 @@ struct EpisodeSettings
     int defaultLifeCount;
     // Should we decrease lives after death?
     bool decreaseLivesAfterDeath;
-    
+
+    // Whether the player should have an easier powerdown instead of one based off SMB1. This phases out anotherPowerdownLibrary.
+    bool easierPowerdown;
+
     EpisodeSettings() :
         episodeDirectory(L""), episodeDirectoryWithoutRoot(L""),
         usingCustomSplash(false), episodeBootImage(L""),
@@ -47,7 +50,8 @@ struct EpisodeSettings
         canCheatAndSave(false),
         episodeWidth(800), episodeHeight(600),
         showPauseOverlay(true),
-        defaultLifeCount(3), decreaseLivesAfterDeath(true)
+        defaultLifeCount(3), decreaseLivesAfterDeath(true),
+        easierPowerdown(false)
     {
     }
 };
