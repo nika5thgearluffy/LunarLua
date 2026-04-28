@@ -224,12 +224,12 @@ void LuaProxy::Misc::exitGame()
     GM_LEVEL_MODE = 0xFFFF;
     GM_CUR_MENUTYPE = 0;
     */
-    _exit(0);
+    ExitSMBX2(0);
 }
 
 void LuaProxy::Misc::exitEngine()
 {
-    _exit(0);
+    ExitSMBX2(0);
 }
 
 bool luaDidGameOverFlag = false;

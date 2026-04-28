@@ -156,7 +156,7 @@ static bool testModeSetupForLoading()
     {
         std::wstring path = L"Could not find level file.\n\nPath:\n" + path;
         LunaMsgBox::ShowW(0, path.c_str(), L"SMBX could not read level file", MB_ICONERROR);
-        _exit(1);
+        ExitSMBX2(1);
     }
 
     // Check episode path
@@ -167,7 +167,7 @@ static bool testModeSetupForLoading()
     {
         std::wstring path = L"The episode path has characters which are not compatible with the system default Windows ANSI code page. This is not currently supported. Please rename or move your episode folder.\n\nUnsupported characters: " + nonAnsiCharsEpisode + L"\n\nPath:\n" + episodePath;
         LunaMsgBox::ShowW(0, path.c_str(), L"SMBX does not support episode path", MB_ICONERROR);
-        _exit(1);
+        ExitSMBX2(1);
     }
 
     // Start by stopping any Lua things
@@ -544,7 +544,7 @@ void TestModeCheckPendingIPCRequest()
         {
             std::wstring path = L"SMBX received no level data from the editor. Please try again.";
             LunaMsgBox::ShowW(0, path.c_str(), L"Error", MB_ICONERROR);
-            _exit(1);
+            ExitSMBX2(1);
             return;
         }
         testModeRestartLevel();

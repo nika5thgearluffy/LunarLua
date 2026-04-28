@@ -1,6 +1,7 @@
 #include <map>
 
 #include "../Globals.h"
+#include "../GlobalFuncs.h"
 #include "../SMBXInternal/PlayerMOB.h"
 #include "../SMBXInternal/Sound.h"
 #include "../Rendering/LunaImage.h"
@@ -63,7 +64,7 @@ void testModeCheckTriggers()
     {
         if (!TestModeCheckHideWindow())
         {
-            _exit(0);
+            ExitSMBX2(0);
         }
     }
     else if (restartTrigger)

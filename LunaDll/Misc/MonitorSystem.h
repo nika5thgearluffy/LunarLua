@@ -21,7 +21,7 @@ struct MonitorSystemMonitors
     int monitorY;
     int monitorWidth;
     int monitorHeight;
-    WCHAR monitorName;
+    wchar_t monitorName[32];
     
     MonitorSystemMonitors()
     {
@@ -39,7 +39,7 @@ struct MonitorSystemMonitors
         monitorY = 0;
         monitorWidth = 0;
         monitorHeight = 0;
-        monitorName = (WCHAR)"";
+        monitorName[0] = L'\0';
     }
 };
 

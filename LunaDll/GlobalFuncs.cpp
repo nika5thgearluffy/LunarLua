@@ -390,7 +390,7 @@ void initAppPaths()
     {
         std::wstring path = L"SMBX2 has been installed in a path with characters which are not compatible with the system default Windows ANSI code page. This is not currently supported. Please install SMBX2 in a location without unsupported characters.\n\nUnsupported characters: " + nonAnsiChars + L"\n\nPath:\n" + fullPath;
         LunaMsgBox::ShowW(0, path.c_str(), L"Invalid SMBX Installation Path", MB_ICONERROR);
-        _exit(1);
+        ExitSMBX2(1);
     }
 
     // Check for UNC path
@@ -398,7 +398,7 @@ void initAppPaths()
     {
         std::wstring path = L"SMBX2 cannot be run from a UNC path (starting with \\\\). Please install SMBX2 elsewhere or map the network drive to a drive letter.\n\nPath:\n" + std::wstring(fullPath);
         LunaMsgBox::ShowW(0, path.c_str(), L"Invalid SMBX Installation Path", MB_ICONERROR);
-        _exit(1);
+        ExitSMBX2(1);
     }
 
     // Check for path that might otherwise cause weird problems
@@ -413,7 +413,7 @@ void initAppPaths()
     {
         std::wstring path = L"The SMBX2 installation path is not recognized as having a normal drive letter.\n\nPath:\n" + std::wstring(fullPath);
         LunaMsgBox::ShowW(0, path.c_str(), L"Invalid SMBX Installation Path", MB_ICONERROR);
-        _exit(1);
+        ExitSMBX2(1);
     }
 
     gAppPathWCHAR = fullPath;
@@ -1294,4 +1294,20 @@ int StartSMBX2Editor()
     {
         return 0;
     }
+}
+
+void ExitSMBX2(int processCode)
+{
+    // This needs to be called so that USB detection and monitor detection unloads. If it doesn't, bugs will happen
+    // [CLAUDE AI USED FOR THIS PART OF THE CODE]
+    if (hDevNotify) {
+        UnregisterDeviceNotification(hDevNotify);
+        hDevNotify = nullptr;
+    }
+    if (hMonitorNotify) {
+        UnregisterDeviceNotification(hMonitorNotify);
+        hMonitorNotify = nullptr;
+    }
+    // Now finally exit
+    _exit(processCode);
 }

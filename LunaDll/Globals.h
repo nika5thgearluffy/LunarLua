@@ -243,3 +243,6 @@ extern bool gInWldx;
 
 extern std::string gUserFilesPathUTF8;
 extern std::wstring gUserFilesPathWCHAR;
+
+extern HDEVNOTIFY hDevNotify;
+extern HDEVNOTIFY hMonitorNotify;

@@ -153,7 +153,7 @@ public:
                 errMsg += " was called during ";
                 errMsg += currentFFIFunc;
                 LunaMsgBox::ShowA(0, errMsg.c_str(), "Error", MB_ICONWARNING | MB_TASKMODAL);
-                _exit(1);
+                ExitSMBX2(1);
             }
 
             callLuaFunction(L, "__callEvent", e, args...);

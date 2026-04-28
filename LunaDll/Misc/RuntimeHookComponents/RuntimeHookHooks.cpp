@@ -91,7 +91,7 @@ extern void __stdcall InitHook()
 
         if (!settings.result){
             GM_ISLEVELEDITORMODE = 0; //set run to false
-            _exit(0);
+            ExitSMBX2(0);
         }
         GM_ISGAME = -1;
         if (settings.result == 2){
@@ -145,7 +145,7 @@ extern void __stdcall InitHook()
 
 extern void __stdcall forceTermination()
 {
-    _exit(0);
+    ExitSMBX2(0);
 }
 
 extern int __stdcall LoadWorld()
@@ -666,7 +666,7 @@ EXCEPTION_DISPOSITION __cdecl LunaDLLCustomExceptionHandler(
     ErrorReport::SnapshotError(ExceptionRecord, ContextRecord);
     ErrorReport::report();
 
-    _exit(0);
+    ExitSMBX2(0);
     return ExceptionContinueSearch; // Never reached
 }
 
@@ -1701,7 +1701,7 @@ void __stdcall runtimeHookGameMenu()
 				// If there's still nothing, we don't have any settings so we shouldn't continue booting LunaDLL
 				std::string msg = "No world file has been specified. This means you booted LunaLoader.exe with no arguments regarding selecting a world or level.\n\nPlease load a world or level by loading the X2 launcher (Or Command Prompt) instead.";
 				MessageBoxA(gMainWindowHwnd, msg.c_str(), "Error", MB_ICONWARNING | MB_OK);
-				_exit(0);
+				ExitSMBX2(0);
 			}
 		}
 		else if(gEpisodeLoadedOnBoot)
@@ -5370,7 +5370,7 @@ SHORT __stdcall runtimeHookGetKeyStateRetore(int vk)
 // don't bother with preserving cpu state or anything, since we'll never return from here...
 void __stdcall runtimeHookCloseGame()
 {
-    _exit(0);
+    ExitSMBX2(0);
 }
 
 extern PlayerMOB* getTemplateForCharacter(int id);

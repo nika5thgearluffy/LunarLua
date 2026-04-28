@@ -23,7 +23,7 @@ void PGE_SDL_Manager::initSDL()
             std::string msg = "Could not initialize SDL.\r\n";
             msg += SDL_GetError();
             LunaMsgBox::ShowA(0, msg.c_str(), "Error", MB_ICONERROR);
-            _exit(1);
+            ExitSMBX2(1);
         }
 
         // Allow driver override
@@ -87,7 +87,7 @@ void PGE_SDL_Manager::initSDL()
         if (selectedDriver == "")
         {
             LunaMsgBox::ShowA(0, "Could not initialize audio subsystem.", "Error", MB_ICONERROR);
-            _exit(1);
+            ExitSMBX2(1);
         }
         else if ((selectedDriver == "dummy") && (driverList.size() > 1))
         {

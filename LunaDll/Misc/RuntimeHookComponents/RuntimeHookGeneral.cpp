@@ -1,6 +1,7 @@
 #include <windows.h>
 #include <windowsx.h>
 #include <dwmapi.h>
+#include <dbt.h>
 #include "../../Main.h"
 #include "../RuntimeHook.h"
 #include <comutil.h>
@@ -32,6 +33,16 @@
 
 #include "../../Misc/MonitorSystem.h"
 #include "../../Misc/KeyboardMouseSystem.h"
+
+// ntddvdeo.h doesn't exist, so declare this
+// [CLAUDE AI USED FOR THIS PART OF THE CODE]
+static const GUID GUID_DEVINTERFACE_MONITOR = 
+{ 0xe6f07b5f, 0xee97, 0x4a90, { 0xb0, 0x76, 0x33, 0xf5, 0x7b, 0xf4, 0xea, 0xa7 } };
+// As well as this
+#define DBT_DEVICEARRIVAL         0x8000
+#define DBT_DEVICEREMOVECOMPLETE  0x8004
+// And this
+static const UINT TIMER_ID_DISPLAY_CHANGE = 1;
 
 #ifndef NO_SDL
 bool episodeStarted = false;
@@ -1009,6 +1020,9 @@ LRESULT CALLBACK HandleWndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lPara
 
                 // Our main window gained focus? Keep track of that.
                 gMainWindowFocused = true;
+
+                // Set keyboard/mouses again just in case
+                KeyboardMouseSystem::RegisterDevices();
                 break;
             case WM_KILLFOCUS:
                 // Unregister VK_SNAPSHOT hotkey handling when out of focus
@@ -1080,18 +1094,27 @@ LRESULT CALLBACK HandleWndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lPara
 
                 return DefWindowProcW(hwnd, uMsg, wParam, lParam);
             }
-            // This should properly detect monitor changes
-            /*case WM_DISPLAYCHANGE:
-                // Resetup monitors if the display has changed in any way
-                MonitorSystem::SetupMonitors();
-                break;*/
-            // This should properly detect USB devices like keyboards & mouses
+            // This should properly detect USB devices like keyboards & mouses, as well as monitors
             case WM_DEVICECHANGE:
                 // DBT_DEVICEARRIVAL || DBT_DEVICEREMOVECOMPLETE
-                if (wParam == 0x8000 || wParam == 0x8004)
+                if (wParam == DBT_DEVICEARRIVAL || wParam == DBT_DEVICEREMOVECOMPLETE)
                 {
-                    // Refresh all devices, if any has been connected or disconnected
-                    KeyboardMouseSystem::RefreshDevices();
+                    // Refresh all devices (Including monitors), if any has been connected or disconnected
+                    MonitorSystem::SetupMonitors();
+                    // Re-register raw input devices since display change can invalidate them
+                    KeyboardMouseSystem::RegisterDevices();
+                }
+                break;
+            case WM_DISPLAYCHANGE:
+                SetTimer(gMainWindowHwnd, TIMER_ID_DISPLAY_CHANGE, 500, NULL);
+                break;
+
+            case WM_TIMER:
+                if (wParam == TIMER_ID_DISPLAY_CHANGE)
+                {
+                    KillTimer(gMainWindowHwnd, TIMER_ID_DISPLAY_CHANGE);
+                    MonitorSystem::SetupMonitors();
+                    KeyboardMouseSystem::RegisterDevices();
                 }
                 break;
             case WM_MOUSEMOVE:
@@ -1198,16 +1221,26 @@ LRESULT CALLBACK MsgHOOKProc(int nCode, WPARAM wParam, LPARAM lParam)
                 // Get all the raw devices, AND Register for the raw input API for keyboards, as well as register for input connection detection
                 KeyboardMouseSystem::RegisterDevices();
 
-                // Setup monitors
+                // Start up RegisterDeviceNotification for detecting USB device connections/disconnections
+                // [CLAUDE AI USED FOR THIS PART OF THE CODE]
+                DEV_BROADCAST_DEVICEINTERFACE filter = {};
+                filter.dbcc_size = sizeof(filter);
+                filter.dbcc_devicetype = DBT_DEVTYP_DEVICEINTERFACE;
+                //filter.dbcc_classguid = GUID_DEVINTERFACE_USB_DEVICE; // or specific class
+
+                HDEVNOTIFY hDevNotify = RegisterDeviceNotification(gMainWindowHwnd, &filter, DEVICE_NOTIFY_WINDOW_HANDLE | DEVICE_NOTIFY_ALL_INTERFACE_CLASSES);
+
+                // Setup monitors...
                 MonitorSystem::SetupMonitors();
 
-                // Register for the raw input API for keyboard
-                RAWINPUTDEVICE rid;
-                rid.usUsagePage = 0x01; // HID_USAGE_PAGE_GENERIC
-                rid.usUsage = 0x06; // HID_USAGE_GENERIC_KEYBOARD
-                rid.dwFlags = RIDEV_INPUTSINK;
-                rid.hwndTarget = gMainWindowHwnd;
-                RegisterRawInputDevices(&rid, 1, sizeof(rid));
+                // ...and the hDevNotify for monitors too
+                // [CLAUDE AI USED FOR THIS PART OF THE CODE]
+                DEV_BROADCAST_DEVICEINTERFACE filterMonitor = {};
+                filterMonitor.dbcc_size = sizeof(filter);
+                filterMonitor.dbcc_devicetype = DBT_DEVTYP_DEVICEINTERFACE;
+                filterMonitor.dbcc_classguid = GUID_DEVINTERFACE_MONITOR;
+
+                hMonitorNotify = RegisterDeviceNotification(gMainWindowHwnd, &filterMonitor, DEVICE_NOTIFY_WINDOW_HANDLE);
 
                 // Set initial window title right away, since we blocked what was causing VB to set it
                 SetWindowTextW(gMainWindowHwnd, GM_GAMETITLE_1.ptr);
@@ -1315,7 +1348,7 @@ void ParseArgs(const std::vector<std::wstring>& args)
                 // Invalid level name
                 std::wstring path = L"SMBX could not open \"" + settings.levelPath + L"\"";
                 LunaMsgBox::ShowW(0, path.c_str(), L"Error", MB_ICONERROR);
-                _exit(1);
+                ExitSMBX2(1);
             }
             gStartupSettings.patch = true;
             break;

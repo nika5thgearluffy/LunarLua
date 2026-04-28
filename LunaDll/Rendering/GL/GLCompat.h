@@ -3,6 +3,7 @@
 
 #include <GL/glew.h>
 #include "../../Defines.h"
+#include "../../GlobalFuncs.h"
 #include <sstream>
 #include <ios>
 
@@ -166,7 +167,7 @@ static inline void _GLErrorCheck(const char* fn, int line, const char* func, Ts.
         _GLErrorMsgArgs(errMsg, std::forward<Ts>(otherArgs)...);
 
         dbgbox(errMsg.str().c_str());
-        _exit(1);
+        ExitSMBX2(1);
     }
 }
 

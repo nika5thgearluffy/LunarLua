@@ -168,3 +168,7 @@ bool gInWldx = false;
 // The user files directory.
 std::string gUserFilesPathUTF8;
 std::wstring gUserFilesPathWCHAR;
+
+// Needed for USB detection and exiting SMBX2
+HDEVNOTIFY hDevNotify;
+HDEVNOTIFY hMonitorNotify;

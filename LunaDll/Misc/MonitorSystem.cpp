@@ -20,7 +20,6 @@ int numberOfMonitors = -1;
 
 BOOL CALLBACK MonitorEnumProc(HMONITOR hMonitor, HDC hdcMonitor, LPRECT lprcMonitor, LPARAM dwData)
 {
-    numberOfMonitors = numberOfMonitors + 1;
     MONITORINFOEX info;
     info.cbSize = sizeof(info);
 
@@ -37,14 +36,19 @@ BOOL CALLBACK MonitorEnumProc(HMONITOR hMonitor, HDC hdcMonitor, LPRECT lprcMoni
         monitorInformation[numberOfMonitors].monitorWidth = (info.rcMonitor.right - info.rcMonitor.left);
         monitorInformation[numberOfMonitors].monitorHeight = (info.rcMonitor.bottom - info.rcMonitor.top);
 
-        monitorInformation[numberOfMonitors].monitorName = (WCHAR)info.szDevice;
+        // [CLAUDE AI WAS USED FOR THIS PART OF THE CODE]
+        wcscpy_s(monitorInformation[numberOfMonitors].monitorName, sizeof(info.szDevice) / sizeof(WCHAR), info.szDevice);
     }
+
+    numberOfMonitors = numberOfMonitors + 1;
 
     return TRUE;
 }
 
 void MonitorSystem::SetupMonitors()
 {
+    numberOfMonitors = 0; // Reset before enumeration
+
     for(int i = 0; i <= 9; i++)
     {
         monitorInformation[i].Reset();
@@ -241,8 +245,7 @@ static luabind::object getMonitorInfo(int monitorID, lua_State *L)
     }
     else
     {
-        wchar_t monitorNameDraft = monitorInformation[realIndex].monitorName;
-        std::wstring monitorName(1, monitorNameDraft);
+        std::wstring monitorName(monitorInformation[realIndex].monitorName);
         luabind::object outData = luabind::newtable(L);
 
         outData["index"] = monitorInformation[realIndex].index;

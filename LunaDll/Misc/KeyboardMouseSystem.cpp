@@ -355,44 +355,24 @@ int MouseSystem::GetCount()
 
 bool KeyboardMouseSystem::RegisterDevices()
 {
+    // [CLAUDE AI WAS USED IN THIS PART OF THE CODE]
     KeyboardMouseSystem::RefreshDevices();
 
-    // Set up the keyboard system
-    static UINT realKeyCount = KeyboardSystem::GetCount() - 1;
+    UINT realKeyCount = KeyboardSystem::GetCount();  // not static
     RAWINPUTDEVICE* rid = new RAWINPUTDEVICE[realKeyCount];
 
-    int success = 0;
-
-    UINT totalCbSize = 0;
-    
-    for(int i = 0; i <= realKeyCount; i++)
+    for(UINT i = 0; i < realKeyCount; i++)
     {
-        // Set HID_USAGE_PAGE_GENERIC
         rid[i].usUsagePage = 0x01;
-
-        // Set HID_USAGE_GENERIC_KEYBOARD
         rid[i].usUsage = 0x06;
-
-        // Set the flags for keyboards
         rid[i].dwFlags = RIDEV_INPUTSINK | RIDEV_DEVNOTIFY;
-
-        // Set the SMBX window as our target
         rid[i].hwndTarget = gMainWindowHwnd;
-
-        if(i >= realKeyCount)
-        {
-            totalCbSize = totalCbSize + sizeof(rid[i]);
-            break;
-        }
     }
-    
-    // Register all keyboards
-    success = RegisterRawInputDevices(rid, KeyboardSystem::GetCount(), totalCbSize);
 
-    // Delete what is still stored in memory
-    delete [] rid;
+    // cbSize is the size of a single RAWINPUTDEVICE, not the total
+    int success = RegisterRawInputDevices(rid, realKeyCount, sizeof(RAWINPUTDEVICE));
 
-    // Return it
+    delete[] rid;
     return success;
 }
 

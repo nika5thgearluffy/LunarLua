@@ -159,7 +159,7 @@ void IPCPipeServer::ReadThread()
     if (gStartupSettings.waitForIPC)
     {
         // And if we were started in dedicated waitForIPC mode, take a broken pipe as a signal to exit
-        _exit(0);
+        ExitSMBX2(0);
     }
 }
 
@@ -344,7 +344,7 @@ void CheckIPCQuitRequest()
     if (gIPCQuitRequested)
     {
         Sleep(10);
-        _exit(0);
+        ExitSMBX2(0);
     }
 }
 
