@@ -1098,7 +1098,11 @@ void CLunaLua::bindAll()
                 // File.copy(fromFile, toFile) - Copies a file to the destination set.
                 def("copy", (void(*)(std::string, std::string))&FileSystem::CopyFile),
                 // File.openDialogAndGetFilepath() - Opens an "open file" dialog, which is used to select a file and get its filepath.
-                def("openDialogAndGetFilepath", (std::string(*)())&FileSystem::OpenDialogAndGetFilepath)
+                def("openDialogAndGetFilepath", (std::string(*)())&FileSystem::OpenDialogAndGetFilepath),
+                // File.createFolder(folder) - Creates a folder at a specified path.
+                def("createFolder", (bool(*)(std::string))&FileSystem::CreateDirectory),
+                // File.folderExists(folder) - Checks to see if a folder exists.
+                def("folderExists", (bool(*)(std::string))&FileSystem::DirectoryExists)
             ],
 
             namespace_("Language")[

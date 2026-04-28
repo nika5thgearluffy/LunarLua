@@ -8,6 +8,8 @@ namespace FileSystem{
     double GetFileSize(std::string file);
     void CopyFile(std::string filePath1, std::string filePath2);
     std::string OpenDialogAndGetFilepath();
+    bool CreateDirectory(std::string pathToDirectory);
+    bool DirectoryExists(std::string directory);
 };
 
 #endif

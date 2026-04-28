@@ -23,13 +23,12 @@ double FileSystem::GetFileSize(std::string file)
 // Copies a file. Copying to a destination gets handled later under lockdown.lua
 void FileSystem::CopyFile(std::string filePath1, std::string filePath2)
 {
-    // Specify the filesystem path and copy_options variables
-    std::experimental::filesystem::path filePath1fs = filePath1;
-    std::experimental::filesystem::path filePath2fs = filePath2;
-    const auto optionsToUse = std::experimental::filesystem::copy_options::update_existing;
+    // Let's copy with an extended MAX_PATH
+    std::string filePath1Extend = "\\\\?\\" + filePath1;
+    std::string filePath2Extend = "\\\\?\\" + filePath2;
 
     // Now copy the file to the specified place!
-    std::experimental::filesystem::copy_file(filePath1fs, filePath2fs, optionsToUse);
+    CopyFileExA(filePath1Extend.c_str(), filePath2Extend.c_str(), NULL, NULL, NULL, COPY_FILE_NO_BUFFERING);
 }
 
 std::string FileSystem::OpenDialogAndGetFilepath()
@@ -77,4 +76,23 @@ std::string FileSystem::OpenDialogAndGetFilepath()
 
     // ...then return the filepath
     return WStr2Str(pszFilePath);
+}
+
+// Creates a directory. Folder creation gets handled later under lockdown.lua
+bool FileSystem::CreateDirectory(std::string pathToDirectory)
+{
+    CreateDirectoryA(pathToDirectory.c_str(), NULL);
+    int hasError = GetLastError();
+    if (hasError == ERROR_ALREADY_EXISTS || hasError == ERROR_PATH_NOT_FOUND)
+    {
+        return false;
+    }
+    return true;
+}
+
+// Checks if a directory exists or not.
+bool FileSystem::DirectoryExists(std::string directory)
+{
+    DWORD dwAttrib = GetFileAttributesA(directory.c_str());
+    return (dwAttrib != INVALID_FILE_ATTRIBUTES && (dwAttrib & FILE_ATTRIBUTE_DIRECTORY));
 }
