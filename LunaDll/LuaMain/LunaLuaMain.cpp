@@ -1087,16 +1087,16 @@ void CLunaLua::bindAll()
 
             namespace_("Keyboard")[
                 // Keyboard.count() - Returns the number of keyboards connected.
-                def("count", (int(*)())&HID_GetKeyboardCount),
+                def("count", (int(*)())&KeyboardSystem::GetCount),
                 // Keyboard.get(index) - Returns keyboard information that's on the idx specified. Note that invalid keyboards and anything higher than 10 will return an invalid table.
-                def("get", (luabind::object(*)(int, lua_State*))&HID_GetKeyboardInfoFromIdx)
+                def("get", (luabind::object(*)(int, lua_State*))&KeyboardSystem::GetInfoFromIdx)
             ],
             
             namespace_("Mouse")[
                 // Mouse.count() - Returns the number of mouses connected.
-                def("count", (int(*)())&HID_GetMouseCount),
+                def("count", (int(*)())&MouseSystem::GetCount),
                 // Mouse.get(index) - Returns mouse information that's on the idx specified. Note that invalid mouses and anything higher than 10 will return an invalid table.
-                def("get", (luabind::object(*)(int, lua_State*))&HID_GetMouseInfoFromIdx)
+                def("get", (luabind::object(*)(int, lua_State*))&MouseSystem::GetInfoFromIdx)
             ],
             
             namespace_("File")[

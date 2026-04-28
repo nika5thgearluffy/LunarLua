@@ -46,12 +46,12 @@ static luabind::object getKeyboardDeviceThings(int index, lua_State *L)
     }
 }
 
-luabind::object HID_GetKeyboardInfoFromIdx(int index, lua_State *L)
+luabind::object KeyboardSystem::GetInfoFromIdx(int index, lua_State *L)
 {
     return getKeyboardDeviceThings(index, L);
 }
 
-void HID_GetAllRawKeyboards()
+void KeyboardSystem::GetAllRawKeyboards()
 {
     for(int i = 0; i <= 9; i++)
     {
@@ -168,9 +168,35 @@ void HID_GetAllRawKeyboards()
     }
 }
 
-int HID_GetKeyboardCount()
+int KeyboardSystem::GetCount()
 {
     return (int)numberOfKeyboards;
+}
+
+int KeyboardSystem::GetKeyboardIDListing(int id)
+{
+    for(int i = 1; i <= KeyboardSystem::GetCount(); i++)
+    {
+        if(keyboardDeviceList[i - 1].keyboardID == id)
+        {
+            return i;
+        }
+    }
+    return -1;
+}
+
+int KeyboardSystem::GetKeyboardToPressKeysWith(HANDLE hDevice)
+{
+    int finalKey = -1;
+    int hDeviceInt = (int)hDevice;
+    for(int i = 1; i <= KeyboardSystem::GetCount(); i++)
+    {
+        if(keyboardDeviceList[i - 1].keyboardID == hDeviceInt)
+        {
+            finalKey = keyboardDeviceList[i - 1].keyboardID;
+        }
+    }
+    return finalKey;
 }
 
 // ----------
@@ -204,12 +230,12 @@ static luabind::object getMouseDeviceThings(int index, lua_State *L)
     }
 }
 
-luabind::object HID_GetMouseInfoFromIdx(int index, lua_State *L)
+luabind::object MouseSystem::GetInfoFromIdx(int index, lua_State *L)
 {
     return getMouseDeviceThings(index, L);
 }
 
-void HID_GetAllRawMouses()
+void MouseSystem::GetAllRawMouses()
 {
     for(int i = 0; i <= 9; i++)
     {
@@ -318,7 +344,7 @@ void HID_GetAllRawMouses()
     }
 }
 
-int HID_GetMouseCount()
+int MouseSystem::GetCount()
 {
     return (int)numberOfMouses;
 }
@@ -327,12 +353,12 @@ int HID_GetMouseCount()
 // **DEVICES**
 // -----------
 
-bool HID_RegisterDevices()
+bool KeyboardMouseSystem::RegisterDevices()
 {
-    HID_RefreshDevices();
+    KeyboardMouseSystem::RefreshDevices();
 
     // Set up the keyboard system
-    static UINT realKeyCount = HID_GetKeyboardCount() - 1;
+    static UINT realKeyCount = KeyboardSystem::GetCount() - 1;
     RAWINPUTDEVICE* rid = new RAWINPUTDEVICE[realKeyCount];
 
     int success = 0;
@@ -361,7 +387,7 @@ bool HID_RegisterDevices()
     }
     
     // Register all keyboards
-    success = RegisterRawInputDevices(rid, HID_GetKeyboardCount(), totalCbSize);
+    success = RegisterRawInputDevices(rid, KeyboardSystem::GetCount(), totalCbSize);
 
     // Delete what is still stored in memory
     delete [] rid;
@@ -370,10 +396,10 @@ bool HID_RegisterDevices()
     return success;
 }
 
-void HID_RefreshDevices()
+void KeyboardMouseSystem::RefreshDevices()
 {
-    HID_GetAllRawKeyboards();
-    HID_GetAllRawMouses();
+    KeyboardSystem::GetAllRawKeyboards();
+    MouseSystem::GetAllRawMouses();
 }
 
 //----

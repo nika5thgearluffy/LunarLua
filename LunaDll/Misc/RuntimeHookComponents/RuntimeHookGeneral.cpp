@@ -567,32 +567,6 @@ static void SendLuaRawKeyEvent(uint32_t virtKey, bool isDown, int keyboardIdx)
     }
 }
 
-int GetKeyboardIDListing(int id)
-{
-    for(int i = 1; i <= HID_GetKeyboardCount(); i++)
-    {
-        if(keyboardDeviceList[i - 1].keyboardID == id)
-        {
-            return i;
-        }
-    }
-    return -1;
-}
-
-int GetKeyboardToPressKeysWith(HANDLE hDevice)
-{
-    int finalKey = -1;
-    int hDeviceInt = (int)hDevice;
-    for(int i = 1; i <= HID_GetKeyboardCount(); i++)
-    {
-        if(keyboardDeviceList[i - 1].keyboardID == hDeviceInt)
-        {
-            finalKey = keyboardDeviceList[i - 1].keyboardID;
-        }
-    }
-    return finalKey;
-}
-
 static void ProcessRawInput_OrigFunc(uint16_t vkey, uint16_t scanCode, uint8_t prefixFlag, int keyboardID, int keyboardIdx, bool keyDown, bool haveFocus)
 {
     // Handle left/right keys
@@ -749,8 +723,8 @@ static void ProcessRawInput(HWND hwnd, HRAWINPUT hRawInput, bool haveFocus)
         return;
     }
 
-    int keyboardID = GetKeyboardToPressKeysWith(hDevice);
-    int keyboardIdx = GetKeyboardIDListing(keyboardID);
+    int keyboardID = KeyboardSystem::GetKeyboardToPressKeysWith(hDevice);
+    int keyboardIdx = KeyboardSystem::GetKeyboardIDListing(keyboardID);
     int hDeviceInt = (int)hDevice;
     
     if(hDeviceInt == keyboardID)
@@ -759,9 +733,9 @@ static void ProcessRawInput(HWND hwnd, HRAWINPUT hRawInput, bool haveFocus)
     }
     else
     {
-        for(int i = 1; i <= HID_GetKeyboardCount(); i++)
+        for(int i = 1; i <= KeyboardSystem::GetCount(); i++)
         {
-            ProcessRawInput_OrigFunc(vkey, scanCode, prefixFlag, GetKeyboardIDListing(i), i, keyDown, haveFocus);
+            ProcessRawInput_OrigFunc(vkey, scanCode, prefixFlag, KeyboardSystem::GetKeyboardIDListing(i), i, keyDown, haveFocus);
         }
     }
 }
@@ -1014,8 +988,8 @@ LRESULT CALLBACK HandleWndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lPara
             {
                 // We'll need to do some additional stuff just to get the keyboardIdx for gKeyState
                 HANDLE hDevice = getTheHandleForWndProc(reinterpret_cast<HRAWINPUT>(lParam));
-                int keyboardID = GetKeyboardToPressKeysWith(hDevice);
-                int keyboardIdx = GetKeyboardIDListing(keyboardID);
+                int keyboardID = KeyboardSystem::GetKeyboardToPressKeysWith(hDevice);
+                int keyboardIdx = KeyboardSystem::GetKeyboardIDListing(keyboardID);
 
                 // Allow free sizing when CTRL is held
                 if ((gKeyState[keyboardIdx - 1][VK_CONTROL] & 0x80) != 0)
@@ -1101,7 +1075,7 @@ LRESULT CALLBACK HandleWndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lPara
                 if(wParam == GIDC_ARRIVAL || wParam == GIDC_REMOVAL)
                 {
                     // Refresh all devices, if any has been connected or disconnected
-                    HID_RefreshDevices();
+                    KeyboardMouseSystem::RefreshDevices();
                 }
 
                 return DefWindowProcW(hwnd, uMsg, wParam, lParam);
@@ -1117,7 +1091,7 @@ LRESULT CALLBACK HandleWndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lPara
                 if (wParam == 0x8000 || wParam == 0x8004)
                 {
                     // Refresh all devices, if any has been connected or disconnected
-                    HID_RefreshDevices();
+                    KeyboardMouseSystem::RefreshDevices();
                 }
                 break;
             case WM_MOUSEMOVE:
@@ -1222,7 +1196,7 @@ LRESULT CALLBACK MsgHOOKProc(int nCode, WPARAM wParam, LPARAM lParam)
                 gMainWindowProc = (WNDPROC)SetWindowLongPtrW(gMainWindowHwnd, GWLP_WNDPROC, (LONG_PTR)HandleWndProc);
 
                 // Get all the raw devices, AND Register for the raw input API for keyboards, as well as register for input connection detection
-                HID_RegisterDevices();
+                KeyboardMouseSystem::RegisterDevices();
 
                 // Setup monitors
                 MonitorSystem::SetupMonitors();

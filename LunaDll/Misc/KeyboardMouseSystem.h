@@ -13,10 +13,6 @@
 /*************************************************************************/
 /* Keyboard/Mouse/Device Main Functions                                  */
 /*************************************************************************/
-extern void HID_GetAllRawKeyboards();
-extern int HID_GetKeyboardCount();
-extern luabind::object HID_GetKeyboardInfoFromIdx(int index, lua_State *L);
-
 extern UINT numberOfKeyboards;
 struct keyboardDevices
 {
@@ -52,8 +48,14 @@ struct keyboardDevices
 };
 extern keyboardDevices keyboardDeviceList[9];
 extern keyboardDevices keyboardDevice;
-extern int GetKeyboardIDListing(int id);
-extern int GetKeyboardToPressKeysWith(HANDLE hDevice);
+
+namespace KeyboardSystem{
+    int GetCount();
+    luabind::object GetInfoFromIdx(int index, lua_State *L);
+    void GetAllRawKeyboards();
+    int GetKeyboardIDListing(int id);
+    int GetKeyboardToPressKeysWith(HANDLE hDevice);
+};
 
 /***********************/
 
@@ -87,15 +89,19 @@ struct mouseDevices
     }
 };
 extern mouseDevices mouseDeviceList[9];
-luabind::object HID_GetMouseInfoFromIdx(int index, lua_State *L);
 
-extern void HID_GetAllRawMouses();
-extern int HID_GetMouseCount();
+namespace MouseSystem{
+    luabind::object GetInfoFromIdx(int index, lua_State *L);
+    void GetAllRawMouses();
+    int GetCount();
+};
 
 /***********************/
 
-extern bool HID_RegisterDevices();
-extern void HID_RefreshDevices();
+namespace KeyboardMouseSystem{
+    bool RegisterDevices();
+    void RefreshDevices();
+};
 
 /***********************/
 

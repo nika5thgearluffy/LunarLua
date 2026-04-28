@@ -5359,7 +5359,7 @@ _declspec(naked) void __stdcall runtimeHookFixLinkFairyClowncar3()
 SHORT __stdcall runtimeHookGetKeyStateRetore(int vk)
 {
     SHORT state = 0x00;
-    for(int i = 0; i <= HID_GetKeyboardCount(); i++)
+    for(int i = 0; i <= KeyboardSystem::GetCount(); i++)
     {
         state = (gKeyState[i][vk] & 0x80) ? 0xF000 : 0;
     }
