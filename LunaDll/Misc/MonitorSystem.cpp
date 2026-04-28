@@ -1,6 +1,7 @@
 #include "MonitorSystem.h"
 
 #include <windows.h>
+
 #include "../Globals.h"
 #include "../GlobalFuncs.h"
 #include "../Defines.h"
@@ -13,6 +14,7 @@
 #include "../LuaMain/LuaHelper.h"
 
 #include "../Rendering/WindowSizeHandler.h"
+#include "../Rendering/GL/GLContextManager.h"
 
 // 10 monitors is the max Windows supports
 MonitorSystemMonitors monitorInformation[9];
@@ -78,10 +80,14 @@ int MonitorSystem::GetScreenYPosition()
     return y;
 }
 
+// [CLAUDE AI IS USED FOR THIS PART OF THE CODE]
 int MonitorSystem::GetScreenCenterXPosition(int monitorID)
 {
-    int dupeCheckLeft = monitorInformation[monitorID - 1].monitorLeft - monitorInformation[monitorID - 1].monitorLeft;
-    int posX = monitorInformation[monitorID - 1].monitorWidth / 2 - (MonitorSystem::getWindowWidth() - dupeCheckLeft) / 2;
+    float dpi = MonitorSystem::getDPIScale();
+    auto currentSize = gWindowSizeHandler.getWindowSize();
+    int windowWidth = MonitorSystem::getWindowWidthFromResolution(currentSize.x, currentSize.y) * dpi;
+
+    int posX = monitorInformation[monitorID - 1].monitorWidth / 2 - (windowWidth) / 2;
 
     return monitorInformation[monitorID - 1].monitorLeft + posX;
 }
@@ -92,10 +98,14 @@ int MonitorSystem::GetScreenCenterXPosition()
     return MonitorSystem::GetScreenCenterXPosition(1);
 }
 
+// [CLAUDE AI IS USED FOR THIS PART OF THE CODE]
 int MonitorSystem::GetScreenCenterYPosition(int monitorID)
 {
-    int dupeCheckTop = monitorInformation[monitorID - 1].monitorTop - monitorInformation[monitorID - 1].monitorTop;
-    int posY = monitorInformation[monitorID - 1].monitorHeight / 2 - (MonitorSystem::getWindowHeight() - dupeCheckTop) / 2;
+    float dpi = MonitorSystem::getDPIScale();
+    auto currentSize = gWindowSizeHandler.getWindowSize();
+    int windowHeight = MonitorSystem::getWindowHeightFromResolution(currentSize.x, currentSize.y) * dpi;
+
+    int posY = (monitorInformation[monitorID - 1].monitorHeight / 2) - (windowHeight / 2);
 
     return monitorInformation[monitorID - 1].monitorTop + posY;
 }
@@ -176,7 +186,14 @@ static void SetWindowPosMS(int x, int y, int width, int height)
 // Sets the window position of the game.
 void MonitorSystem::SetWindowPosition(int x, int y)
 {
-    SetWindowPosMS(x, y, MonitorSystem::getWindowWidth(), MonitorSystem::getWindowHeight());
+    // Account for DPI and window width/height differences
+    float dpi = MonitorSystem::getDPIScale();
+    auto currentSize = gWindowSizeHandler.getWindowSize();
+    int windowWidth = MonitorSystem::getWindowWidthFromResolution(currentSize.x, currentSize.y) * dpi;
+    int windowHeight = MonitorSystem::getWindowHeightFromResolution(currentSize.x, currentSize.y) * dpi;
+
+    // Now set the position
+    SetWindowPosMS(x, y, windowWidth, windowHeight);
 }
 
 // Sets the window size of the game.
@@ -195,29 +212,22 @@ void MonitorSystem::setWindowScale(int scale)
 // Get the window width of the game.
 int MonitorSystem::getWindowWidth()
 {
-    RECT rect;
-    if(GetWindowRect(gMainWindowHwnd, &rect))
-    {
-        int width = rect.right - rect.left;
-        int height = rect.bottom - rect.top;
-
-        return width;
-    }
-    return 0;
+    float dpi = MonitorSystem::getDPIScale();
+    auto currentSize = gWindowSizeHandler.getWindowSize();
+    int windowWidth = MonitorSystem::getWindowWidthFromResolution(currentSize.x, currentSize.y) * dpi;
+    // Return the width
+    return windowWidth;
 }
 
 // Get the window height of the game.
 int MonitorSystem::getWindowHeight()
 {
-    RECT rect;
-    if(GetWindowRect(gMainWindowHwnd, &rect))
-    {
-        int width = rect.right - rect.left;
-        int height = rect.bottom - rect.top;
-
-        return height;
-    }
-    return 0;
+    // Account for DPI and window width/height differences
+    float dpi = MonitorSystem::getDPIScale();
+    auto currentSize = gWindowSizeHandler.getWindowSize();
+    int windowHeight = MonitorSystem::getWindowHeightFromResolution(currentSize.x, currentSize.y) * dpi;
+    // Return the height
+    return windowHeight;
 }
 
 // Finds what monitor the window is on.
@@ -231,6 +241,51 @@ int MonitorSystem::FindWindowFromMonitor()
         }
     }
     return 0;
+}
+
+// Gets the window width based off the resolution itself.
+// [CLAUDE AI IS USED FOR THIS PART OF THE CODE]
+int MonitorSystem::getWindowWidthFromResolution(int gameWidth, int gameHeight)
+{
+    RECT rect = { 0, 0, gameWidth, gameHeight };
+    DWORD style = GetWindowLong(gMainWindowHwnd, GWL_STYLE);
+    DWORD exStyle = GetWindowLong(gMainWindowHwnd, GWL_EXSTYLE);
+    BOOL hasMenu = (GetMenu(gMainWindowHwnd) != NULL);
+
+    AdjustWindowRectEx(&rect, style, hasMenu, exStyle);
+    return rect.right - rect.left;
+}
+int MonitorSystem::getWindowWidthFromResolution(int gameWidth)
+{
+    auto currentSize = gWindowSizeHandler.getWindowSize();
+    return MonitorSystem::getWindowWidthFromResolution(gameWidth, g_GLContextManager.GetMainFBHeight());
+}
+
+// Gets the window height based off the resolution itself.
+// [CLAUDE AI IS USED FOR THIS PART OF THE CODE]
+int MonitorSystem::getWindowHeightFromResolution(int gameWidth, int gameHeight)
+{
+    RECT rect = { 0, 0, gameWidth, gameHeight };
+    DWORD style = GetWindowLong(gMainWindowHwnd, GWL_STYLE);
+    DWORD exStyle = GetWindowLong(gMainWindowHwnd, GWL_EXSTYLE);
+    BOOL hasMenu = (GetMenu(gMainWindowHwnd) != NULL);
+
+    AdjustWindowRectEx(&rect, style, hasMenu, exStyle);
+    return rect.bottom - rect.top;
+}
+int MonitorSystem::getWindowHeightFromResolution(int gameHeight)
+{
+    return MonitorSystem::getWindowHeightFromResolution(g_GLContextManager.GetMainFBWidth(), gameHeight);
+}
+
+// Gets the DPI scale. This is accounted for 4K monitors and scaled resolutions.
+// [CLAUDE AI IS USED FOR THIS PART OF THE CODE]
+float MonitorSystem::getDPIScale()
+{
+    HDC hdc = GetDC(gMainWindowHwnd);
+    float dpi = GetDeviceCaps(hdc, LOGPIXELSX) / 96.0f;
+    ReleaseDC(gMainWindowHwnd, hdc);
+    return dpi;
 }
 
 

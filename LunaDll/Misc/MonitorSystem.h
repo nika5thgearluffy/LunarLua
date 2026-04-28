@@ -79,6 +79,14 @@ namespace MonitorSystem{
     int getWindowHeight();
 
     int FindWindowFromMonitor();
+
+    int getWindowWidthFromResolution(int gameWidth, int gameHeight);
+    int getWindowWidthFromResolution(int gameWidth);
+
+    int getWindowHeightFromResolution(int gameWidth, int gameHeight);
+    int getWindowHeightFromResolution(int gameHeight);
+
+    float getDPIScale();
     
     luabind::object GetMonitorInfo(int monitorID, lua_State *L);
 };

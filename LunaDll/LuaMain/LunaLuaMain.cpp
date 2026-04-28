@@ -1082,7 +1082,13 @@ void CLunaLua::bindAll()
                 // Window.setScale(scale) - Sets the window scale of the game.
                 def("setScale", (void(*)(int))&MonitorSystem::setWindowScale),
                 // Window.findMonitor() - Finds the monitor where the window is located.
-                def("findMonitor", (int(*)())&MonitorSystem::FindWindowFromMonitor)
+                def("findMonitor", (int(*)())&MonitorSystem::FindWindowFromMonitor),
+                // Window.dpiScale() - Gets the DPI scale of the window.
+                def("dpiScale", (float(*)())&MonitorSystem::getDPIScale),
+                // Window.getWidthFromResolution(width) - Gets the window width based off the resolution width.
+                def("getWidthFromResolution", (int(*)(int))&MonitorSystem::getWindowWidthFromResolution),
+                // Window.getHeightFromResolution(height) - Gets the window height based off the resolution width.
+                def("getHeightFromResolution", (int(*)(int))&MonitorSystem::getWindowHeightFromResolution)
             ],
 
             namespace_("Keyboard")[
