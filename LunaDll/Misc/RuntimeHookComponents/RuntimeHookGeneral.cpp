@@ -1106,6 +1106,20 @@ LRESULT CALLBACK HandleWndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lPara
 
                 return DefWindowProcW(hwnd, uMsg, wParam, lParam);
             }
+            // This should properly detect monitor changes
+            /*case WM_DISPLAYCHANGE:
+                // Resetup monitors if the display has changed in any way
+                MonitorSystem::SetupMonitors();
+                break;*/
+            // This should properly detect USB devices like keyboards & mouses
+            case WM_DEVICECHANGE:
+                // DBT_DEVICEARRIVAL || DBT_DEVICEREMOVECOMPLETE
+                if (wParam == 0x8000 || wParam == 0x8004)
+                {
+                    // Refresh all devices, if any has been connected or disconnected
+                    HID_RefreshDevices();
+                }
+                break;
             case WM_MOUSEMOVE:
                 gMouseHandler.OnMouseMove(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam), wParam);
                 break;

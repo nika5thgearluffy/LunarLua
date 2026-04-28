@@ -51,13 +51,11 @@ void MonitorSystem::SetupMonitors()
     }
 
     bool monitorSuccess = EnumDisplayMonitors(NULL, NULL, MonitorEnumProc, 0);
+}
 
-    int monitorCountToCompare = GetSystemMetrics(SM_CMONITORS);
-    numberOfMonitors = numberOfMonitors + 1; // To make sure that Lua is compatible with this
-    if(numberOfMonitors != monitorCountToCompare)
-    {
-        MessageBoxA(NULL, "Looks like the size comparison is false", "Test", NULL);
-    }
+int MonitorSystem::GetCount()
+{
+    return GetSystemMetrics(SM_CMONITORS);
 }
 
 int MonitorSystem::GetScreenXPosition()

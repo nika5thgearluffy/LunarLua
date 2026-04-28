@@ -1041,6 +1041,8 @@ void CLunaLua::bindAll()
             namespace_("Monitor")[
                 // Monitor.get(monitorID) - Returns monitor information that's on the idx specified. Note that invalid monitors and anything higher than 10 will return an invalid table.
                 def("get", (luabind::object(*)(int, lua_State*))&MonitorSystem::GetMonitorInfo),
+                // Monitor.count() - Returns the number of monitors connected.
+                def("count", (int(*)())&MonitorSystem::GetCount),
                 // Monitor.screenX(monitorID) - Gets the specific monitor's X position.
                 def("screenX", (int(*)(int))&MonitorSystem::GetScreenX),
                 def("screenX", (int(*)())&MonitorSystem::GetScreenX),

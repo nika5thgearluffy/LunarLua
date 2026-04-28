@@ -49,6 +49,8 @@ extern MonitorSystemMonitors monitorInformation[9];
 namespace MonitorSystem{
     void SetupMonitors();
 
+    int GetCount();
+
     int GetScreenXPosition();
     int GetScreenYPosition();
     int GetScreenCenterXPosition(int monitorID);
