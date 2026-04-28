@@ -81,7 +81,13 @@ std::string FileSystem::OpenDialogAndGetFilepath()
 // Creates a directory. Folder creation gets handled later under lockdown.lua
 bool FileSystem::CreateDirectory(std::string pathToDirectory)
 {
-    CreateDirectoryA(pathToDirectory.c_str(), NULL);
+    // Extend the MAX_PATH
+    std::string pathToDirectoryExtend = "\\\\?\\" + pathToDirectory;
+
+    // Create the directory
+    CreateDirectoryA(pathToDirectoryExtend.c_str(), NULL);
+
+    // Check for an error
     int hasError = GetLastError();
     if (hasError == ERROR_ALREADY_EXISTS || hasError == ERROR_PATH_NOT_FOUND)
     {
