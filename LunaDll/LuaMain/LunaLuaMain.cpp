@@ -944,6 +944,7 @@ void CLunaLua::bindAll()
                 def("MusicGetTempo", (double(*)())&LuaProxy::Audio::MusicGetTempo),
                 def("MusicGetPitch", (double(*)())&LuaProxy::Audio::MusicGetPitch),
                 def("MusicGetSpeed", (double(*)())&LuaProxy::Audio::MusicGetSpeed),
+
                 def("MusicGet", (std::string(*)(bool))&LuaProxy::Audio::MusicGet),
                 def("MusicGet", (std::string(*)())&LuaProxy::Audio::MusicGet),
                 def("MusicGetArguments", (std::string(*)())&LuaProxy::Audio::MusicGetArguments),

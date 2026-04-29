@@ -32,6 +32,7 @@
 
 extern PlayerMOB* getTemplateForCharacterWithDummyFallback(int id);
 extern "C" void __cdecl LunaLuaSetGameData(const char* dataPtr, int dataLen);
+void __stdcall runtimeHookLoadLevel(VB6StrPtr* filename);
 
 int EpisodeMain_EpisodeCount = 0;
 int EpisodeMain_EpisodeIdx = 0;
@@ -754,10 +755,41 @@ void EpisodeMain::LoadWorldMapLevel(std::string levelName, int warpIdx)
     // Get the full path of the level
     std::string fullPathS = WStr2Str(gEpisodeSettings.episodeDirectory + L"\\") + levelName;
     VB6StrPtr fullPathVB6 = fullPathS.c_str();
+    VB6StrPtr* fullPathVB6Pointer = &fullPathVB6;
 
     // The file should exist so the player can warp to the level
     if (fileExists(Str2WStr(fullPathS)))
     {
+        /*// Unpause the game
+        g_EventHandler.requestUnpause();
+
+        // Set the filename
+        Vars::FileName = fullPathVB6;
+
+        // Set start warp
+        Vars::StartWarp = warpIdx;
+
+        // Stop music
+        Functions::StopMusic();
+
+        // We're not on the map anymore
+        Vars::LevelSelect = false;
+
+        // Clear the level if existing
+        Functions::ClearLevel();
+
+        // Do GameThing
+        Functions::GameThing();
+
+        // show loadscreen
+        LunaLoadScreenStart();
+
+        // Now open the level
+        runtimeHookLoadLevel(fullPathVB6Pointer);
+
+        // hide loadscreen
+        LunaLoadScreenKill();*/
+
         // Before doing anything, set the states of the player onto g_episodeWorldWarpToLevelStates
         for (int i = 1; i <= Vars::numPlayers; i++)
         {
