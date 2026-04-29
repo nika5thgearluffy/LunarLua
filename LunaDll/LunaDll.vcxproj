@@ -75,7 +75,7 @@
       </PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;_USRDLL;LUNADLL_EXPORTS;NDEBUG;_CRT_SECURE_NO_WARNINGS;GLEW_STATIC;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;_USRDLL;LUNADLL_EXPORTS;NDEBUG;_CRT_SECURE_NO_WARNINGS;GLEW_STATIC;NOMINMAX;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>$(LUA_DEV)</AdditionalIncludeDirectories>
       <MultiProcessorCompilation>false</MultiProcessorCompilation>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
@@ -333,6 +333,7 @@
     <ClInclude Include="Misc\MonitorSystem.h" />
     <ClInclude Include="Misc\KeyboardMouseSystem.h" />
     <ClInclude Include="Misc\FileSystem.h" />
+    <ClInclude Include="Misc\InternetSystem.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\LunaLoader\LunaLoaderPatch.cpp" />
@@ -579,6 +580,7 @@
     <ClCompile Include="Misc\MonitorSystem.cpp" />
     <ClCompile Include="Misc\KeyboardMouseSystem.cpp" />
     <ClCompile Include="Misc\FileSystem.cpp" />
+    <ClCompile Include="Misc\InternetSystem.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Misc\scrappedcode.txt" />

@@ -3,6 +3,8 @@
 #include <cctype>
 #include <cstdarg>
 #include <mutex>
+#include <future>
+#include <atomic>
 #include "Globals.h"
 #include "LevelCodes/LevelCodes.h"
 #include "Shlwapi.h"
@@ -177,4 +179,7 @@ HDEVNOTIFY hMonitorNotify;
 bool gDisablePlayerKeysLegacy = false;
 
 // Set to true for pending a download.
-bool gDownloadPending = false;
+std::future<std::string> gDownloadFuture;
+std::atomic<bool> gDownloadPending(false);
+std::atomic<int> gDownloadProgress(0);
+std::string gDownloadFilename;

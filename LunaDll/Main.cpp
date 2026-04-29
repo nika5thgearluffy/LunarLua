@@ -37,6 +37,7 @@ using std::max;
 #include "../LunaLoader/LunaLoaderPatch.h"
 
 #include "Misc/MonitorSystem.h"
+#include "Misc/InternetSystem.h"
 
 static bool LevelCustomSounds = false;
 
@@ -391,7 +392,7 @@ void OnLevelHUDDraw(int cameraIdx) {
 // This code will run every frame everywhere, making for easy testing
 void TestFrameCode() {
     // Run the poll for downloading internet files
-    Internet_poll();
+    Internet::Poll();
 
     /// DEBUG STUFF//
 

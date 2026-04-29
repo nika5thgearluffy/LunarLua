@@ -45,6 +45,7 @@
 #include "../Misc/MonitorSystem.h"
 #include "../Misc/KeyboardMouseSystem.h"
 #include "../Misc/FileSystem.h"
+#include "../Misc/InternetSystem.h"
 
 /*static*/ DWORD CLunaFFILock::currentLockTlsIdx = TlsAlloc();
 
@@ -1128,10 +1129,14 @@ void CLunaLua::bindAll()
             
             namespace_("Internet")[
                 // Internet.downloadAndParse(url[, filePath]) - Downloads and parses a file as a string. This can be used to retrieve JSON files and such. Optionally, you can also save the file as well (lockdown.lua will take care of only saving files to possible places)
-                def("startDownload", (void(*)(const std::string&))&Internet_startDownload),
-                def("startDownload", (void(*)(const std::string&, const std::string&))&Internet_startDownload),
+                def("downloadFile", (void(*)(const std::string&))&Internet::StartDownload),
+                def("downloadFile", (void(*)(const std::string&, const std::string&))&Internet::StartDownload),
                 // Internet.isDownloading() - If the game is downloading a file, this is true.
-                def("isDownloading", (bool(*)())&gDownloadPending)
+                def("isDownloading", (bool(*)())&Internet::IsDownloading),
+                // Internet.downloadFilename() - Gets the current download's filename. Blank if not downloading anything.
+                def("downloadFilename", (std::string(*)())&Internet::DownloadFilename),
+                // Internet.downloadProgress() - Gets the current download's progress. Sorted like 0% - 100%
+                def("downloadProgress", (int(*)())&Internet::DownloadProgress)
             ],
 
             namespace_("Editor")[

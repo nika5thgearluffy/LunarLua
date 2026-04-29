@@ -11,6 +11,7 @@
 #include <atomic>
 #include <cstdint>
 #include <mutex>
+#include <future>
 #include "LevelCodes/LevelCodes.h"
 #include "Rendering/Rendering.h"
 #include "Autocode/AutocodeManager.h"
@@ -249,4 +250,7 @@ extern HDEVNOTIFY hMonitorNotify;
 
 extern bool gDisablePlayerKeysLegacy;
 
-extern bool gDownloadPending;
+extern std::future<std::string> gDownloadFuture;
+extern std::atomic<bool> gDownloadPending;
+extern std::atomic<int> gDownloadProgress;
+extern std::string gDownloadFilename;

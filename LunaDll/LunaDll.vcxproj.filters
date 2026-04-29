@@ -767,6 +767,9 @@
     <ClInclude Include="Misc\FileSystem.h">
       <Filter>Misc</Filter>
     </ClInclude>
+    <ClInclude Include="Misc\InternetSystem.h">
+      <Filter>Misc</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="LuaMain\LuaHelper.cpp">
@@ -1417,9 +1420,6 @@
     <ClCompile Include="libs\luabind-deboostified\src$filename">
       <Filter>libs\luabind-deboostified</Filter>
     </ClCompile>
-    <ClCompile Include="libs\luabind-deboostified\src$filename">
-      <Filter>libs\luabind-deboostified</Filter>
-    </ClCompile>
     <ClCompile Include="Rendering\WindowSizeHandler.cpp">
       <Filter>Rendering</Filter>
     </ClCompile>
@@ -1502,6 +1502,9 @@
       <Filter>Misc</Filter>
     </ClCompile>
     <ClCompile Include="Misc\KeyboardMouseSystem.cpp">
+      <Filter>Misc</Filter>
+    </ClCompile>
+    <ClCompile Include="Misc\InternetSystem.cpp">
       <Filter>Misc</Filter>
     </ClCompile>
     <ClCompile Include="Misc\FileSystem.cpp">
