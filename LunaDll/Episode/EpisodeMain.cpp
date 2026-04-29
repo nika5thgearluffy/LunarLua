@@ -124,7 +124,7 @@ void EpisodeMain::LaunchEpisode(std::wstring wldPathWS, int saveSlot, int player
         if(!nonAnsiCharsEpisode.empty())
         {
             std::wstring path = L"The episode path has characters which are not compatible with the system default Windows ANSI code page. This is not currently supported. Please rename or move your episode folder.\n\nUnsupported characters: " + nonAnsiCharsEpisode + L"\n\nPath:\n" + fullPthNoWorldFileWS;
-            MessageBoxW(0, path.c_str(), L"SMBX does not support episode path", MB_ICONERROR);
+            LunaMsgBox::ShowW(0, path.c_str(), L"SMBX does not support episode path", MB_ICONERROR);
             ExitSMBX2(1);
         }
 
@@ -132,28 +132,28 @@ void EpisodeMain::LaunchEpisode(std::wstring wldPathWS, int saveSlot, int player
         if(!nonAnsiCharsFullPath.empty())
         {
             std::wstring path = L"The world map filename has characters which are not compatible with the system default Windows ANSI code page. This is not currently supported. Please rename your world map file.\n\nUnsupported characters: " + nonAnsiCharsFullPath + L"\n\nPath:\n" + fullPathWS;
-            MessageBoxW(0, path.c_str(), L"SMBX could not load world map", MB_ICONERROR);
+            LunaMsgBox::ShowW(0, path.c_str(), L"SMBX could not load world map", MB_ICONERROR);
             ExitSMBX2(1);
         }
 
         if(!FileFormats::OpenWorldFileHeader(fullPathS, wldData) || !wldData.meta.ReadFileValid)
         {
             std::wstring path = L"The world map file header cannot be parsed.\n\nPath:\n" + fullPathWS;
-            MessageBoxW(0, path.c_str(), L"SMBX could not load world map", MB_ICONERROR);
+            LunaMsgBox::ShowW(0, path.c_str(), L"SMBX could not load world map", MB_ICONERROR);
             ExitSMBX2(1);
         }
 
         if(wldData.meta.RecentFormat != WorldData::SMBX64 && wldData.meta.RecentFormat != WorldData::PGEX)
         {
             std::wstring path = L"The world map file is in the wrong format. It must be saved in SMBX64 format.\n\nPath:\n" + fullPathWS;
-            MessageBoxW(0, path.c_str(), L"SMBX could not load world map", MB_ICONERROR);
+            LunaMsgBox::ShowW(0, path.c_str(), L"SMBX could not load world map", MB_ICONERROR);
             ExitSMBX2(1);
         }
     }
     else
     {
         std::wstring path = L"SMBX could not find the world map file \"" + fullPathWS + L"\"";
-        MessageBoxW(0, path.c_str(), L"SMBX could not load world map", MB_ICONERROR);
+        LunaMsgBox::ShowW(0, path.c_str(), L"SMBX could not load world map", MB_ICONERROR);
         ExitSMBX2(1);
     }
 
@@ -454,7 +454,7 @@ void EpisodeMain::LaunchEpisode(std::wstring wldPathWS, int saveSlot, int player
         else if(!fileExists(fullPathAndAutobootLvlS) && !Vars::NoMap)
         {
             std::wstring path = L"The level autoboot file can not be loaded. Does it even exist?\n\nAutoboot level:\n" + fullPathWS;
-            MessageBoxW(0, path.c_str(), L"SMBX could not load the autoboot level", MB_ICONERROR);
+            LunaMsgBox::ShowW(0, path.c_str(), L"SMBX could not load the autoboot level", MB_ICONERROR);
 
             // boot the map
             Vars::LevelSelect = true;
@@ -463,7 +463,7 @@ void EpisodeMain::LaunchEpisode(std::wstring wldPathWS, int saveSlot, int player
         else if(!fileExists(fullPathAndAutobootLvlS) && Vars::NoMap)
         {
             std::wstring path = L"The level hub file can not be loaded. Does it even exist?\n\nAutoboot level:\n" + fullPathWS + L"\n\nBecause there is no hub level, the game will now close after clicking OK. Please put in a valid hub level file in the episode before loading it.";
-            MessageBoxW(0, path.c_str(), L"SMBX could not load the hub level", MB_ICONERROR);
+            LunaMsgBox::ShowW(0, path.c_str(), L"SMBX could not load the hub level", MB_ICONERROR);
             ExitSMBX2(1);
         }
     }

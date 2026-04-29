@@ -149,7 +149,7 @@ void MusicManager::rebuildSoundCache()
     int countOfFailedSounds = 0;
     constexpr static int MaxFailedSoundToDisplay = 15;
 
-    for(int i=0; i<91; i++)
+    for(int i=0; i<max_soundeffect_count; i++)
     {
         if(sounds[i].channel != -1)
         {
@@ -555,6 +555,7 @@ void MusicManager::loadMusics(std::string path, std::string root, bool is_first_
         {
             musicList.read("total-level", new_max_lvl_music_id, new_max_lvl_music_id);
             musicList.read("total-world", new_max_wld_music_id, new_max_wld_music_id);
+            musicList.endGroup();
         }
 
         resizeMusicArrays(new_max_lvl_music_id, new_max_wld_music_id);
@@ -610,8 +611,8 @@ void MusicManager::loadMusics(std::string path, std::string root, bool is_first_
         {
             music_spc[i - 1].setPath(root + fileName);
         }
-        gMusicCountSpecial = MusicManager::defaultMusCountSpc;
     }
+    gMusicCountSpecial = MusicManager::defaultMusCountSpc;
 
     //Level music
     for(int i = 1; i <= max_lvl_music_id; i++)
@@ -703,12 +704,10 @@ std::string MusicManager::getMusicIndex(int type, int index)
 
 void MusicManager::loadCustomSounds(std::string episodePath, std::string levelCustomPath)
 {
-    initArraysSound();
     loadSounds(defaultSndINI, gAppPathUTF8 + "\\sound\\", false);
     loadSounds(episodePath+"\\sounds.ini", episodePath, false);
     if(!levelCustomPath.empty())
         loadSounds(levelCustomPath+"\\sounds.ini", levelCustomPath, false);
-    initArraysMusic();
     loadMusics(defaultMusINI, gAppPathUTF8, false);
     loadMusics(episodePath+"\\music.ini", episodePath, false);
     if(!levelCustomPath.empty())
@@ -719,10 +718,10 @@ void MusicManager::loadCustomSounds(std::string episodePath, std::string levelCu
 
 void MusicManager::resetSoundsToDefault()
 {
-    initArraysSound();
     loadSounds(defaultSndINI, gAppPathUTF8 + "\\", false);
-    initArraysMusic();
+    initArraysSound();
     loadMusics(defaultMusINI, gAppPathUTF8 + "\\", false);
+    initArraysMusic();
     rebuildSoundCache();
 }
 
@@ -757,6 +756,7 @@ void MusicManager::resizeMusicArrays(int new_max_lvl_music_id, int new_max_wld_m
         }
         max_lvl_music_id = new_max_lvl_music_id;
         music_lvl = new MusicEntry[new_max_lvl_music_id];
+        any_change = true;
     }
     if (new_max_wld_music_id != max_wld_music_id)
     {
@@ -765,8 +765,9 @@ void MusicManager::resizeMusicArrays(int new_max_lvl_music_id, int new_max_wld_m
         {
             delete[] music_wld;
         }
-        max_wld_music_id = new_max_lvl_music_id;
+        max_wld_music_id = new_max_wld_music_id;
         music_wld = new MusicEntry[new_max_wld_music_id];
+        any_change = true;
     }
     if (any_change)
     {
@@ -786,6 +787,7 @@ void MusicManager::resizeSoundArrays(int new_max_sound_id) {
         }
         max_soundeffect_count = new_max_sound_id;
         sounds = new ChunkEntry[new_max_sound_id];
+        any_change = true;
     }
     if (any_change)
     {

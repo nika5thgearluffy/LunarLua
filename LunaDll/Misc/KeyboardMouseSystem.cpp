@@ -65,7 +65,7 @@ void KeyboardSystem::GetAllRawKeyboards()
     {
         numberOfKeyboards = 0;
         error = "If you get this error, that means that a keyboard cannot be found for the engine. Please connect a keyboard to play SMBX2.";
-        MessageBoxA(NULL, error.c_str(), "Keyboard Error", NULL);
+        LunaMsgBox::ShowA(NULL, error.c_str(), "Keyboard Error", NULL);
     }
 
     PRAWINPUTDEVICELIST pRawInputDeviceList = NULL;
@@ -74,7 +74,7 @@ void KeyboardSystem::GetAllRawKeyboards()
     if(pRawInputDeviceList == NULL)
     {
         error = "If you get this error, that means that the memory cannot be allocated to generate the keyboard list for the engine. If you see this, contact Nika.";
-        MessageBoxA(NULL, error.c_str(), "Keyboard Error", NULL);
+        LunaMsgBox::ShowA(NULL, error.c_str(), "Keyboard Error", NULL);
     }
 
     int nResult = 0;
@@ -152,7 +152,7 @@ void KeyboardSystem::GetAllRawKeyboards()
     {
         numberOfKeyboards = 9;
         error = "Unfortunately, only 10 keyboards can be connected at maximum for the engine. Please disconnect an extra keyboard, then refresh the device status again.";
-        MessageBoxA(NULL, error.c_str(), "Keyboard Error", NULL);
+        LunaMsgBox::ShowA(NULL, error.c_str(), "Keyboard Error", NULL);
     }
 
     // Critical errors, in case
@@ -162,7 +162,7 @@ void KeyboardSystem::GetAllRawKeyboards()
         if (GetLastError() != ERROR_INSUFFICIENT_BUFFER)
         {
             error = "An error has occured while getting keyboard information. The error code is " + std::to_string(GetLastError()) + ". Please check out https://learn.microsoft.com/en-us/windows/win32/debug/system-error-codes for a complete list of error codes to see what went wrong.";
-            MessageBoxA(NULL, error.c_str(), "Keyboard Error", NULL);
+            LunaMsgBox::ShowA(NULL, error.c_str(), "Keyboard Error", NULL);
         }
         free(pRawInputDeviceList);
     }
@@ -252,7 +252,7 @@ void MouseSystem::GetAllRawMouses()
     if(pRawInputDeviceList == NULL)
     {
         error = "If you get this error, that means that the memory cannot be allocated to generate the mouse list for the engine. If you see this, contact Nika.";
-        MessageBoxA(NULL, error.c_str(), "Mouse Error", NULL);
+        LunaMsgBox::ShowA(NULL, error.c_str(), "Mouse Error", NULL);
     }
 
     int nResult = 0;
@@ -328,7 +328,7 @@ void MouseSystem::GetAllRawMouses()
     {
         numberOfMouses = 9;
         error = "Unfortunately, only 10 mice can be connected at maximum for the engine. Please disconnect an extra mouse, then refresh the device status again.";
-        MessageBoxA(NULL, error.c_str(), "Mouse Error", NULL);
+        LunaMsgBox::ShowA(NULL, error.c_str(), "Mouse Error", NULL);
     }
 
     // Critical errors, in case
@@ -338,7 +338,7 @@ void MouseSystem::GetAllRawMouses()
         if (GetLastError() != ERROR_INSUFFICIENT_BUFFER)
         {
             error = "An error has occured while getting mouse information. The error code is " + std::to_string(GetLastError()) + ". Please check out https://learn.microsoft.com/en-us/windows/win32/debug/system-error-codes for a complete list of error codes to see what went wrong.";
-            MessageBoxA(NULL, error.c_str(), "Mouse Error", NULL);
+            LunaMsgBox::ShowA(NULL, error.c_str(), "Mouse Error", NULL);
         }
         free(pRawInputDeviceList);
     }
