@@ -349,6 +349,32 @@ int MouseSystem::GetCount()
     return (int)numberOfMouses;
 }
 
+int MouseSystem::GetMouseIDListing(int id)
+{
+    for(int i = 1; i <= MouseSystem::GetCount(); i++)
+    {
+        if(mouseDeviceList[i - 1].mouseID == id)
+        {
+            return i;
+        }
+    }
+    return -1;
+}
+
+int MouseSystem::GetMouseToClickWith(HANDLE hDevice)
+{
+    int finalKey = -1;
+    int hDeviceInt = (int)hDevice;
+    for(int i = 1; i <= MouseSystem::GetCount(); i++)
+    {
+        if(mouseDeviceList[i - 1].mouseID == hDeviceInt)
+        {
+            finalKey = mouseDeviceList[i - 1].mouseID;
+        }
+    }
+    return finalKey;
+}
+
 // -----------
 // **DEVICES**
 // -----------
@@ -358,6 +384,7 @@ bool KeyboardMouseSystem::RegisterDevices()
     // [CLAUDE AI WAS USED IN THIS PART OF THE CODE]
     KeyboardMouseSystem::RefreshDevices();
 
+    // -- Register Keyboards --
     UINT realKeyCount = KeyboardSystem::GetCount();  // not static
     RAWINPUTDEVICE* rid = new RAWINPUTDEVICE[realKeyCount];
 
@@ -373,6 +400,26 @@ bool KeyboardMouseSystem::RegisterDevices()
     int success = RegisterRawInputDevices(rid, realKeyCount, sizeof(RAWINPUTDEVICE));
 
     delete[] rid;
+
+    // -- Register Mouses --
+
+    UINT realMiceCount = MouseSystem::GetCount();  // not static
+    RAWINPUTDEVICE* rid2 = new RAWINPUTDEVICE[realMiceCount];
+
+    for(UINT i = 0; i < realMiceCount; i++)
+    {
+        RAWINPUTDEVICE ridMouse = {};
+        ridMouse.usUsagePage = 0x01;
+        ridMouse.usUsage = 0x02;  // HID_USAGE_GENERIC_MOUSE
+        ridMouse.dwFlags = RIDEV_INPUTSINK;
+        ridMouse.hwndTarget = gMainWindowHwnd;
+    }
+
+    // cbSize is the size of a single RAWINPUTDEVICE, not the total
+    int success = RegisterRawInputDevices(rid2, realMiceCount, sizeof(RAWINPUTDEVICE));
+
+    delete[] rid2;
+
     return success;
 }
 

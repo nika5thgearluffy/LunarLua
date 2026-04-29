@@ -94,6 +94,8 @@ namespace MouseSystem{
     luabind::object GetInfoFromIdx(int index, lua_State *L);
     void GetAllRawMouses();
     int GetCount();
+    int GetMouseIDListing(int id);
+    int GetMouseToClickWith(HANDLE hDevice);
 };
 
 /***********************/

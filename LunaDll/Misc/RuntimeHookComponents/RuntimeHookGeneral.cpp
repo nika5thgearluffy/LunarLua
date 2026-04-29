@@ -1082,6 +1082,24 @@ LRESULT CALLBACK HandleWndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lPara
                 {
                     return DefWindowProcW(hwnd, uMsg, wParam, lParam);
                 }
+
+                // Get mouse devices
+                // [CLAUDE ID WAS USED FOR THIS PART OF THE CODE]
+                /*UINT dwSize;
+                GetRawInputData((HRAWINPUT)lParam, RID_INPUT, NULL, &dwSize, sizeof(RAWINPUTHEADER));
+                
+                LPBYTE lpb = new BYTE[dwSize];
+                GetRawInputData((HRAWINPUT)lParam, RID_INPUT, lpb, &dwSize, sizeof(RAWINPUTHEADER));
+                
+                RAWINPUT* raw = (RAWINPUT*)lpb;
+                
+                if (raw->header.dwType == RIM_TYPEMOUSE)
+                {
+                    HANDLE hDevice = raw->header.hDevice;
+                    int mouseID = MouseSystem::GetMouseToClickWith(hDevice);
+
+                    RAWMOUSE& mouse = raw->data.mouse;
+                }*/
                 return 0;
             }
             case WM_INPUT_DEVICE_CHANGE:
