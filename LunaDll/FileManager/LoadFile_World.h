@@ -4,16 +4,21 @@
 #include <vector>
 #include <string>
 
-struct WorldMusicBoxes_Entries
+struct WorldMusicBoxes_Struct
 {
     std::string customMusicFile;
+
+    WorldMusicBoxes_Struct()
+    {
+        Reset();
+    }
+
+    void Reset()
+    {
+        customMusicFile = "";
+    }
 };
 
-struct WorldMusicBoxes_List
-{
-    std::vector<WorldMusicBoxes_Entries> entries;
-};
-
-extern WorldMusicBoxes_List WorldMusicBoxes;
+extern WorldMusicBoxes_Struct WorldMusicBoxes[999];
 
 #endif

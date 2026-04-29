@@ -5066,16 +5066,11 @@ void __stdcall runtimeHookUpdateBGOMomentum(int bgoId, int layerId) {
 static void __stdcall runtimeHookHandleMapMusicBoxCollisionInternal(int musicBoxIdx)
 {
     SMBXMusicbox* musicBox = SMBXMusicbox::GetRaw(musicBoxIdx);
-    if (GM_WORLD_CURRENT_MUSIC != musicBox->id) {
+    if (GM_WORLD_CURRENT_MUSIC != musicBox->id)
+    {
         if (musicBox->id != 17)
         {
             native_playMusic(&(musicBox->id)); // sets GM_WORLD_CURRENT_MUSIC
-        }
-        else
-        {
-            //PGE_MusPlayer::MUS_stopMusic();
-            //PGE_MusPlayer::MUS_openFile(WorldMusicBoxes.entries[musicBoxIdx].customMusicFile.c_str());
-            //PGE_MusPlayer::MUS_playMusic();
         }
     }
 }

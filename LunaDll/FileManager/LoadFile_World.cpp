@@ -22,7 +22,7 @@
 #include "CustomParamStore.h"
 
 
-WorldMusicBoxes_List WorldMusicBoxes;
+WorldMusicBoxes_Struct WorldMusicBoxes[999];
 
 
 WorldData worldData;
@@ -278,7 +278,7 @@ void LunaLua_loadWorldFile(WorldData& outData, std::wstring fullPath, bool isVal
         obj->momentum.width = 32;
         obj->momentum.height = 32;
         std::string musicFile = music.music_file;
-        //WorldMusicBoxes.entries[i].customMusicFile = musicFile;
+        WorldMusicBoxes[i].customMusicFile = musicFile;
     }
 
     // UNIMPLEMENTED FIELDS:
