@@ -655,50 +655,64 @@ void MusicManager::changeMusicIndex(int type, int index, std::string fileName)
     }
 
     // World music
-    if (index == 1)
+    if (type == 1)
     {
-        if (file_existsX(clearTrackNumber(fileName)))
+        if (file_existsX(clearTrackNumber(fileName)) && (index >= 1 || index <= max_wld_music_id))
         {
-            music_wld[type - 1].setPath(fileName);
+            music_wld[index - 1].setPath(fileName);
         }
     }
-    else if (index == 2) // Special music
+    else if (type == 2) // Special music
     {
-        if (file_existsX(clearTrackNumber(fileName)))
+        if (file_existsX(clearTrackNumber(fileName)) && (index >= 1 || index <= MusicManager::defaultMusCountSpc))
         {
-            music_spc[type - 1].setPath(fileName);
+            music_spc[index - 1].setPath(fileName);
         }
     }
-    else if (index == 3) // Level music
+    else if (type == 3) // Level music
     {
-        if (file_existsX(clearTrackNumber(fileName)))
+        if (file_existsX(clearTrackNumber(fileName)) && (index >= 1 || index <= max_lvl_music_id))
         {
-            music_lvl[type - 1].setPath(fileName);
+            music_lvl[index - 1].setPath(fileName);
         }
     }
 }
 
+// [CLAUDE AI IS USED FOR THIS PART OF THE CODE]
 std::string MusicManager::getMusicIndex(int type, int index)
 {
     // Don't do beyond/below the music types
-    if (type < 1 && type > 3)
+    if (type < 1 || type > 3)
     {
         return "";
     }
 
-    // World music
-    if (index == 1)
+    if (type == 1) // World music
     {
-        return music_wld[type - 1].fullPath;
+        if (index < 1 || index > max_wld_music_id)
+        {
+            return "";
+        }
+        return music_wld[index - 1].fullPath;
     }
-    else if (index == 2) // Special music
+    else if (type == 2) // Special music
     {
-        return music_spc[type - 1].fullPath;
+        if (index < 1 || index > MusicManager::defaultMusCountSpc)
+        {
+            return "";
+        }
+        return music_spc[index - 1].fullPath;
     }
-    else if (index == 3) // Level music
+    else if (type == 3) // Level music
     {
-        return music_lvl[type - 1].fullPath;
+        if (index < 1 || index > max_lvl_music_id)
+        {
+            return "";
+        }
+        return music_lvl[index - 1].fullPath;
     }
+
+    return "";
 }
 
 
