@@ -10,9 +10,9 @@
 #include "../../GlobalFuncs.h"
 
 bool gPlayerInputOverhaulToggled = true;
-NewSMBXInputKeyboard g_playerKeyboardInputs[199];
-NewSMBXInputController g_playerControllerInputs[199];
-NewSMBXInput g_playerInputPressing[199];
+NewSMBXInputKeyboard g_playerKeyboardInputs[1];
+NewSMBXInputController g_playerControllerInputs[1];
+NewSMBXInput g_playerInputPressing[1];
 
 PlayerInput::PlayerInput()
 {
@@ -21,8 +21,6 @@ PlayerInput::PlayerInput()
 
     // Set to disable all the legacy player keys
     gDisablePlayerKeysLegacy = true;
-    gPlayerInputOverhaulToggled = true;
-    gDisablePlayerMovementAboveThree = true;
 }
 
 PlayerInput::~PlayerInput() {}
@@ -32,15 +30,11 @@ bool PlayerInput::Toggle(bool enable)
     if(enable)
     {
         gDisablePlayerKeysLegacy = false;
-        gPlayerInputOverhaulToggled = true;
-        gDisablePlayerMovementAboveThree = true;
         return true;
     }
     else
     {
         gDisablePlayerKeysLegacy = true;
-        gPlayerInputOverhaulToggled = false;
-        gDisablePlayerMovementAboveThree = false;
         return false;
     }
 }
@@ -529,7 +523,7 @@ void PlayerInput::RefreshAllInputs(bool isWritten, bool isRead)
     if(file_existsX(appDirToIni))
     {
         IniProcessing inputConfig(appDirToIni);
-        for(int i = 0; i <= 199; i++)
+        for(int i = 0; i <= 1; i++)
         {
             if(inputConfig.beginGroup("Player " + std::to_string(i + 1) + " Controls"));
             {
@@ -619,7 +613,7 @@ void PlayerInput::ResetAllInputs()
     {
         std::wstring appDirToIniWS = Str2WStr(appDirToIni);
         IniProcessing inputConfig(appDirToIni);
-        for(int i = 0; i <= 199; i++)
+        for(int i = 0; i <= 1; i++)
         {
             g_playerKeyboardInputs[i].Reset();
             g_playerControllerInputs[i].Reset();

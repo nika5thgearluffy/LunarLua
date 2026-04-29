@@ -246,3 +246,5 @@ extern std::wstring gUserFilesPathWCHAR;
 
 extern HDEVNOTIFY hDevNotify;
 extern HDEVNOTIFY hMonitorNotify;
+
+extern bool gDisablePlayerKeysLegacy;

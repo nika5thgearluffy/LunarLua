@@ -148,9 +148,9 @@ struct NewSMBXInputController
 };
 
 //0 = 1, 199 = 200
-extern NewSMBXInputKeyboard g_playerKeyboardInputs[199];
-extern NewSMBXInputController g_playerControllerInputs[199];
-extern NewSMBXInput g_playerInputPressing[199];
+extern NewSMBXInputKeyboard g_playerKeyboardInputs[1];
+extern NewSMBXInputController g_playerControllerInputs[1];
+extern NewSMBXInput g_playerInputPressing[1];
 
 class PlayerInput {
     public:

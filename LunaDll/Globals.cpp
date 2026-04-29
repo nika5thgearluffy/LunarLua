@@ -172,3 +172,6 @@ std::wstring gUserFilesPathWCHAR;
 // Needed for USB detection and exiting SMBX2
 HDEVNOTIFY hDevNotify;
 HDEVNOTIFY hMonitorNotify;
+
+// Set this to true to use the new system of player inputs.
+bool gDisablePlayerKeysLegacy = false;

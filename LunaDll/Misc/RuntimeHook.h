@@ -664,6 +664,8 @@ void __stdcall runtimeHookUpdateLayersDuringEffect();
 void __stdcall runtimeHookOnLayerStop(int currentLayerId);
 bool __stdcall runtimeHookGetOffVineCondition();
 
+void __stdcall runtimeHookHandleMapMusicBoxCollision(void);
+
 void __stdcall runtimeHookPlayerKillLava(short* playerIdxPtr);
 void __stdcall runtimeHookPlayerKillLavaSolidExit(short* playerIdxPtr);
 void __stdcall runtimeHookPlayerCountCollisionsForWeakLava(short* playerIdxPtr);

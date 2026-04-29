@@ -568,6 +568,12 @@ void MusicManager::loadMusics(std::string path, std::string root, bool is_first_
     //World music
     for(int i = 1; i <= max_wld_music_id; i++)
     {
+        if (i == 17)
+        {
+            // Skip loading audio for custom music index
+            continue;
+        }
+
         std::string head = "world-music-" + i2str(i);
         std::string fileName;
 

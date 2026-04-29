@@ -28,6 +28,7 @@
 #include "../../SMBXInternal/Blocks.h"
 #include "../../SMBXInternal/Level.h"
 #include "../../SMBXInternal/Sound.h"
+#include "../../SMBXInternal/MusicBox.h"
 
 #include "../PerfTracker.h"
 
@@ -844,7 +845,10 @@ extern void __stdcall runtimeHookUpdateInput()
     if (gMainWindowFocused || !gStartupSettings.runWhenUnfocused)
     {
         // Only run player input update if focused, if we're able to run at all when unfocused
-        updateInput_Orig();
+        if (!gDisablePlayerKeysLegacy)
+        {
+            updateInput_Orig();
+        }
     }
     else
     {
@@ -5055,6 +5059,40 @@ void __stdcall runtimeHookUpdateBGOMomentum(int bgoId, int layerId) {
     // Update BGO speed
     bgoObj->momentum.speedX = layerObj->xSpeed;
     bgoObj->momentum.speedY = layerObj->ySpeed;
+}
+
+static void __stdcall runtimeHookHandleMapMusicBoxCollisionInternal(int musicBoxIdx)
+{
+    SMBXMusicbox* musicBox = SMBXMusicbox::GetRaw(musicBoxIdx);
+    if (GM_WORLD_CURRENT_MUSIC != musicBox->id) {
+        if (musicBox->id != 17)
+        {
+            native_playMusic(&(musicBox->id)); // sets GM_WORLD_CURRENT_MUSIC
+        }
+        else
+        {
+            
+        }
+    }
+}
+
+__declspec(naked) void __stdcall runtimeHookHandleMapMusicBoxCollision(void)
+{
+    __asm {
+        push eax
+        push ecx
+        push edx
+        push esi
+
+        push esi // Music box index
+        call runtimeHookHandleMapMusicBoxCollisionInternal
+
+        pop esi
+        pop edx
+        pop ecx
+        pop eax
+        ret
+    }
 }
 
 static void __stdcall runtimeHookStopAllBgos() {
