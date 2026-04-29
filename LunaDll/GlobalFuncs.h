@@ -195,3 +195,7 @@ std::string getParentDirectory(std::string str);
 
 extern int StartSMBX2Editor();
 extern void ExitSMBX2(int processCode);
+
+std::string DownloadURL(const std::string& url);
+void Internet_startDownload(const std::string& url, const std::string& savePath);
+void Internet_poll();

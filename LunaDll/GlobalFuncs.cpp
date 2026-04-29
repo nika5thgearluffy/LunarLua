@@ -21,6 +21,8 @@
 #include <mutex>
 #include <cstddef>
 #include <experimental/filesystem>
+#include <wininet.h>
+#include <future>
 
 #include "Misc/MiscFuncs.h"
 #include "Input/Input.h"
@@ -36,6 +38,8 @@
 #include "SMBXInternal/Functions.h"
 
 #include "Episode/EpisodeMain.h"
+
+#pragma comment(lib, "wininet.lib")
 
 void splitStr(std::vector<std::string>& dest, const std::string& str, const char* separator)
 {
@@ -1310,4 +1314,96 @@ void ExitSMBX2(int processCode)
     }
     // Now finally exit
     _exit(processCode);
+}
+
+// This downloads a file and parses it as a string
+// [CLAUDE AI WAS USED FOR THIS PART OF THE CODE]
+std::string DownloadURL(const std::string& url)
+{
+    std::string result;
+
+    HINTERNET hInternet = InternetOpenA("LunarLua", INTERNET_OPEN_TYPE_DIRECT, NULL, NULL, 0);
+    if (!hInternet)
+        return result;
+
+    HINTERNET hConnect = InternetOpenUrlA(hInternet, url.c_str(), NULL, 0, 
+        INTERNET_FLAG_RELOAD | INTERNET_FLAG_NO_CACHE_WRITE, 0);
+    if (!hConnect)
+    {
+        InternetCloseHandle(hInternet);
+        return result;
+    }
+
+    char buffer[4096];
+    DWORD bytesRead = 0;
+    while (InternetReadFile(hConnect, buffer, sizeof(buffer), &bytesRead) && bytesRead > 0)
+    {
+        result.append(buffer, bytesRead);
+    }
+
+    // Unload/cleanup
+    InternetCloseHandle(hConnect);
+    InternetCloseHandle(hInternet);
+
+    return result;
+}
+
+#include <future>
+
+static std::future<std::string> gDownloadFuture;
+
+// [CLAUDE AI WAS USED FOR THIS PART OF THE CODE]
+void Internet_startDownload(const std::string& url, const std::string& savePath = "")
+{
+    if (gDownloadPending)
+        return;
+
+    gDownloadFuture = std::async(std::launch::async, [url, savePath]() {
+        std::string result = DownloadURL(url);
+
+        if (!savePath.empty() && !result.empty())
+        {
+            std::ofstream file(savePath);
+            if (file.is_open())
+            {
+                file << result;
+                file.close();
+            }
+        }
+
+        return result;
+    });
+
+    if (gLunaLua.isValid())
+    {
+        std::shared_ptr<Event> downloadStart = std::make_shared<Event>("onDownloadStart", false);
+        downloadStart->setDirectEventName("onDownloadComplete");
+        downloadStart->setLoopable(false);
+        gLunaLua.callEvent(downloadStart, url, savePath);
+    }
+
+    gDownloadPending = true;
+}
+
+// Call this every frame from your game tick
+// [CLAUDE AI WAS USED FOR THIS PART OF THE CODE]
+void Internet_poll()
+{
+    if (!gDownloadPending)
+        return;
+
+    // Check if download is done without blocking
+    if (gDownloadFuture.wait_for(std::chrono::seconds(0)) == std::future_status::ready)
+    {
+        std::string result = gDownloadFuture.get();
+        gDownloadPending = false;
+
+        if (gLunaLua.isValid())
+        {
+            std::shared_ptr<Event> downloadComplete = std::make_shared<Event>("onDownloadComplete", false);
+            downloadComplete->setDirectEventName("onDownloadComplete");
+            downloadComplete->setLoopable(false);
+            gLunaLua.callEvent(downloadComplete, result);
+        }
+    }
 }

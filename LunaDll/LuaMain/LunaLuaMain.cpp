@@ -1125,6 +1125,14 @@ void CLunaLua::bindAll()
                 // Language.get() - Gets a language code for use of detecting a default language on an episode.
                 def("get", &GetOSLanguage)
             ],
+            
+            namespace_("Internet")[
+                // Internet.downloadAndParse(url[, filePath]) - Downloads and parses a file as a string. This can be used to retrieve JSON files and such. Optionally, you can also save the file as well (lockdown.lua will take care of only saving files to possible places)
+                def("startDownload", (void(*)(const std::string&))&Internet_startDownload),
+                def("startDownload", (void(*)(const std::string&, const std::string&))&Internet_startDownload),
+                // Internet.isDownloading() - If the game is downloading a file, this is true.
+                def("isDownloading", (bool(*)())&gDownloadPending)
+            ],
 
             namespace_("Editor")[
                 // Editor.getItem() - Gets an item that is selected from the SMBX2R Editor. Only runs on the editor.

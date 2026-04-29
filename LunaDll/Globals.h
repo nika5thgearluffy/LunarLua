@@ -248,3 +248,5 @@ extern HDEVNOTIFY hDevNotify;
 extern HDEVNOTIFY hMonitorNotify;
 
 extern bool gDisablePlayerKeysLegacy;
+
+extern bool gDownloadPending;

@@ -175,3 +175,6 @@ HDEVNOTIFY hMonitorNotify;
 
 // Set this to true to use the new system of player inputs.
 bool gDisablePlayerKeysLegacy = false;
+
+// Set to true for pending a download.
+bool gDownloadPending = false;

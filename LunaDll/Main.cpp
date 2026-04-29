@@ -390,6 +390,9 @@ void OnLevelHUDDraw(int cameraIdx) {
 
 // This code will run every frame everywhere, making for easy testing
 void TestFrameCode() {
+    // Run the poll for downloading internet files
+    Internet_poll();
+
     /// DEBUG STUFF//
 
     //- Uncomment to test variable bank
