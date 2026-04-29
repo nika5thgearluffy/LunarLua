@@ -56,7 +56,9 @@ namespace LuaProxy
         double  MusicGetTempo();
         double  MusicGetPitch();
         double  MusicGetSpeed();
+        std::string MusicGet(bool withArguments);
         std::string MusicGet();
+        std::string MusicGetArguments();
         std::string MusicGetIndex(int type, int index);
         void MusicChangeIndex(int type, int index, std::string fileName);
         luabind::object MusicCount(lua_State *L);

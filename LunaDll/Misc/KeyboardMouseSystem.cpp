@@ -416,7 +416,7 @@ bool KeyboardMouseSystem::RegisterDevices()
     }
 
     // cbSize is the size of a single RAWINPUTDEVICE, not the total
-    int success = RegisterRawInputDevices(rid2, realMiceCount, sizeof(RAWINPUTDEVICE));
+    int success2 = RegisterRawInputDevices(rid2, realMiceCount, sizeof(RAWINPUTDEVICE));
 
     delete[] rid2;
 
