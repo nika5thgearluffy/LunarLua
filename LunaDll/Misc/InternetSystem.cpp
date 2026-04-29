@@ -92,6 +92,17 @@ void Internet::StartDownload(const std::string& url, const std::string& savePath
     gDownloadFilename = GetFilenameFromURL(url);
     gDownloadProgress = 0;
 
+    // Call onDownloadStart event
+    if (gLunaLua.isValid())
+    {
+        std::shared_ptr<Event> downloadStart = std::make_shared<Event>("onDownloadStart", false);
+        downloadStart->setDirectEventName("onDownloadStart");
+        downloadStart->setLoopable(false);
+        gLunaLua.callEvent(downloadStart, url, savePath);
+    }
+
+    // The way to set up downloading without hanging the engine is as such.
+    // That way, files can be downloaded while the game runs!
     gDownloadFuture = std::async(std::launch::async, [url, savePath]() {
         std::string result = Internet::DownloadURL(url);
 
@@ -107,15 +118,6 @@ void Internet::StartDownload(const std::string& url, const std::string& savePath
 
         return result;
     });
-
-    if (gLunaLua.isValid())
-    {
-        std::shared_ptr<Event> downloadStart = std::make_shared<Event>("onDownloadStart", false);
-        downloadStart->setDirectEventName("onDownloadStart");
-        downloadStart->setLoopable(false);
-        gLunaLua.callEvent(downloadStart, url, savePath);
-    }
-    
 }
 
 // Call this every frame from your game tick
