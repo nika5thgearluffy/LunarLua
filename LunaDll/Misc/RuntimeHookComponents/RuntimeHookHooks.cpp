@@ -45,6 +45,8 @@
 #include "../../Misc/VB6RNG.h"
 #include "../../SMBXInternal/Types.h"
 
+#include "../../FileManager/LoadFile_World.h"
+
 #include "../../Episode/EpisodeMain.h"
 #include "../../SMBXInternal/Overworld.h"
 
@@ -5071,7 +5073,9 @@ static void __stdcall runtimeHookHandleMapMusicBoxCollisionInternal(int musicBox
         }
         else
         {
-            
+            //PGE_MusPlayer::MUS_stopMusic();
+            //PGE_MusPlayer::MUS_openFile(WorldMusicBoxes.entries[musicBoxIdx].customMusicFile.c_str());
+            //PGE_MusPlayer::MUS_playMusic();
         }
     }
 }

@@ -151,9 +151,8 @@ void ErrorReport::SnapshotError(EXCEPTION_RECORD* exception, CONTEXT* context)
 
     fullErrorDescription << "\n== Reporting ==\n";
     fullErrorDescription << "If you like to help us finding the error then please post this log at:\n";
-    fullErrorDescription << "* The Codehaus Discord server or\n";
-    fullErrorDescription << "* https://www.smbxgame.com/forums/viewforum.php?f=35 or\n";
-    fullErrorDescription << "* https://talkhaus.raocow.com/viewforum.php?f=36\n";
+    fullErrorDescription << "* The LunarLua issues on our repo at:\n";
+    fullErrorDescription << "* https://github.com/nika5thgearluffy/LunarLua/issues \n";
     fullErrorDescription << "\n";
 
     ErrorReportVars::lastErrDesc = fullErrorDescription.str();

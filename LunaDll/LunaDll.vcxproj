@@ -129,6 +129,7 @@
     <ClInclude Include="FileManager\CustomParamStore.h" />
     <ClInclude Include="FileManager\SaveFile.h" />
     <ClInclude Include="FileManager\SMBXFileManager.h" />
+    <ClInclude Include="FileManager\LoadFile_World.h" />
     <ClInclude Include="Input\LunaGameController.h" />
     <ClInclude Include="Input\MouseHandler.h" />
     <ClInclude Include="libs\DirManager\dirman.h" />

@@ -752,6 +752,9 @@
     <ClInclude Include="FileManager\SaveFile.h">
       <Filter>FileManager</Filter>
     </ClInclude>
+    <ClInclude Include="FileManager\LoadFile_World.h">
+      <Filter>FileManager</Filter>
+    </ClInclude>
     <ClInclude Include="Episode\EpisodeMain.h">
       <Filter>Episode</Filter>
     </ClInclude>

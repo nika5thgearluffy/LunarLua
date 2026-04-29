@@ -3,6 +3,8 @@
 #include <thread>
 #include <fmt/fmt_format.h>
 
+#include "LoadFile_World.h"
+
 #include "../Defines.h"
 #include "../Globals.h"
 #include "../GlobalFuncs.h"
@@ -18,6 +20,9 @@
 #include "../../Rendering/ImageLoader.h"
 
 #include "CustomParamStore.h"
+
+
+WorldMusicBoxes_List WorldMusicBoxes;
 
 
 WorldData worldData;
@@ -272,6 +277,8 @@ void LunaLua_loadWorldFile(WorldData& outData, std::wstring fullPath, bool isVal
         obj->momentum.y = music.y;
         obj->momentum.width = 32;
         obj->momentum.height = 32;
+        std::string musicFile = music.music_file;
+        //WorldMusicBoxes.entries[i].customMusicFile = musicFile;
     }
 
     // UNIMPLEMENTED FIELDS:
