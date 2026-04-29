@@ -312,6 +312,11 @@ void LunaLua_loadWorldFile(WorldData& outData, std::wstring fullPath, bool isVal
 
     }
 
+    auto player = SMBXOverworld::get();
+    // These are not initalized, so set them
+    player->momentum.width = 32;
+    player->momentum.height = 32;
+
     if (hasUnrecognizedConfigPack)
     {
         std::wstring m = fmt::format(L"This world file was created in an editor that was using an unrecognized config pack. "
