@@ -136,7 +136,19 @@ void FreeImageData::init(int width, int height, BYTE* pData, ColorMode color /*=
         return;
 
     BYTE* bitmapData = FreeImage_GetBits(m_bitmap);
-    memcpy(bitmapData, pData, width * height * (bpp / 8));
+    m_bitmap = FreeImage_Allocate(width, height, bpp, redMask, greenMask, blueMask);
+
+    // [CLAUDE AI WAS USED FOR THIS PART OF THE CODE]
+    if (!m_bitmap)
+        return;
+
+    int rowBytes = width * (bpp / 8);
+    for (int y = 0; y < height; y++)
+    {
+        BYTE* src = (BYTE*)pData + y * rowBytes;
+        BYTE* dst = FreeImage_GetScanLine(m_bitmap, y);
+        memcpy(dst, src, rowBytes);
+    }
 }
 
 void FreeImageData::reset()

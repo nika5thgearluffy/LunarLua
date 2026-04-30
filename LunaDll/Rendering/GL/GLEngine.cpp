@@ -272,8 +272,18 @@ bool GLEngine::GenerateScreenshot(uint32_t x, uint32_t y, uint32_t w, uint32_t h
     header.biClrUsed = 0;
     header.biClrImportant = 0;
 
+    // [CLAUDE AI WAS USED IN THIS PART OF THE CODE]
+    // Save and set alignment
+    GLint prevAlignment;
+    glGetIntegerv(GL_PACK_ALIGNMENT, &prevAlignment);
+    glPixelStorei(GL_PACK_ALIGNMENT, 1);
+
     // Read pixels
-    glReadPixels(x, y, w, h, GL_BGR, GL_UNSIGNED_BYTE, pPixelData);
+    glReadPixels(x, y, w, h, GL_RGB, GL_UNSIGNED_BYTE, pPixelData);
+
+    // Restore alignment
+    glPixelStorei(GL_PACK_ALIGNMENT, prevAlignment);
+
     if (glGetError() != GL_NO_ERROR) {
         GlobalFree(handle);
         handle = nullptr;
@@ -281,29 +291,43 @@ bool GLEngine::GenerateScreenshot(uint32_t x, uint32_t y, uint32_t w, uint32_t h
     }
 
     // Flip pixels
+    // [CLAUDE AI WAS USED IN THIS PART OF THE CODE]
     int wBytes = 3 * static_cast<int>(w);
     for (int y = 0; y < static_cast<int>(h) / 2; y++)
     {
         int y2 = h - 1 - y;
-        BYTE* row1 = &pPixelData[y * w * 3];
-        BYTE* row2 = &pPixelData[y2 * w * 3];
-        for (int i = 0; i < wBytes; i++)
+        BYTE* row1 = &pPixelData[y * wBytes];
+        BYTE* row2 = &pPixelData[y2 * wBytes];
+        for (int i = 0; i < wBytes; i += 3)
         {
-            BYTE tmp = row1[i];
-            row1[i] = row2[i];
-            row2[i] = tmp;
+            // Swap rows AND swap R/B channels
+            BYTE r = row1[i];
+            BYTE g = row1[i+1];
+            BYTE b = row1[i+2];
+            row1[i]   = row2[i+2];  // R = other row's B
+            row1[i+1] = row2[i+1];  // G = other row's G
+            row1[i+2] = row2[i];    // B = other row's R
+            row2[i]   = b;
+            row2[i+1] = g;
+            row2[i+2] = r;
         }
     }
 
     bool releaseMem = true;
     if (mScreenshotCallback) {
-        bool releaseMem = mScreenshotCallback(handle, &header, (void*)pPixelData, mHwnd);
+        releaseMem = mScreenshotCallback(handle, &header, (void*)pPixelData, mHwnd);
     }
     else
     {
         GlobalFree(handle);
         handle = nullptr;
         return false;
+    }
+
+    // [CLAUDE AI WAS USED IN THIS PART OF THE CODE]
+    if (releaseMem) {
+        GlobalFree(handle);
+        handle = nullptr;
     }
 
     mScreenshotCallback = nullptr;

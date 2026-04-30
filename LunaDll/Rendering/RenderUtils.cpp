@@ -37,7 +37,7 @@ std::tuple<std::vector<HBITMAP>, int> LoadAnimatedGfx(const std::wstring& filena
 void GenerateScreenshot(const std::wstring& fName, const BITMAPINFOHEADER& header, void* pData)
 {
     FreeImageData screenshotFile;
-    screenshotFile.init(header.biWidth, header.biHeight, (BYTE*)pData);
+    screenshotFile.init(header.biWidth, header.biHeight, (BYTE*)pData, FreeImageData::ColorMode::COLORMODE_RGB);
     screenshotFile.saveFile(WStr2StrA(fName));
 }
 
