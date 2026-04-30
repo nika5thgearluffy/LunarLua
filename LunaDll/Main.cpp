@@ -339,6 +339,9 @@ int OnLvlLoad() {
 // *EXPORT* Test Func -- Run once per gameplay frame
 int TestFunc()
 {
+    // Run the poll for downloading internet files
+    InternetSystem::Poll();
+
     // Clean up
     gAutoMan.ClearExpired();
     gSavedVarBank.CheckSaveDeletion();
@@ -391,9 +394,6 @@ void OnLevelHUDDraw(int cameraIdx) {
 
 // This code will run every frame everywhere, making for easy testing
 void TestFrameCode() {
-    // Run the poll for downloading internet files
-    Internet::Poll();
-
     /// DEBUG STUFF//
 
     //- Uncomment to test variable bank

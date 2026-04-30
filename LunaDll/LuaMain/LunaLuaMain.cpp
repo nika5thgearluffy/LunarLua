@@ -1128,15 +1128,18 @@ void CLunaLua::bindAll()
             ],
             
             namespace_("Internet")[
-                // Internet.downloadAndParse(url[, filePath]) - Downloads and parses a file as a string. This can be used to retrieve JSON files and such. Optionally, you can also save the file as well (lockdown.lua will take care of only saving files to possible places)
-                def("downloadFile", (void(*)(const std::string&))&Internet::StartDownload),
-                def("downloadFile", (void(*)(const std::string&, const std::string&))&Internet::StartDownload),
+                // Internet.downloadAndParse(url, filePath) - Downloads and parses a file as a string. This can be used to retrieve JSON files and such.
+                def("downloadFile", (void(*)(std::string, std::string))&InternetSystem::StartDownload),
                 // Internet.isDownloading() - If the game is downloading a file, this is true.
-                def("isDownloading", (bool(*)())&Internet::IsDownloading),
+                def("isDownloading", (bool(*)())&InternetSystem::IsDownloading),
                 // Internet.downloadFilename() - Gets the current download's filename. Blank if not downloading anything.
-                def("downloadFilename", (std::string(*)())&Internet::DownloadFilename),
-                // Internet.downloadProgress() - Gets the current download's progress. Sorted like 0% - 100%
-                def("downloadProgress", (int(*)())&Internet::DownloadProgress)
+                def("downloadFilename", (std::string(*)())&InternetSystem::DownloadFilename),
+                // Internet.downloadURL() - Gets the current download's URL. Blank if not downloading anything.
+                def("downloadURL", (std::string(*)())&InternetSystem::DownloadURL),
+                // Internet.downloadProgress() - Gets the current download's progress. Displays as 0 - 100 (Without the percent)
+                def("downloadProgress", (int(*)())&InternetSystem::DownloadProgress),
+                // Internet.getDownloadFilename(url) - Gets the download filename from the URL.
+                def("getDownloadFilename", (std::string(*)(std::string))&InternetSystem::GetFilenameFromURL)
             ],
 
             namespace_("Editor")[

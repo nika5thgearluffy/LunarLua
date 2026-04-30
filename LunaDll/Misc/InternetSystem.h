@@ -4,16 +4,17 @@
 #include <windows.h>
 #include <string>
 
-namespace Internet{
-    std::string DownloadURL(const std::string& url);
+namespace InternetSystem{
+    std::string DownloadURL(std::string url);
 
-    std::string GetFilenameFromURL(const std::string& url);
+    std::string GetFilenameFromURL(std::string url);
 
     int DownloadProgress();
     bool IsDownloading();
     std::string DownloadFilename();
+    std::string DownloadURL();
 
-    void StartDownload(const std::string& url, const std::string& savePath = "");
+    void StartDownload(std::string url, std::string savePath);
     void Poll();
 };
 

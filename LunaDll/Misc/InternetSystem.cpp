@@ -7,11 +7,22 @@
 
 #include "../Globals.h"
 
+#pragma comment(lib, "wininet.lib")
+
 // This downloads a file and parses it as a string
 // [CLAUDE AI WAS USED FOR THIS PART OF THE CODE]
-std::string Internet::DownloadURL(const std::string& url)
+std::string InternetSystem::DownloadURL(std::string url)
 {
     std::string result;
+    bool savingToFile = (gDownloadSavePath[0] != '\0');
+    std::ofstream outFile;
+
+    if (savingToFile)
+    {
+        outFile.open(gDownloadSavePath, std::ios::binary);
+        if (!outFile.is_open())
+            savingToFile = false;
+    }
 
     HINTERNET hInternet = InternetOpenA("LunarLua", INTERNET_OPEN_TYPE_DIRECT, NULL, NULL, 0);
     if (!hInternet) return result;
@@ -24,7 +35,6 @@ std::string Internet::DownloadURL(const std::string& url)
         return result;
     }
 
-    // Get total file size from headers
     DWORD contentLength = 0;
     DWORD bufLen = sizeof(DWORD);
     HttpQueryInfo(hConnect, HTTP_QUERY_CONTENT_LENGTH | HTTP_QUERY_FLAG_NUMBER,
@@ -36,23 +46,34 @@ std::string Internet::DownloadURL(const std::string& url)
 
     while (InternetReadFile(hConnect, buffer, sizeof(buffer), &bytesRead) && bytesRead > 0)
     {
-        result.append(buffer, bytesRead);
         totalRead += bytesRead;
 
-        // Update global progress (0-100)
+        if (savingToFile)
+        {
+            // Write directly to file instead of buffering in memory
+            outFile.write(buffer, bytesRead);
+        }
+        else
+        {
+            result.append(buffer, bytesRead);
+        }
+
         if (contentLength > 0)
             gDownloadProgress = (int)((totalRead * 100) / contentLength);
     }
 
+    if (savingToFile)
+        outFile.close();
+
     InternetCloseHandle(hConnect);
     InternetCloseHandle(hInternet);
 
-    return result;
+    return savingToFile ? "" : result;
 }
 
 // Gets a filename from the specificed URL.
 // [CLAUDE AI WAS USED FOR THIS PART OF THE CODE]
-std::string Internet::GetFilenameFromURL(const std::string& url)
+std::string InternetSystem::GetFilenameFromURL(std::string url)
 {
     size_t lastSlash = url.find_last_of('/');
     if (lastSlash == std::string::npos)
@@ -67,48 +88,46 @@ std::string Internet::GetFilenameFromURL(const std::string& url)
     return filename;
 }
 
-int Internet::DownloadProgress()
+int InternetSystem::DownloadProgress()
 {
     return gDownloadProgress;
 }
 
-bool Internet::IsDownloading()
+bool InternetSystem::IsDownloading()
 {
     return gDownloadPending;
 }
 
-std::string Internet::DownloadFilename()
+std::string InternetSystem::DownloadFilename()
 {
-    return gDownloadFilename;
+    return std::string(gDownloadFilename);
+}
+
+std::string InternetSystem::DownloadURL()
+{
+    return std::string(gDownloadURL);
 }
 
 // [CLAUDE AI WAS USED FOR THIS PART OF THE CODE]
-void Internet::StartDownload(const std::string& url, const std::string& savePath)
+void InternetSystem::StartDownload(std::string url, std::string savePath)
 {
     if (gDownloadPending)
         return;
 
     gDownloadPending = true;
-    gDownloadFilename = GetFilenameFromURL(url);
+
+    strncpy_s(gDownloadFilename, sizeof(gDownloadFilename), GetFilenameFromURL(url).c_str(), _TRUNCATE);
+    strncpy_s(gDownloadURL, sizeof(gDownloadURL), url.c_str(), _TRUNCATE);
+    strncpy_s(gDownloadSavePath, sizeof(gDownloadSavePath), savePath.c_str(), _TRUNCATE);
     gDownloadProgress = 0;
 
-    // Call onDownloadStart event
-    if (gLunaLua.isValid())
-    {
-        std::shared_ptr<Event> downloadStart = std::make_shared<Event>("onDownloadStart", false);
-        downloadStart->setDirectEventName("onDownloadStart");
-        downloadStart->setLoopable(false);
-        gLunaLua.callEvent(downloadStart, url, savePath);
-    }
+    gDownloadFuture = std::async(std::launch::async, []() -> std::string {
+        // Use globals directly instead of capturing strings
+        std::string result = DownloadURL(std::string(gDownloadURL));
 
-    // The way to set up downloading without hanging the engine is as such.
-    // That way, files can be downloaded while the game runs!
-    gDownloadFuture = std::async(std::launch::async, [url, savePath]() {
-        std::string result = Internet::DownloadURL(url);
-
-        if (!savePath.empty() && !result.empty())
+        if (gDownloadSavePath[0] != '\0' && !result.empty())
         {
-            std::ofstream file(savePath);
+            std::ofstream file(gDownloadSavePath);
             if (file.is_open())
             {
                 file << result;
@@ -118,11 +137,19 @@ void Internet::StartDownload(const std::string& url, const std::string& savePath
 
         return result;
     });
+
+    if (gLunaLua.isValid())
+    {
+        std::shared_ptr<Event> downloadStart = std::make_shared<Event>("onDownloadStart", false);
+        downloadStart->setDirectEventName("onDownloadStart");
+        downloadStart->setLoopable(false);
+        gLunaLua.callEvent(downloadStart, std::string(gDownloadURL));
+    }
 }
 
 // Call this every frame from your game tick
 // [CLAUDE AI WAS USED FOR THIS PART OF THE CODE]
-void Internet::Poll()
+void InternetSystem::Poll()
 {
     if (!gDownloadPending)
         return;
@@ -141,7 +168,9 @@ void Internet::Poll()
             gLunaLua.callEvent(downloadComplete, result);
         }
 
-        gDownloadFilename = "";
+        gDownloadFilename[0] = '\0';
+        gDownloadURL[0] = '\0';
+        gDownloadSavePath[0] = '\0';
         gDownloadProgress = 0;
     }
 }

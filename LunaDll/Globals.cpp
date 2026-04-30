@@ -182,4 +182,6 @@ bool gDisablePlayerKeysLegacy = false;
 std::future<std::string> gDownloadFuture;
 std::atomic<bool> gDownloadPending(false);
 std::atomic<int> gDownloadProgress(0);
-std::string gDownloadFilename;
+char gDownloadFilename[2048] = { 0 };
+char gDownloadURL[2048] = { 0 };
+char gDownloadSavePath[2048] = { 0 };

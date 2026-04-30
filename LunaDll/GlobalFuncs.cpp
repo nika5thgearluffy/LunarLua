@@ -39,8 +39,6 @@
 
 #include "Episode/EpisodeMain.h"
 
-#pragma comment(lib, "wininet.lib")
-
 void splitStr(std::vector<std::string>& dest, const std::string& str, const char* separator)
 {
     dest.clear();

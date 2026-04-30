@@ -253,4 +253,6 @@ extern bool gDisablePlayerKeysLegacy;
 extern std::future<std::string> gDownloadFuture;
 extern std::atomic<bool> gDownloadPending;
 extern std::atomic<int> gDownloadProgress;
-extern std::string gDownloadFilename;
+extern char gDownloadFilename[2048];
+extern char gDownloadURL[2048];
+extern char gDownloadSavePath[2048];
