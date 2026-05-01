@@ -1119,7 +1119,9 @@ void CLunaLua::bindAll()
                 // File.createFolder(folder) - Creates a folder at a specified path.
                 def("createFolder", (bool(*)(std::string))&FileSystem::CreateDirectory),
                 // File.folderExists(folder) - Checks to see if a folder exists.
-                def("folderExists", (bool(*)(std::string))&FileSystem::DirectoryExists)
+                def("folderExists", (bool(*)(std::string))&FileSystem::DirectoryExists),
+                // File.getMD5Hash(filepath) - Get an MD5 hash of a file.
+                def("getMD5Hash", (std::string(*)(std::string))&FileSystem::GetMD5Hash)
             ],
 
             namespace_("Language")[

@@ -2,6 +2,7 @@
 
 #include <windows.h>
 #include <shobjidl.h>
+#include <wincrypt.h>
 
 #include <string>
 #include <io.h>
@@ -11,6 +12,8 @@
 
 #include "../GlobalFuncs.h"
 #include "../LuaMain/LunaPathValidator.h"
+
+#pragma comment(lib, "advapi32.lib")
 
 // Retrieves the size of a file
 double FileSystem::GetFileSize(std::string file)
@@ -101,4 +104,56 @@ bool FileSystem::DirectoryExists(std::string directory)
 {
     DWORD dwAttrib = GetFileAttributesA(directory.c_str());
     return (dwAttrib != INVALID_FILE_ATTRIBUTES && (dwAttrib & FILE_ATTRIBUTE_DIRECTORY));
+}
+
+std::string FileSystem::GetMD5Hash(std::string filePath)
+{
+    // Open file
+    std::ifstream file(filePath, std::ios::binary);
+    if (!file.is_open())
+        return "";
+
+    // Read file contents
+    std::string contents((std::istreambuf_iterator<char>(file)),
+                          std::istreambuf_iterator<char>());
+
+    // Set up crypto provider
+    HCRYPTPROV hProv = 0;
+    HCRYPTHASH hHash = 0;
+    if (!CryptAcquireContext(&hProv, NULL, NULL, PROV_RSA_FULL, CRYPT_VERIFYCONTEXT))
+        return "";
+
+    if (!CryptCreateHash(hProv, CALG_MD5, 0, 0, &hHash))
+    {
+        CryptReleaseContext(hProv, 0);
+        return "";
+    }
+
+    // Hash the data
+    if (!CryptHashData(hHash, (BYTE*)contents.data(), contents.size(), 0))
+    {
+        CryptDestroyHash(hHash);
+        CryptReleaseContext(hProv, 0);
+        return "";
+    }
+
+    // Get hash bytes
+    BYTE hashBytes[16];
+    DWORD hashLen = 16;
+    if (!CryptGetHashParam(hHash, HP_HASHVAL, hashBytes, &hashLen, 0))
+    {
+        CryptDestroyHash(hHash);
+        CryptReleaseContext(hProv, 0);
+        return "";
+    }
+
+    CryptDestroyHash(hHash);
+    CryptReleaseContext(hProv, 0);
+
+    // Convert to hex string
+    char hexStr[33] = { 0 };
+    for (int i = 0; i < 16; i++)
+        sprintf_s(&hexStr[i * 2], 3, "%02x", hashBytes[i]);
+
+    return std::string(hexStr);
 }

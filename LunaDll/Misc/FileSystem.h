@@ -10,6 +10,7 @@ namespace FileSystem{
     std::string OpenDialogAndGetFilepath();
     bool CreateDirectory(std::string pathToDirectory);
     bool DirectoryExists(std::string directory);
+    std::string GetMD5Hash(std::string filePath);
 };
 
 #endif
