@@ -653,7 +653,7 @@ typedef struct ExtendedPlayerFields_\
         CLunaFFILock ffiLock(__FUNCTION__);
         std::unique_lock<std::mutex> lck(readFileMutex);
 
-        LunaPathValidator::Result* ptr = LunaPathValidator::GetForThread().CheckPath(path);
+        LunaPathValidator::Result* ptr = LunaPathValidator::GetForThread().CheckPath(path, true);
         if (!ptr) return nullptr;
         path = ptr->path;
 
@@ -709,7 +709,7 @@ typedef struct ExtendedPlayerFields_\
     {
         CLunaFFILock ffiLock(__FUNCTION__);
 
-        LunaPathValidator::Result* ptr = LunaPathValidator::GetForThread().CheckPath(path);
+        LunaPathValidator::Result* ptr = LunaPathValidator::GetForThread().CheckPath(path, true);
         if (!ptr) return false;
 
         std::wstring wpath = Str2WStr(path);
@@ -720,7 +720,7 @@ typedef struct ExtendedPlayerFields_\
     {
         CLunaFFILock ffiLock(__FUNCTION__);
 
-        LunaPathValidator::Result* ptr = LunaPathValidator::GetForThread().CheckPath(path);
+        LunaPathValidator::Result* ptr = LunaPathValidator::GetForThread().CheckPath(path, true);
         if (!ptr) return false;
         if (!ptr->canWrite) return false;
         path = ptr->path;
@@ -1016,7 +1016,13 @@ extern "C" {
     FFI_EXPORT(LunaPathValidator::Result*) LunaLuaMakeSafeAbsolutePath(const char* path)
     {
         if (!path) return nullptr;
-        return LunaPathValidator::GetForThread().CheckPath(path);
+        return LunaPathValidator::GetForThread().CheckPath(path, true);
+    }
+
+    FFI_EXPORT(LunaPathValidator::Result*) LunaLuaMakeSafeAbsolutePathNoFileRestriction(const char* path)
+    {
+        if (!path) return nullptr;
+        return LunaPathValidator::GetForThread().CheckPath(path, false);
     }
 }
 

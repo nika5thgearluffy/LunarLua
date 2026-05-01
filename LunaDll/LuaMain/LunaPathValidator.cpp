@@ -49,7 +49,7 @@ void LunaPathValidator::SetPaths()
     std::transform(mMatchingUserFilesPath.begin(), mMatchingUserFilesPath.end(), mMatchingUserFilesPath.begin(), towlower);
 }
 
-LunaPathValidator::Result* LunaPathValidator::CheckPath(const char* path)
+LunaPathValidator::Result* LunaPathValidator::CheckPath(const char* path, bool shouldFilesCount)
 {
     // Normalize path and make it absolute if necessary
     if ((
@@ -95,7 +95,7 @@ LunaPathValidator::Result* LunaPathValidator::CheckPath(const char* path)
         return nullptr;
     }
 
-    if (mResult.canWrite)
+    if (mResult.canWrite && shouldFilesCount)
     {
         // Check extension
         std::wstring fileExt = L"";

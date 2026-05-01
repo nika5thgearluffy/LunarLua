@@ -32,7 +32,7 @@ public:
     LunaPathValidator();
     ~LunaPathValidator();
     void SetPaths();
-    Result* CheckPath(const char* path);
+    Result* CheckPath(const char* path, bool shouldFilesCount);
 public:
     static LunaPathValidator& GetForThread();
 };
