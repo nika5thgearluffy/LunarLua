@@ -143,7 +143,7 @@ void InternetSystem::StartDownload(std::string url, std::string savePath)
         std::shared_ptr<Event> downloadStart = std::make_shared<Event>("onDownloadStart", false);
         downloadStart->setDirectEventName("onDownloadStart");
         downloadStart->setLoopable(false);
-        gLunaLua.callEvent(downloadStart, std::string(gDownloadURL));
+        gLunaLua.callEvent(downloadStart, std::string(gDownloadURL), std::string(gDownloadFilename));
     }
 }
 
@@ -165,7 +165,7 @@ void InternetSystem::Poll()
             std::shared_ptr<Event> downloadComplete = std::make_shared<Event>("onDownloadComplete", false);
             downloadComplete->setDirectEventName("onDownloadComplete");
             downloadComplete->setLoopable(false);
-            gLunaLua.callEvent(downloadComplete, result);
+            gLunaLua.callEvent(downloadComplete, result, std::string(gDownloadURL), std::string(gDownloadFilename));
         }
 
         gDownloadFilename[0] = '\0';

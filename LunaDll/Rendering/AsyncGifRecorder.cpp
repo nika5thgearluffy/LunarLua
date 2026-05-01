@@ -138,7 +138,7 @@ void AsyncGifRecorder::workerFunc()
 
             if (!m_error)
             {
-                if (!GIF_H::GifWriteFrame(m_gifWriter, nextData.data, nextData.width, nextData.height, 3, 8, false))
+                if (!GIF_H::GifWriteFrame(m_gifWriter, nextData.data, nextData.width, nextData.height, 3, 8, true))
                 {
                     GIF_H::GifEnd(m_gifWriter);
                     m_error = true;
