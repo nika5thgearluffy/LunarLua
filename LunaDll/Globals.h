@@ -256,3 +256,5 @@ extern std::atomic<int> gDownloadProgress;
 extern char gDownloadFilename[2048];
 extern char gDownloadURL[2048];
 extern char gDownloadSavePath[2048];
+
+extern int gLuaMaxInt;

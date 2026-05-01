@@ -185,3 +185,6 @@ std::atomic<int> gDownloadProgress(0);
 char gDownloadFilename[2048] = { 0 };
 char gDownloadURL[2048] = { 0 };
 char gDownloadSavePath[2048] = { 0 };
+
+// Set the max int value for Lua-related calls
+int gLuaMaxInt = 2147483647;

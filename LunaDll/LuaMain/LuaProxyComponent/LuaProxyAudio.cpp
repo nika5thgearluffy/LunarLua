@@ -232,6 +232,11 @@ std::string LuaProxy::Audio::MusicGet(bool withArguments)
 {
 #ifndef NO_SDL
     std::string musicGet = PGE_MusPlayer::MUS_get();
+    unsigned int musicGetLength = musicGet.length();
+    if (musicGet.empty() || musicGetLength >= MAX_PATH)
+    {
+        return "";
+    }
     if (!withArguments && musicGet.find("|"))
     {
         return musicGet.substr(0, musicGet.find("|"));
