@@ -10,10 +10,7 @@
 #include "RenderUtils.h"
 #include <atomic>
 
-namespace GIF_H
-{
-    struct GifWriter;
-}
+#include "gifski.h"
 
 class AsyncGifRecorder
 {
@@ -46,7 +43,9 @@ private:
     std::wstring m_fileName;
     bool m_opened;
     bool m_error;
-    GIF_H::GifWriter *m_gifWriter;
+    gifski* m_gifski;
+    uint32_t mFirstTimestamp;
+    uint32_t mFrameIndex;
     uint32_t mLastTimestamp;
 
 public:

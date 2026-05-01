@@ -56,13 +56,13 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>$(MSBuildProjectDirectory)\libs;$(MSBuildProjectDirectory)\libs\luabind-deboostified;$(MSBuildProjectDirectory)\libs\lua\include;$(MSBuildProjectDirectory)\libs\sdl\include;$(MSBuildProjectDirectory)\libs\glew\include;$(MSBuildProjectDirectory)\libs\freeimage;$(IncludePath)</IncludePath>
-    <LibraryPath>$(MSBuildProjectDirectory)\libs\lua\lib;$(MSBuildProjectDirectory)\libs\sdl\lib;$(MSBuildProjectDirectory)\libs\glew\lib\Release\Win32;$(MSBuildProjectDirectory)\libs\freeimage;$(LibraryPath)</LibraryPath>
+    <IncludePath>$(MSBuildProjectDirectory)\libs;$(MSBuildProjectDirectory)\libs\luabind-deboostified;$(MSBuildProjectDirectory)\libs\lua\include;$(MSBuildProjectDirectory)\libs\sdl\include;$(MSBuildProjectDirectory)\libs\glew\include;$(MSBuildProjectDirectory)\libs\freeimage;$(MSBuildProjectDirectory)\libs\gifski\include;$(IncludePath)</IncludePath>
+    <LibraryPath>$(MSBuildProjectDirectory)\libs\ntdll;$(MSBuildProjectDirectory)\libs\lua\lib;$(MSBuildProjectDirectory)\libs\sdl\lib;$(MSBuildProjectDirectory)\libs\glew\lib\Release\Win32;$(MSBuildProjectDirectory)\libs\gifski\lib;$(MSBuildProjectDirectory)\libs\freeimage;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
-    <IncludePath>$(MSBuildProjectDirectory)\libs;$(MSBuildProjectDirectory)\libs\luabind-deboostified;$(MSBuildProjectDirectory)\libs\lua\include;$(MSBuildProjectDirectory)\libs\sdl\include;$(MSBuildProjectDirectory)\libs\glew\include;$(MSBuildProjectDirectory)\libs\freeimage;$(IncludePath)</IncludePath>
-    <LibraryPath>$(MSBuildProjectDirectory)\libs\lua\lib;$(MSBuildProjectDirectory)\libs\sdl\lib;$(MSBuildProjectDirectory)\libs\glew\lib\Release\Win32;$(MSBuildProjectDirectory)\libs\freeimage;$(LibraryPath)</LibraryPath>
+    <IncludePath>$(MSBuildProjectDirectory)\libs;$(MSBuildProjectDirectory)\libs\luabind-deboostified;$(MSBuildProjectDirectory)\libs\lua\include;$(MSBuildProjectDirectory)\libs\sdl\include;$(MSBuildProjectDirectory)\libs\glew\include;$(MSBuildProjectDirectory)\libs\freeimage;$(MSBuildProjectDirectory)\libs\gifski\include;$(IncludePath)</IncludePath>
+    <LibraryPath>$(MSBuildProjectDirectory)\libs\ntdll;$(MSBuildProjectDirectory)\libs\lua\lib;$(MSBuildProjectDirectory)\libs\sdl\lib;$(MSBuildProjectDirectory)\libs\glew\lib\Release\Win32;$(MSBuildProjectDirectory)\libs\freeimage;$(MSBuildProjectDirectory)\libs\gifski\lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release without SDL|Win32'">
     <LinkIncremental>false</LinkIncremental>
@@ -84,7 +84,7 @@
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>kernel32.lib;user32.lib;gdi32.lib;gdiplus.lib;FreeImageLite.lib;version.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;winmm.lib;shlwapi.lib;lua51.lib;Dbghelp.lib;Ws2_32.lib;SDL2.lib;SDL2main.lib;SDL2_mixer_ext.lib;setupapi.lib;comsuppw.lib;opengl32.lib;glew32s.lib;delayimp.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>ntdll.lib;userenv.lib;ws2_32.lib;bcrypt.lib;kernel32.lib;user32.lib;gdi32.lib;gdiplus.lib;FreeImageLite.lib;version.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;winmm.lib;shlwapi.lib;lua51.lib;Dbghelp.lib;Ws2_32.lib;SDL2.lib;SDL2main.lib;SDL2_mixer_ext.lib;setupapi.lib;comsuppw.lib;opengl32.lib;glew32s.lib;gifski.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -112,7 +112,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalDependencies>kernel32.lib;user32.lib;gdi32.lib;gdiplus.lib;FreeImageLite.lib;version.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;winmm.lib;shlwapi.lib;lua51.lib;Dbghelp.lib;Ws2_32.lib;SDL2.lib;SDL2main.lib;SDL2_mixer_ext.lib;setupapi.lib;comsuppw.lib;opengl32.lib;glew32s.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>ntdll.lib;userenv.lib;ws2_32.lib;bcrypt.lib;kernel32.lib;user32.lib;gdi32.lib;gdiplus.lib;FreeImageLite.lib;version.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;winmm.lib;shlwapi.lib;lua51.lib;Dbghelp.lib;Ws2_32.lib;SDL2.lib;SDL2main.lib;SDL2_mixer_ext.lib;setupapi.lib;comsuppw.lib;opengl32.lib;glew32s.lib;gifski.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <ForceFileOutput>
       </ForceFileOutput>
       <GenerateMapFile>true</GenerateMapFile>
@@ -143,6 +143,7 @@
     <ClInclude Include="libs\fmt\fmt_qformat.h" />
     <ClInclude Include="libs\fmt\fmt_string.h" />
     <ClInclude Include="libs\fmt\fmt_time.h" />
+    <ClInclude Include="libs\gifski\include\gifski.h" />
     <ClInclude Include="libs\IniProcessor\ini_processing.h" />
     <ClInclude Include="libs\IniProcessor\ini_processing_variant.h" />
     <ClInclude Include="libs\json\json.hpp" />

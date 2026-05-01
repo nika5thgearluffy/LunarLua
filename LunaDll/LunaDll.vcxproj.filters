@@ -147,6 +147,12 @@
     <Filter Include="Episode">
       <UniqueIdentifier>{3f818452-6107-4098-9f76-bc9e25f681ec}</UniqueIdentifier>
     </Filter>
+    <Filter Include="libs\gifski">
+      <UniqueIdentifier>{de17c0d9-6ea3-42e3-bafa-1df1a5848c38}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libs\gifski\include">
+      <UniqueIdentifier>{9c0a048b-fad3-4835-ba5e-3d90aed395b9}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="LuaMain\LuaHelper.h">
@@ -770,6 +776,9 @@
     <ClInclude Include="Misc\InternetSystem.h">
       <Filter>Misc</Filter>
     </ClInclude>
+    <ClInclude Include="libs\gifski\include\gifski.h">
+      <Filter>libs\gifski\include</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="LuaMain\LuaHelper.cpp">
@@ -1383,9 +1392,6 @@
     </ClCompile>
     <ClCompile Include="LuaMain\LunaPathValidator.cpp">
       <Filter>LuaMain</Filter>
-    </ClCompile>
-    <ClCompile Include="libs\luabind-deboostified\src$filename">
-      <Filter>libs\luabind-deboostified</Filter>
     </ClCompile>
     <ClCompile Include="libs\luabind-deboostified\src$filename">
       <Filter>libs\luabind-deboostified</Filter>

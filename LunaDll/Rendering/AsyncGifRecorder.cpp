@@ -2,7 +2,8 @@
 #include "AsyncGifRecorder.h"
 #include "../Globals.h"
 #include "../GlobalFuncs.h"
-#include "../../libs/gif-h/gif.h"
+
+#pragma comment(lib, "gifski.lib")
 
 AsyncGifRecorder::AsyncGifRecorder() : 
     m_workerThread(nullptr),
@@ -11,9 +12,12 @@ AsyncGifRecorder::AsyncGifRecorder() :
     m_StateChangeMutex(),
     m_BufferCount(),
     m_fileName(),
-    m_error(false), m_opened(false),
-    m_gifWriter(new GIF_H::GifWriter()),
-    mLastTimestamp(0)
+    m_error(false),
+    m_opened(false),
+    m_gifski(nullptr),      // replace m_gifWriter
+    mLastTimestamp(0),
+    mFirstTimestamp(0),     // new - track start time
+    mFrameIndex(0)          // new - track frame number
 {
     m_isEncoding.store(false, std::memory_order_relaxed);
     m_isRunning.store(false, std::memory_order_relaxed);
@@ -27,10 +31,8 @@ AsyncGifRecorder::~AsyncGifRecorder()
         m_workerThread->join();
         m_workerThread = nullptr;
     }
-    delete m_gifWriter;
-    m_gifWriter = nullptr;
+    // gifski handle is freed by gifski_finish, no delete needed
 }
-
 
 void AsyncGifRecorder::addNextFrameToProcess(int width, int height, BYTE* pData, uint32_t timestamp)
 {
@@ -38,9 +40,7 @@ void AsyncGifRecorder::addNextFrameToProcess(int width, int height, BYTE* pData,
     if (!isRunning())
     {
         if (pData)
-        {
-            delete pData;
-        }
+            delete[] pData;
         return;
     }
 
@@ -69,7 +69,6 @@ void AsyncGifRecorder::exitWorkerThread()
 
 void AsyncGifRecorder::workerFunc()
 {
-    // Use low priority for GIF encoding, to not impact gameplay
     SetThreadPriority(GetCurrentThread(), THREAD_PRIORITY_LOWEST);
 
     while (true) {
@@ -82,24 +81,53 @@ void AsyncGifRecorder::workerFunc()
         if (nextData.cmd == GIFREC_EXIT)
             return;
         
-        bool doCleanup = false;
         switch (nextData.cmd)
         {
         case GIFREC_START:
         {
             if (m_isEncoding.load(std::memory_order_relaxed))
                 continue;
+
             std::wstring screenshotPath = gAppPathWCHAR + std::wstring(L"\\gif-recordings");
             if (GetFileAttributesW(screenshotPath.c_str()) & INVALID_FILE_ATTRIBUTES) {
                 CreateDirectoryW(screenshotPath.c_str(), NULL);
             }
             screenshotPath += L"\\";
             screenshotPath += Str2WStr(generateTimestampForFilename()) + std::wstring(L".gif");
-
             m_fileName = screenshotPath;
-            m_opened = false;
+
+            // Create gifski instance
+            GifskiSettings settings;
+            memset(&settings, 0, sizeof(settings));
+            settings.quality = 90;
+            settings.fast = false;
+            settings.repeat = 0;
+            m_gifski = gifski_new(&settings);
+
+            if (!m_gifski)
+            {
+                m_error = true;
+                m_isEncoding.store(true, std::memory_order_relaxed);
+                break;
+            }
+
+            // Set output file (must be UTF-8/ASCII path)
+            std::string filePathUtf8 = WStr2Str(m_fileName);
+            GifskiError err = gifski_set_file_output(m_gifski, filePathUtf8.c_str());
+            if (err != GIFSKI_OK)
+            {
+                gifski_finish(m_gifski);
+                m_gifski = nullptr;
+                m_error = true;
+                m_isEncoding.store(true, std::memory_order_relaxed);
+                break;
+            }
+
             m_error = false;
-            memset(m_gifWriter, 0, sizeof(GIF_H::GifWriter));
+            m_opened = true;
+            mFrameIndex = 0;
+            mFirstTimestamp = 0;
+            mLastTimestamp = 0;
 
             m_isEncoding.store(true, std::memory_order_relaxed);
             break;
@@ -112,38 +140,28 @@ void AsyncGifRecorder::workerFunc()
                 continue;
             }
 
-            if ((!m_opened) && (!m_error))
+            if (!m_error && m_gifski)
             {
-                FILE *pFile = _wfopen(m_fileName.c_str(), L"wb");
-                if (pFile)
-                {
-                    m_opened = GIF_H::GifBegin(m_gifWriter, pFile, nextData.width, nextData.height, 3, 8, false);
-                    m_error = !m_opened;
-                }
+                // Set first timestamp as reference point
+                if (mFrameIndex == 0)
+                    mFirstTimestamp = nextData.timestamp;
+
+                // Calculate presentation timestamp in seconds from start
+                double pts = (nextData.timestamp - mFirstTimestamp) / 1000.0;
+
+                GifskiError err = gifski_add_frame_rgba(
+                    m_gifski,
+                    mFrameIndex,
+                    nextData.width,
+                    nextData.height,
+                    nextData.data,
+                    pts
+                );
+
+                if (err != GIFSKI_OK)
+                    m_error = true;
                 else
-                {
-                    m_opened = false;
-                    m_error = true;
-                }
-                mLastTimestamp = nextData.timestamp;
-            }
-            else if (!m_error)
-            {
-                // Edit last frame's delay
-                uint32_t diffMs = nextData.timestamp - mLastTimestamp;
-                GIF_H::GifOverwriteLastDelay(m_gifWriter, diffMs / 10);
-
-                mLastTimestamp = nextData.timestamp - (diffMs % 10);
-            }
-
-            if (!m_error)
-            {
-                if (!GIF_H::GifWriteFrame(m_gifWriter, nextData.data, nextData.width, nextData.height, 3, 8, true))
-                {
-                    GIF_H::GifEnd(m_gifWriter);
-                    m_error = true;
-                    m_opened = false;
-                }
+                    mFrameIndex++;
             }
 
             m_BufferCount--;
@@ -153,32 +171,31 @@ void AsyncGifRecorder::workerFunc()
         {
             if (!m_isEncoding.load(std::memory_order_relaxed))
                 continue;
-            
-            if (!m_error)
-            {
-                GIF_H::GifEnd(m_gifWriter);
-            }
-            memset(m_gifWriter, 0, sizeof(GIF_H::GifWriter));
-            m_opened = false;
 
+            if (m_gifski)
+            {
+                // gifski_finish blocks until all frames are written
+                gifski_finish(m_gifski);
+                m_gifski = nullptr;
+            }
+
+            m_opened = false;
+            m_error = false;
             m_isEncoding.store(false, std::memory_order_relaxed);
             break;
         }
         default:
             break;
         }
-
     }
-    
 }
 
 void AsyncGifRecorder::start()
 {
     std::unique_lock<std::mutex> lck(m_StateChangeMutex);
     if (isRunning())
-    {
         return;
-    }
+
     GifRecorderCMDItem startCmd;
     memset(&startCmd, 0, sizeof(startCmd));
     startCmd.cmd = GIFREC_START;
@@ -190,13 +207,11 @@ void AsyncGifRecorder::stop()
 {
     std::unique_lock<std::mutex> lck(m_StateChangeMutex);
     if (!isRunning())
-    {
         return;
-    }
+
     GifRecorderCMDItem stopCmd;
     memset(&stopCmd, 0, sizeof(stopCmd));
     stopCmd.cmd = GIFREC_STOP;
     nextFrames.push(stopCmd);
     m_isRunning.store(false, std::memory_order_relaxed);
 }
-
