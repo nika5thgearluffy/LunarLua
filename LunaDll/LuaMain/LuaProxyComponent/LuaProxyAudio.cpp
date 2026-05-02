@@ -232,11 +232,13 @@ std::string LuaProxy::Audio::MusicGet(bool withArguments)
 {
 #ifndef NO_SDL
     std::string musicGet = PGE_MusPlayer::MUS_get();
+
     unsigned int musicGetLength = musicGet.length();
-    if (musicGet.empty() || musicGetLength >= MAX_PATH)
+    if (musicGet.empty() || musicGetLength > MAX_PATH)
     {
         return "";
     }
+
     if (!withArguments && musicGet.find("|"))
     {
         return musicGet.substr(0, musicGet.find("|"));
@@ -259,6 +261,13 @@ std::string LuaProxy::Audio::MusicGet()
 std::string LuaProxy::Audio::MusicGetArguments()
 {
     std::string musicGet = PGE_MusPlayer::MUS_get();
+
+    unsigned int musicGetLength = musicGet.length();
+    if (musicGet.empty() || musicGetLength > MAX_PATH)
+    {
+        return "";
+    }
+
     return musicGet.substr(musicGet.find_last_of("|" + 1));
 }
 
