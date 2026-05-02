@@ -147,6 +147,76 @@ void __stdcall SMBX13::Ports::PlayerEffects(int16_t& A) {
         }
         // Player shrinking effect
         else if (_.Effect == 2) {
+            if (gEpisodeSettings.easierPowerdown && _.State >= 3)
+            {
+                _.Effect = 13;
+            }
+            if (_.Duck == true) {
+                // Fixes a block collision bug
+                _.StandUp = true;
+                _.Duck = false;
+                _.Location.Height = Physics.PlayerHeight[_.State][BaseCharacter];
+                _.Location.Y = ((_.Location.Y - Physics.PlayerHeight[_.State][BaseCharacter]) + Physics.PlayerDuckHeight[_.State][BaseCharacter]);
+            }
+            _.Frame = 1;
+            _.Effect2 = (_.Effect2 + 1);
+            if ((_.Effect2 / 5) == ::floor((_.Effect2 / 5))) {
+                if (_.State == 1) {
+                    _.State = 2;
+                    if (_.Mount == 3) {
+                        YoshiHeight(A);
+                    }
+                    else if (!(_.Mount == 2)) {
+                        if (SMBX13::Ports::_enablePowerupPowerdownPositionFixes) {
+                            UpdatePlayerPositionForStateChange(_);
+                        }
+                        else {
+                            _.Location.X = ((_.Location.X - (Physics.PlayerWidth[2][BaseCharacter] * 0.5)) + (Physics.PlayerWidth[1][BaseCharacter] * 0.5));
+                            _.Location.Y = ((_.Location.Y - Physics.PlayerHeight[2][BaseCharacter]) + Physics.PlayerHeight[1][BaseCharacter]);
+                            _.Location.Width = Physics.PlayerWidth[_.State][BaseCharacter];
+                            _.Location.Height = Physics.PlayerHeight[_.State][BaseCharacter];
+                        }
+                    }
+                }
+                else {
+                    _.State = 1;
+                    if (_.Mount == 3) {
+                        YoshiHeight(A);
+                    }
+                    else if (!(_.Mount == 2)) {
+                        if (SMBX13::Ports::_enablePowerupPowerdownPositionFixes) {
+                            UpdatePlayerPositionForStateChange(_);
+                        }
+                        else {
+                            _.Location.X = ((_.Location.X - (Physics.PlayerWidth[1][BaseCharacter] * 0.5)) + (Physics.PlayerWidth[2][BaseCharacter] * 0.5));
+                            _.Location.Y = ((_.Location.Y - Physics.PlayerHeight[1][BaseCharacter]) + Physics.PlayerHeight[2][BaseCharacter]);
+                            _.Location.Width = Physics.PlayerWidth[_.State][BaseCharacter];
+                            _.Location.Height = Physics.PlayerHeight[1][BaseCharacter];
+                        }
+                    }
+                }
+            }
+            if (_.Effect2 >= 50) {
+                _.State = 1;
+                if (!(_.Mount == 2)) {
+                    if (SMBX13::Ports::_enablePowerupPowerdownPositionFixes) {
+                        UpdatePlayerPositionForStateChange(_);
+                    }
+                    else {
+                        _.Location.X = ((_.Location.X - (Physics.PlayerWidth[1][BaseCharacter] * 0.5)) + (Physics.PlayerWidth[2][BaseCharacter] * 0.5));
+                        _.Location.Y = ((_.Location.Y - Physics.PlayerHeight[1][BaseCharacter]) + Physics.PlayerHeight[2][BaseCharacter]);
+                        _.Location.Width = Physics.PlayerWidth[_.State][BaseCharacter];
+                        _.Location.Height = Physics.PlayerHeight[_.State][BaseCharacter];
+                    }
+                }
+                _.Immune = 150;
+                _.Immune2 = true;
+                _.Effect = 0;
+                _.Effect2 = 0;
+            }
+        }
+        else if (_.Effect == 13)
+        {
             int16_t originalState = _.State;
             if (_.Duck == true) {
                 // Fixes a block collision bug
@@ -157,104 +227,30 @@ void __stdcall SMBX13::Ports::PlayerEffects(int16_t& A) {
             }
             _.Frame = 1;
             _.Effect2 = (_.Effect2 + 1);
-            if (!gEpisodeSettings.easierPowerdown || originalState == 2)
-            {
-                if ((_.Effect2 / 5) == ::floor((_.Effect2 / 5))) {
-                    if (_.State == 1) {
-                        _.State = 2;
-                        if (_.Mount == 3) {
-                            YoshiHeight(A);
-                        }
-                        else if (!(_.Mount == 2)) {
-                            if (SMBX13::Ports::_enablePowerupPowerdownPositionFixes) {
-                                UpdatePlayerPositionForStateChange(_);
-                            }
-                            else {
-                                _.Location.X = ((_.Location.X - (Physics.PlayerWidth[2][BaseCharacter] * 0.5)) + (Physics.PlayerWidth[1][BaseCharacter] * 0.5));
-                                _.Location.Y = ((_.Location.Y - Physics.PlayerHeight[2][BaseCharacter]) + Physics.PlayerHeight[1][BaseCharacter]);
-                                _.Location.Width = Physics.PlayerWidth[_.State][BaseCharacter];
-                                _.Location.Height = Physics.PlayerHeight[_.State][BaseCharacter];
-                            }
-                        }
+            if ((_.Effect2 / 5) == ::floor((_.Effect2 / 5))) {
+                if (_.State == 1) {
+                    _.State = originalState;
+                    if (_.Mount == 3) {
+                        YoshiHeight(A);
                     }
-                    else {
-                        _.State = 1;
-                        if (_.Mount == 3) {
-                            YoshiHeight(A);
-                        }
-                        else if (!(_.Mount == 2)) {
-                            if (SMBX13::Ports::_enablePowerupPowerdownPositionFixes) {
-                                UpdatePlayerPositionForStateChange(_);
-                            }
-                            else {
-                                _.Location.X = ((_.Location.X - (Physics.PlayerWidth[1][BaseCharacter] * 0.5)) + (Physics.PlayerWidth[2][BaseCharacter] * 0.5));
-                                _.Location.Y = ((_.Location.Y - Physics.PlayerHeight[1][BaseCharacter]) + Physics.PlayerHeight[2][BaseCharacter]);
-                                _.Location.Width = Physics.PlayerWidth[_.State][BaseCharacter];
-                                _.Location.Height = Physics.PlayerHeight[1][BaseCharacter];
-                            }
-                        }
-                    }
-                }
-                if (_.Effect2 >= 50) {
-                    _.State = 1;
-                    if (!(_.Mount == 2)) {
+                    else if (!(_.Mount == 2)) {
                         if (SMBX13::Ports::_enablePowerupPowerdownPositionFixes) {
                             UpdatePlayerPositionForStateChange(_);
                         }
                         else {
-                            _.Location.X = ((_.Location.X - (Physics.PlayerWidth[1][BaseCharacter] * 0.5)) + (Physics.PlayerWidth[2][BaseCharacter] * 0.5));
-                            _.Location.Y = ((_.Location.Y - Physics.PlayerHeight[1][BaseCharacter]) + Physics.PlayerHeight[2][BaseCharacter]);
+                            _.Location.X = ((_.Location.X - (Physics.PlayerWidth[originalState][BaseCharacter] * 0.5)) + (Physics.PlayerWidth[2][BaseCharacter] * 0.5));
+                            _.Location.Y = ((_.Location.Y - Physics.PlayerHeight[originalState][BaseCharacter]) + Physics.PlayerHeight[2][BaseCharacter]);
                             _.Location.Width = Physics.PlayerWidth[_.State][BaseCharacter];
                             _.Location.Height = Physics.PlayerHeight[_.State][BaseCharacter];
                         }
                     }
-                    _.Immune = 150;
-                    _.Immune2 = true;
-                    _.Effect = 0;
-                    _.Effect2 = 0;
                 }
-            }
-            else
-            {
-                if ((_.Effect2 / 5) == ::floor((_.Effect2 / 5))) {
-                    if (originalState >= 3)
-                    {
-                        if (_.State == 2)
-                        {
-                            _.State = originalState;
-                            if (_.Mount == 3) {
-                                YoshiHeight(A);
-                            }
-                            else if (!(_.Mount == 2)) {
-                                if (SMBX13::Ports::_enablePowerupPowerdownPositionFixes) {
-                                    UpdatePlayerPositionForStateChange(_);
-                                }
-                                else {
-                                    _.Location.X = ((_.Location.X - (Physics.PlayerWidth[2][BaseCharacter] * 0.5)) + (Physics.PlayerWidth[originalState][BaseCharacter] * 0.5));
-                                    _.Location.Y = ((_.Location.Y - Physics.PlayerHeight[2][BaseCharacter]) + Physics.PlayerHeight[originalState][BaseCharacter]);
-                                    _.Location.Width = Physics.PlayerWidth[_.State][BaseCharacter];
-                                    _.Location.Height = Physics.PlayerHeight[_.State][BaseCharacter];
-                                }
-                            }
-                        }
-                        else
-                        {
-                            _.State = 2;
-                            if (SMBX13::Ports::_enablePowerupPowerdownPositionFixes) {
-                                UpdatePlayerPositionForStateChange(_);
-                            }
-                            else {
-                                _.Location.X = ((_.Location.X - (Physics.PlayerWidth[originalState][BaseCharacter] * 0.5)) + (Physics.PlayerWidth[2][BaseCharacter] * 0.5));
-                                _.Location.Y = ((_.Location.Y - Physics.PlayerHeight[originalState][BaseCharacter]) + Physics.PlayerHeight[2][BaseCharacter]);
-                                _.Location.Width = Physics.PlayerWidth[_.State][BaseCharacter];
-                                _.Location.Height = Physics.PlayerHeight[_.State][BaseCharacter];
-                            }
-                        }
-                    }
-                }
-                if (_.Effect2 >= 50) {
+                else {
                     _.State = 2;
-                    if (!(_.Mount == 2)) {
+                    if (_.Mount == 3) {
+                        YoshiHeight(A);
+                    }
+                    else if (!(_.Mount == 2)) {
                         if (SMBX13::Ports::_enablePowerupPowerdownPositionFixes) {
                             UpdatePlayerPositionForStateChange(_);
                         }
@@ -262,10 +258,28 @@ void __stdcall SMBX13::Ports::PlayerEffects(int16_t& A) {
                             _.Location.X = ((_.Location.X - (Physics.PlayerWidth[2][BaseCharacter] * 0.5)) + (Physics.PlayerWidth[originalState][BaseCharacter] * 0.5));
                             _.Location.Y = ((_.Location.Y - Physics.PlayerHeight[2][BaseCharacter]) + Physics.PlayerHeight[originalState][BaseCharacter]);
                             _.Location.Width = Physics.PlayerWidth[_.State][BaseCharacter];
-                            _.Location.Height = Physics.PlayerHeight[_.State][BaseCharacter];
+                            _.Location.Height = Physics.PlayerHeight[2][BaseCharacter];
                         }
                     }
                 }
+            }
+            if (_.Effect2 >= 50) {
+                _.State = 2;
+                if (!(_.Mount == 2)) {
+                    if (SMBX13::Ports::_enablePowerupPowerdownPositionFixes) {
+                        UpdatePlayerPositionForStateChange(_);
+                    }
+                    else {
+                        _.Location.X = ((_.Location.X - (Physics.PlayerWidth[2][BaseCharacter] * 0.5)) + (Physics.PlayerWidth[originalState][BaseCharacter] * 0.5));
+                        _.Location.Y = ((_.Location.Y - Physics.PlayerHeight[2][BaseCharacter]) + Physics.PlayerHeight[originalState][BaseCharacter]);
+                        _.Location.Width = Physics.PlayerWidth[_.State][BaseCharacter];
+                        _.Location.Height = Physics.PlayerHeight[_.State][BaseCharacter];
+                    }
+                }
+                _.Immune = 150;
+                _.Immune2 = true;
+                _.Effect = 0;
+                _.Effect2 = 0;
             }
         }
         // Player losing firepower
