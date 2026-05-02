@@ -152,6 +152,7 @@
     <ClInclude Include="libs\Utils\vptrlist.h" />
     <ClInclude Include="LuaMain\LuaProxyFFIGraphics.h" />
     <ClInclude Include="LuaMain\LunaPathValidator.h" />
+    <ClInclude Include="Misc\BackgroundWorker.h" />
     <ClInclude Include="Misc\CollisionMatrix.h" />
     <ClInclude Include="Misc\LoadScreen.h" />
     <ClInclude Include="Misc\NpcIdExtender.h" />
@@ -363,6 +364,7 @@
     <ClCompile Include="LuaMain\LuaProxyFFIGraphics.cpp" />
     <ClCompile Include="LuaMain\LunaPathValidator.cpp" />
     <ClCompile Include="Misc\AsmPatch.cpp" />
+    <ClCompile Include="Misc\BackgroundWorker.cpp" />
     <ClCompile Include="Misc\CollisionMatrix.cpp" />
     <ClCompile Include="Misc\Gameover.cpp" />
     <ClCompile Include="Misc\LoadScreen.cpp" />

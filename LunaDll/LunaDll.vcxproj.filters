@@ -779,6 +779,9 @@
     <ClInclude Include="libs\gifski\include\gifski.h">
       <Filter>libs\gifski\include</Filter>
     </ClInclude>
+    <ClInclude Include="Misc\BackgroundWorker.h">
+      <Filter>Misc</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="LuaMain\LuaHelper.cpp">
@@ -1420,9 +1423,6 @@
     <ClCompile Include="libs\luabind-deboostified\src$filename">
       <Filter>libs\luabind-deboostified</Filter>
     </ClCompile>
-    <ClCompile Include="libs\luabind-deboostified\src$filename">
-      <Filter>libs\luabind-deboostified</Filter>
-    </ClCompile>
     <ClCompile Include="Rendering\WindowSizeHandler.cpp">
       <Filter>Rendering</Filter>
     </ClCompile>
@@ -1536,6 +1536,9 @@
     </ClCompile>
     <ClCompile Include="Episode\EpisodeMain.cpp">
       <Filter>Episode</Filter>
+    </ClCompile>
+    <ClCompile Include="Misc\BackgroundWorker.cpp">
+      <Filter>Misc</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

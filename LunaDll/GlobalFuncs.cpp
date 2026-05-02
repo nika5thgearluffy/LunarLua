@@ -38,6 +38,7 @@
 #include "SMBXInternal/Functions.h"
 
 #include "Episode/EpisodeMain.h"
+#include "Misc/BackgroundWorker.h"
 
 void splitStr(std::vector<std::string>& dest, const std::string& str, const char* separator)
 {
@@ -1310,6 +1311,8 @@ void ExitSMBX2(int processCode)
         UnregisterDeviceNotification(hMonitorNotify);
         hMonitorNotify = nullptr;
     }
+    // Don't forget to exit the background worker too
+    BackgroundWorker_Stop();
     // Now finally exit
     _exit(processCode);
 }

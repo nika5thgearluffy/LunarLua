@@ -486,7 +486,7 @@ static void ProcessRawKeyPress(uint32_t virtKey, uint32_t scanCode, bool repeate
         }
 
         g_GLEngine.TriggerScreenshot([](HGLOBAL globalMem, const BITMAPINFOHEADER* header, void* pData, HWND curHwnd) {
-            std::wstring screenshotPath = gAppPathWCHAR + std::wstring(L"\\screenshots");
+            std::wstring screenshotPath = gUserFilesPathWCHAR + std::wstring(L"\\!screenshots");
             if (GetFileAttributesW(screenshotPath.c_str()) & INVALID_FILE_ATTRIBUTES) {
                 CreateDirectoryW(screenshotPath.c_str(), NULL);
             }

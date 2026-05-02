@@ -106,6 +106,7 @@ bool FileSystem::DirectoryExists(std::string directory)
     return (dwAttrib != INVALID_FILE_ATTRIBUTES && (dwAttrib & FILE_ATTRIBUTE_DIRECTORY));
 }
 
+// Gets an MD5 hash of a file.
 std::string FileSystem::GetMD5Hash(std::string filePath)
 {
     // Open file

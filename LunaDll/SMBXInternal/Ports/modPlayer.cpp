@@ -215,9 +215,14 @@ void __stdcall SMBX13::Ports::PlayerEffects(int16_t& A) {
                 _.Effect2 = 0;
             }
         }
+        // Player shrinking effect, when big (Used for the easier powerdown episode.ini setting)
         else if (_.Effect == 13)
         {
-            int16_t originalState = _.State;
+            int16_t originalState = 1;
+            if (_.Effect2 == 0)
+            {
+                originalState = _.State;
+            }
             if (_.Duck == true) {
                 // Fixes a block collision bug
                 _.StandUp = true;

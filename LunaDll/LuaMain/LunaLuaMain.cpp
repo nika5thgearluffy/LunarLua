@@ -46,6 +46,7 @@
 #include "../Misc/KeyboardMouseSystem.h"
 #include "../Misc/FileSystem.h"
 #include "../Misc/InternetSystem.h"
+#include "../Misc/BackgroundWorker.h"
 
 /*static*/ DWORD CLunaFFILock::currentLockTlsIdx = TlsAlloc();
 
@@ -1142,6 +1143,19 @@ void CLunaLua::bindAll()
                 def("downloadProgress", (int(*)())&InternetSystem::DownloadProgress),
                 // Internet.getDownloadFilename(url) - Gets the download filename from the URL.
                 def("getDownloadFilename", (std::string(*)(std::string))&InternetSystem::GetFilenameFromURL)
+            ],
+            
+            namespace_("BackgroundWorker")[
+                // BackgroundWorker.getResult(key, value) - Gets a result from a global background process.
+                def("getResult", (std::string(*)(std::string))&BackgroundWorker_GetResult),
+                // BackgroundWorker.hasResult(key) - Whether a global background process has a result or not.
+                def("hasResult", (bool(*)(std::string))&BackgroundWorker_HasResult),
+                // BackgroundWorker.clearResult(key) - Clears a result from a global background process.
+                def("clearResult", (void(*)(std::string))&BackgroundWorker_ClearResult),
+                // BackgroundWorker.clearAllResults() - Clears all global background process results.
+                def("clearAllResults", (void(*)())&BackgroundWorker_ClearAllResults),
+                // BackgroundWorker.startMD5Check(filePath) - Starts an MD5 hash check on a filepath. Call this on a Lua for loop outside of any loop functions.
+                def("startMD5Check", (void(*)(std::string))&BackgroundWorker_StartMD5Check)
             ],
 
             namespace_("Editor")[

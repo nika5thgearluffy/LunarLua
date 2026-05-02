@@ -38,6 +38,7 @@ using std::max;
 
 #include "Misc/MonitorSystem.h"
 #include "Misc/InternetSystem.h"
+#include "Misc/BackgroundWorker.h"
 
 static bool LevelCustomSounds = false;
 
@@ -154,6 +155,9 @@ void ReadEpisodeIni()
 // SetupLunaDLLInitHook that runs from DLL_PROCESS_ATTACH
 void LunaDLLInit()
 {
+    // Start background worker
+    BackgroundWorker_Start();
+
     InitGlobals();
 
     //Check for arguments and write them in gStartupSettings
