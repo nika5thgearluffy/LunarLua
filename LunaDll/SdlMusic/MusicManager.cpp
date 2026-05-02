@@ -375,15 +375,15 @@ std::string MusicManager::getCurrentMusic()
     bool isLevel = (curMusicAlias.substr(0, 5) == "music");
     bool isOverworld = (curMusicAlias.substr(0, 6) == "wmusic");
 
-    if(isSpecial && !music_spc[currentMusicID].fullPath.empty())
+    if(isSpecial && currentMusicID >= 0 && currentMusicID < MusicManager::defaultMusCountSpc && !music_spc[currentMusicID].fullPath.empty())
     {
         return music_spc[currentMusicID].fullPath;
     }
-    else if(isOverworld && !music_wld[currentMusicID].fullPath.empty())
+    else if(isOverworld && currentMusicID >= 0 && currentMusicID < max_wld_music_id && !music_wld[currentMusicID].fullPath.empty())
     {
         return music_wld[currentMusicID].fullPath;
     }
-    else if(isLevel && !music_lvl[currentMusicID].fullPath.empty())
+    else if(isLevel && currentMusicID >= 0 && currentMusicID < max_lvl_music_id && !music_lvl[currentMusicID].fullPath.empty())
     {
         return music_lvl[currentMusicID].fullPath;
     }

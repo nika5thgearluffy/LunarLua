@@ -239,7 +239,7 @@ std::string LuaProxy::Audio::MusicGet(bool withArguments)
         return "";
     }
 
-    if (!withArguments && musicGet.find("|"))
+    if (!withArguments && musicGet.find("|") != std::string::npos)
     {
         return musicGet.substr(0, musicGet.find("|"));
     }
@@ -268,7 +268,7 @@ std::string LuaProxy::Audio::MusicGetArguments()
         return "";
     }
 
-    return musicGet.substr(musicGet.find_last_of("|" + 1));
+    return musicGet.substr(musicGet.find_last_of("|") + 1);
 }
 
 std::string LuaProxy::Audio::MusicGetIndex(int type, int index)
