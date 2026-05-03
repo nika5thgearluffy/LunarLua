@@ -7,6 +7,7 @@
 #include <condition_variable>
 #include <string>
 #include <unordered_map>
+#include <atomic>
 
 // Store a result from the background thread
 void BackgroundWorker_SetResult(std::string key, std::string value);
@@ -27,6 +28,14 @@ void BackgroundWorker_ClearAllResults();
 void BackgroundWorker_Queue(std::function<void()> task);
 void BackgroundWorker_Start();
 void BackgroundWorker_Stop();
+
+// Polls for any thread process
+void BackgroundWorker_Poll();
+
+// Checking if the background worker is busy
+extern std::atomic<bool> gBackgroundWorkerBusy;
+
+// -- FUNCTIONS THAT RUNS WITH THE BACKGROUNDWORKER GO BELOW
 
 // Start an MD5 check
 void BackgroundWorker_StartMD5Check(std::string filePath);

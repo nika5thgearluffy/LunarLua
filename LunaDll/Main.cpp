@@ -346,6 +346,9 @@ int TestFunc()
     // Run the poll for downloading internet files
     InternetSystem::Poll();
 
+    // Runs the background worker poll
+    BackgroundWorker_Poll();
+
     // Clean up
     gAutoMan.ClearExpired();
     gSavedVarBank.CheckSaveDeletion();

@@ -4,6 +4,7 @@
 #include <queue>
 #include <mutex>
 #include <condition_variable>
+#include <atomic>
 
 #include "BackgroundWorker.h"
 
@@ -49,6 +50,7 @@ void BackgroundWorker_ClearAllResults()
 static std::queue<std::function<void()>> gTaskQueue;
 static std::mutex gTaskMutex;
 static std::condition_variable gTaskCV;
+static std::atomic<bool> gBackgroundWorkerThreadTick(false);
 
 void BackgroundWorker_Start()
 {
@@ -58,19 +60,29 @@ void BackgroundWorker_Start()
         SetThreadPriority(GetCurrentThread(), THREAD_PRIORITY_BELOW_NORMAL);
         while (gBackgroundWorkerRunning)
         {
+            // Process any queued tasks
             std::function<void()> task;
             {
                 std::unique_lock<std::mutex> lock(gTaskMutex);
-                // Wait until there's a task or we're shutting down
-                gTaskCV.wait(lock, []{ 
-                    return !gTaskQueue.empty() || !gBackgroundWorkerRunning; 
-                });
-                if (!gBackgroundWorkerRunning && gTaskQueue.empty())
-                    return;
-                task = gTaskQueue.front();
-                gTaskQueue.pop();
+                if (!gTaskQueue.empty())
+                {
+                    task = gTaskQueue.front();
+                    gTaskQueue.pop();
+                }
             }
-            task();
+            if (task)
+                task();
+
+            // Signal main thread for onThread event
+            gBackgroundWorkerThreadTick.store(true);
+
+            // Small sleep to avoid burning CPU when idle
+            std::this_thread::sleep_for(std::chrono::microseconds(100));
+
+            // Mark if the queue is busy or not for a separate LunaLua event
+            std::lock_guard<std::mutex> lock(gTaskMutex);
+            if (gTaskQueue.empty())
+                gBackgroundWorkerBusy.store(false);
         }
     });
 }
@@ -87,14 +99,61 @@ void BackgroundWorker_Stop()
     }
 }
 
+std::atomic<bool> gBackgroundWorkerBusy(false);
+
 void BackgroundWorker_Queue(std::function<void()> task)
 {
     {
         std::lock_guard<std::mutex> lock(gTaskMutex);
         gTaskQueue.push(task);
     }
+    gBackgroundWorkerBusy.store(true);
     gTaskCV.notify_one();
 }
+
+void BackgroundWorker_Poll()
+{
+    if (gBackgroundWorkerThreadTick.exchange(false))
+    {
+        if (gLunaLua.isValid())
+        {
+            std::shared_ptr<Event> ev = std::make_shared<Event>("onThread", false);
+            ev->setDirectEventName("onThread");
+            ev->setLoopable(false);
+            gLunaLua.callEvent(ev);
+        }
+    }
+
+    // Fire Lua event while background worker is busy
+    static bool wasWorkerBusy = false;
+    bool isWorkerBusy = gBackgroundWorkerBusy.load();
+
+    if (isWorkerBusy)
+    {
+        if (gLunaLua.isValid())
+        {
+            std::shared_ptr<Event> ev = std::make_shared<Event>("onThreadBusy", false);
+            ev->setDirectEventName("onThreadBusy");
+            ev->setLoopable(false);
+            gLunaLua.callEvent(ev);
+        }
+    }
+    else if (wasWorkerBusy)
+    {
+        // Worker just finished, fire completion event
+        if (gLunaLua.isValid())
+        {
+            std::shared_ptr<Event> ev = std::make_shared<Event>("onThreadBusyComplete", false);
+            ev->setDirectEventName("onThreadBusyComplete");
+            ev->setLoopable(false);
+            gLunaLua.callEvent(ev);
+        }
+    }
+
+    wasWorkerBusy = isWorkerBusy;
+}
+
+
 
 // Define all background worker functions below
 void BackgroundWorker_StartMD5Check(std::string filePath)
