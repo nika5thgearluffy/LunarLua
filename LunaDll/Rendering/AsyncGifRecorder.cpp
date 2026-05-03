@@ -1,7 +1,11 @@
+// [CLAUDE AI WAS USED FOR THIS ENTIRE FILE]
+
 #include <iostream>
 #include "AsyncGifRecorder.h"
 #include "../Globals.h"
 #include "../GlobalFuncs.h"
+
+#include "../Misc/FileSystem.h"
 
 #pragma comment(lib, "gifski.lib")
 
@@ -32,6 +36,21 @@ AsyncGifRecorder::~AsyncGifRecorder()
         m_workerThread = nullptr;
     }
     // gifski handle is freed by gifski_finish, no delete needed
+}
+
+uint64_t AsyncGifRecorder::GetCurrentGIFSize()
+{
+    if (m_fileName.empty()) return 0;
+    
+    WIN32_FILE_ATTRIBUTE_DATA fileInfo;
+    if (GetFileAttributesExW(m_fileName.c_str(), GetFileExInfoStandard, &fileInfo))
+    {
+        ULARGE_INTEGER size;
+        size.HighPart = fileInfo.nFileSizeHigh;
+        size.LowPart = fileInfo.nFileSizeLow;
+        return size.QuadPart;
+    }
+    return 0;
 }
 
 void AsyncGifRecorder::addNextFrameToProcess(int width, int height, BYTE* pData, uint32_t timestamp)
@@ -142,13 +161,40 @@ void AsyncGifRecorder::workerFunc()
 
             if (!m_error && m_gifski)
             {
+                // Check disk space before adding next frame
+                // Stop if less than 1MB remaining after accounting for current GIF size
+                constexpr uint64_t MIN_FREE_SPACE = 1 * 1024 * 1024; // 1MB
+                uint64_t gifSize = AsyncGifRecorder::GetCurrentGIFSize();
+                
+                if (!FileSystem::HasEnoughDiskSpace(gAppPathWCHAR, (int)MIN_FREE_SPACE + (int)gifSize))
+                {
+                    // Not enough space, stop recording
+                    gifski_finish(m_gifski);
+                    m_gifski = nullptr;
+                    m_isRunning.store(false, std::memory_order_relaxed);
+                    m_isEncoding.store(false, std::memory_order_relaxed);
+                    m_error = false;
+                    m_opened = false;
+                    m_BufferCount--;
+                    
+                    // Notify Lua
+                    if (gLunaLua.isValid())
+                    {
+                        std::shared_ptr<Event> ev = std::make_shared<Event>("onGifRecordFull", false);
+                        ev->setDirectEventName("onGifRecordFull");
+                        ev->setLoopable(false);
+                        gLunaLua.callEvent(ev);
+                    }
+
+                    break;
+                }
+
                 // Set first timestamp as reference point
                 if (mFrameIndex == 0)
                     mFirstTimestamp = nextData.timestamp;
 
-                // Calculate presentation timestamp in seconds from start
+                // Normal frame adding
                 double pts = (nextData.timestamp - mFirstTimestamp) / 1000.0;
-
                 GifskiError err = gifski_add_frame_rgba(
                     m_gifski,
                     mFrameIndex,
@@ -163,7 +209,6 @@ void AsyncGifRecorder::workerFunc()
                 else
                     mFrameIndex++;
             }
-
             m_BufferCount--;
             break;
         }

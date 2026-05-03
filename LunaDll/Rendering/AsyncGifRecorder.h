@@ -56,6 +56,8 @@ public:
     inline bool isEncoding() { return m_isEncoding.load(std::memory_order_relaxed); }
     inline bool isRunning() { return m_isRunning.load(std::memory_order_relaxed); }
     inline uint32_t bufferLen() { return m_BufferCount.load(std::memory_order_relaxed); }
+
+    uint64_t GetCurrentGIFSize();
     
     void init();
     void exitWorkerThread();

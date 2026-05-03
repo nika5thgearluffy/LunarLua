@@ -158,3 +158,18 @@ std::string FileSystem::GetMD5Hash(std::string filePath)
 
     return std::string(hexStr);
 }
+
+// Returns if the bytes of a file has enough disk space to create a file.
+bool FileSystem::HasEnoughDiskSpace(std::wstring path, int requiredBytesOfUse)
+{
+    uint64_t requiredBytes = requiredBytesOfUse;
+    ULARGE_INTEGER freeBytes;
+    ULARGE_INTEGER totalBytes;
+    ULARGE_INTEGER totalFreeBytes;
+    
+    if (GetDiskFreeSpaceExW(path.c_str(), &freeBytes, &totalBytes, &totalFreeBytes))
+    {
+        return freeBytes.QuadPart >= requiredBytes;
+    }
+    return false;
+}
