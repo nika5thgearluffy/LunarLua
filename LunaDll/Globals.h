@@ -250,6 +250,26 @@ extern HDEVNOTIFY hMonitorNotify;
 
 extern bool gDisablePlayerKeysLegacy;
 
+struct DownloadEntry
+{
+    std::future<std::string> future;
+    std::atomic<int> progress;
+    char filename[2048];
+    char savePath[2048];
+    char url[2048];
+    bool pending;
+
+    DownloadEntry() : progress(0), pending(false)
+    {
+        filename[0] = '\0';
+        savePath[0] = '\0';
+        url[0] = '\0';
+    }
+};
+
+extern std::unordered_map<std::string, DownloadEntry*> gDownloadMap;
+extern std::mutex gDownloadMapMutex;
+
 extern std::future<std::string> gDownloadFuture;
 extern std::atomic<bool> gDownloadPending;
 extern std::atomic<int> gDownloadProgress;

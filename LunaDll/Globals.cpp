@@ -186,6 +186,10 @@ char gDownloadFilename[2048] = { 0 };
 char gDownloadURL[2048] = { 0 };
 char gDownloadSavePath[2048] = { 0 };
 
+// New globals for multiple-download support
+std::unordered_map<std::string, DownloadEntry*> gDownloadMap;
+std::mutex gDownloadMapMutex;
+
 // Set the max int value for Lua-related calls
 int gLuaMaxInt = 2147483647;
 

@@ -12,6 +12,8 @@
 #include <lua.hpp>
 #include "LoadScreen.h"
 #include "../LuaMain/LunaPathValidator.h"
+#include "MonitorSystem.h"
+#include "../LuaMain/LuaProxy.h"
 
 static bool lunaLoadScreenEnabled = false;
 static std::thread* loadThread = nullptr;
@@ -50,6 +52,8 @@ static void updateFinishedFlag(lua_State* L)
 
 // also used by Gameover.cpp
 void InitMinimalLuaState(lua_State* L) {
+    using namespace luabind;
+
     lua_pushcfunction(L, luaopen_base);
     lua_call(L, 0, 0);
     lua_pushcfunction(L, luaopen_math);
@@ -117,6 +121,46 @@ void InitMinimalLuaState(lua_State* L) {
     DEF_CONST(L, GL_DOUBLE_MAT4x2);
     DEF_CONST(L, GL_DOUBLE_MAT4x3);
     DEF_CONST(L, GL_SAMPLER_2D);
+
+    // Expose Window to the Loadscreen for setting reolutions automatically as soon as the game starts up
+    module(L) [
+        namespace_("Window")[
+            // Window.center(monitorID) - Centers the window to the middle of the screen. monitorID can be specified to center to a specific screen, rather than the main one.
+            def("center", (void(*)(int))&MonitorSystem::CenterWindow),
+            def("center", (void(*)())&MonitorSystem::CenterWindow),
+            // Window.x() - Gets the current X window position.
+            def("x", (int(*)())&MonitorSystem::GetScreenXPosition),
+            // Window.y() - Gets the current Y window position.
+            def("y", (int(*)())&MonitorSystem::GetScreenYPosition),
+            // Window.width() - Gets the window width of the game.
+            def("width", (int(*)())&MonitorSystem::getWindowWidth),
+            // Window.height() - Gets the window height of the game.
+            def("height", (int(*)())&MonitorSystem::getWindowHeight),
+            // Window.centerX(monitorID) - Gets the X window position where the window would be at if it was centered.
+            def("centerX", (int(*)(int))&MonitorSystem::GetScreenCenterXPosition),
+            def("centerX", (int(*)())&MonitorSystem::GetScreenCenterXPosition),
+            // Window.centerY(monitorID) - Gets the Y window position where the window would be at if it was centered.
+            def("centerY", (int(*)(int))&MonitorSystem::GetScreenCenterYPosition),
+            def("centerY", (int(*)())&MonitorSystem::GetScreenCenterYPosition),
+            // Window.setPosition(x, y) - Sets the window position of the game.
+            def("setPosition", (void(*)(int, int))&MonitorSystem::SetWindowPosition),
+            // Window.setSize(width, height) - Sets the window size of the game.
+            def("setSize", (void(*)(int, int))&MonitorSystem::setWindowSize),
+            // Window.setScale(scale) - Sets the window scale of the game.
+            def("setScale", (void(*)(int))&MonitorSystem::setWindowScale),
+            // Window.findMonitor() - Finds the monitor where the window is located.
+            def("findMonitor", (int(*)())&MonitorSystem::FindWindowFromMonitor),
+            // Window.dpiScale() - Gets the DPI scale of the window.
+            def("dpiScale", (float(*)())&MonitorSystem::getDPIScale),
+            // Window.getWidthFromResolution(width) - Gets the window width based off the resolution width.
+            def("getWidthFromResolution", (int(*)(int))&MonitorSystem::getWindowWidthFromResolution),
+            // Window.getHeightFromResolution(height) - Gets the window height based off the resolution width.
+            def("getHeightFromResolution", (int(*)(int))&MonitorSystem::getWindowHeightFromResolution)
+        ],
+        namespace_("Misc") [
+            def("hasFirstBooted", (bool(*)())&LuaProxy::Misc::hasFirstBooted)
+        ]
+    ];
 }
 
 static void LoadThread(void)
@@ -144,12 +188,6 @@ static void LoadThread(void)
             fread(&mainCode[0], 1, len, theFile);
         }
         fclose(theFile);
-    }
-    
-    if (!gFirstBooted)
-    {
-        // We offically first booted on the first time the load screen has loaded
-        gFirstBooted = true;
     }
 
     static lua_State* L = nullptr;

@@ -35,6 +35,13 @@ void BackgroundWorker_Poll();
 // Checking if the background worker is busy
 extern std::atomic<bool> gBackgroundWorkerBusy;
 
+// The global for the main thread speed.
+extern int gBackgroundWorkerSleepMicros;
+
+// Thread speed calls.
+void BackgroundWorker_SetThreadSpeed(int microseconds);
+void BackgroundWorker_ResetThreadSpeed();
+
 // -- FUNCTIONS THAT RUNS WITH THE BACKGROUNDWORKER GO BELOW
 
 // Start an MD5 check

@@ -77,7 +77,7 @@ void BackgroundWorker_Start()
             gBackgroundWorkerThreadTick.store(true);
 
             // Small sleep to avoid burning CPU when idle
-            std::this_thread::sleep_for(std::chrono::microseconds(100));
+            std::this_thread::sleep_for(std::chrono::microseconds(gBackgroundWorkerSleepMicros));
 
             // Mark if the queue is busy or not for a separate LunaLua event
             std::lock_guard<std::mutex> lock(gTaskMutex);
@@ -151,6 +151,20 @@ void BackgroundWorker_Poll()
     }
 
     wasWorkerBusy = isWorkerBusy;
+}
+
+int gBackgroundWorkerSleepMicros = 100;
+
+// Sets the thread speed for onThread events.
+void BackgroundWorker_SetThreadSpeed(int microseconds)
+{
+    gBackgroundWorkerSleepMicros = microseconds;
+}
+
+// Resets the thread speed.
+void BackgroundWorker_ResetThreadSpeed()
+{
+    gBackgroundWorkerSleepMicros = 100;
 }
 
 

@@ -10,6 +10,9 @@
 #include "SdlMusic/SdlMusPlayer.h"
 #include "SMBXInternal/Variables.h"
 
+#include "Misc/InternetSystem.h"
+#include "Misc/BackgroundWorker.h"
+
 // Global instance
 EventStateMachine g_EventHandler;
 
@@ -212,6 +215,15 @@ void EventStateMachine::sendOnDraw(void) {
         gMainWindowUnfocusPending = true;
     }
 
+    // -- Before calling onDraw, call some other functions here first --
+
+    // Run the poll for downloading internet files
+    InternetSystem::Poll();
+
+    // Runs the background worker poll
+    BackgroundWorker_Poll();
+    
+    // -- Now call onDraw --
     sendSimpleLuaEvent("onDraw");
 
     // Check if we need the overlay

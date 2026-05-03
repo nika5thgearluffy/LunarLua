@@ -757,7 +757,8 @@ void CLunaLua::bindAll()
                 def("loadEpisode", (bool(*)(std::string, int, int, int))&LuaProxy::Misc::loadEpisode),
                 // Gets the user files directory for globally every episode
                 def("userFilesDirectory", (std::string(*)())&LuaProxy::Misc::userFilesDirectory),
-                // Starts the SMBX2 editor
+                // Returns true if first booted (False before onStart loads for the first time)
+                def("hasFirstBooted", (bool(*)())&LuaProxy::Misc::hasFirstBooted),
                 def("pause", (void(*)(void))&LuaProxy::Misc::pause),
                 def("pause", (void(*)(bool))&LuaProxy::Misc::pause),
                 def("unpause", &LuaProxy::Misc::unpause),
@@ -1131,7 +1132,7 @@ void CLunaLua::bindAll()
             ],
             
             namespace_("Internet")[
-                // Internet.downloadAndParse(url, filePath) - Downloads and parses a file as a string. This can be used to retrieve JSON files and such.
+                // Internet.downloadFile(url, filePath) - Downloads and parses a file as a string. This can be used to retrieve JSON files and such.
                 def("downloadFile", (void(*)(std::string, std::string))&InternetSystem::StartDownload),
                 // Internet.isDownloading() - If the game is downloading a file, this is true.
                 def("isDownloading", (bool(*)())&InternetSystem::IsDownloading),
@@ -1142,7 +1143,22 @@ void CLunaLua::bindAll()
                 // Internet.downloadProgress() - Gets the current download's progress. Displays as 0 - 100 (Without the percent)
                 def("downloadProgress", (int(*)())&InternetSystem::DownloadProgress),
                 // Internet.getDownloadFilename(url) - Gets the download filename from the URL.
-                def("getDownloadFilename", (std::string(*)(std::string))&InternetSystem::GetFilenameFromURL)
+                def("getDownloadFilename", (std::string(*)(std::string))&InternetSystem::GetFilenameFromURL),
+
+                // Internet.startDownload(url, filePath) - Start a file download. Call this with a variable.
+                def("startDownload", &InternetSystem::StartDownloadID),
+                // Internet.isCurrentlyDownloading(download) - Checks if something is already downloading.
+                def("isCurrentlyDownloading", &InternetSystem::IsDownloadingID),
+                // Internet.getProgress(download) - Gets the progress of a download.
+                def("getProgress", &InternetSystem::GetDownloadProgressID),
+                // Internet.getFilename(download) - Gets the filename of a download.
+                def("getFilename", &InternetSystem::GetDownloadFilenameID),
+                // Internet.getURL(download) - Gets the URL of a download.
+                def("getURL", &InternetSystem::GetDownloadURLID),
+                // Internet.cancelDownload(downloaD) - Sets to cancel a download if something is already downloading.
+                def("cancelDownload", &InternetSystem::CancelDownloadID),
+                // Internet.downloadCount() - The total count of current downloads.
+                def("downloadCount", &InternetSystem::GetActiveDownloadCount)
             ],
             
             namespace_("BackgroundWorker")[
@@ -1154,6 +1170,12 @@ void CLunaLua::bindAll()
                 def("clearResult", (void(*)(std::string))&BackgroundWorker_ClearResult),
                 // BackgroundWorker.clearAllResults() - Clears all global background process results.
                 def("clearAllResults", (void(*)())&BackgroundWorker_ClearAllResults),
+
+                // BackgroundWorker.setThreadSpeed(milliseconds) - Sets the thread speed for onThread-related events.
+                def("setThreadSpeed", (void(*)(int))&BackgroundWorker_SetThreadSpeed),
+                // BackgroundWorker.resetThreadSpeed(milliseconds) - Resets the thread speed for onThread-related events back to the default value.
+                def("resetThreadSpeed", (void(*)())&BackgroundWorker_ResetThreadSpeed),
+
                 // BackgroundWorker.startMD5Check(filePath) - Starts an MD5 hash check on a filepath. Call this on a Lua for loop outside of any loop functions.
                 def("startMD5Check", (void(*)(std::string))&BackgroundWorker_StartMD5Check)
             ],
@@ -1727,7 +1749,14 @@ void CLunaLua::triggerOnStart()
         return;
     }
 
-    if (!m_onStartRan) {
+    if (!m_onStartRan)
+    {
+        if (!gFirstBooted)
+        {
+            // We offically first booted if this isn't true yet
+            gFirstBooted = true;
+        }
+
         // manually flag all players to have onSectionChange called following onStart
         for (int i = 1; i <= GM_PLAYERS_COUNT; i++) {
             gLunaLua.queuePlayerSectionChangeEvent(i);

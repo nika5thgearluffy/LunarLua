@@ -151,26 +151,169 @@ void InternetSystem::StartDownload(std::string url, std::string savePath)
 // [CLAUDE AI WAS USED FOR THIS PART OF THE CODE]
 void InternetSystem::Poll()
 {
-    if (!gDownloadPending)
-        return;
-
-    // Check if download is done without blocking
-    if (gDownloadFuture.wait_for(std::chrono::seconds(0)) == std::future_status::ready)
+    // Legacy single download poll - kept for compatibility
+    if (gDownloadPending)
     {
-        std::string result = gDownloadFuture.get();
-        gDownloadPending = false;
+        if (gDownloadFuture.valid() &&
+            gDownloadFuture.wait_for(std::chrono::seconds(0)) == std::future_status::ready)
+        {
+            std::string result = gDownloadFuture.get();
+            gDownloadPending = false;
+
+            if (gLunaLua.isValid())
+            {
+                std::shared_ptr<Event> ev = std::make_shared<Event>("onDownloadComplete", false);
+                ev->setDirectEventName("onDownloadComplete");
+                ev->setLoopable(false);
+                gLunaLua.callEvent(ev, result, std::string(gDownloadURL), std::string(gDownloadFilename));
+            }
+
+            gDownloadURL[0] = '\0';
+            gDownloadFilename[0] = '\0';
+            gDownloadSavePath[0] = '\0';
+            gDownloadProgress = 0;
+        }
+    }
+
+    // Multi-download poll
+    std::vector<std::string> completedIDs;
+    {
+        std::lock_guard<std::mutex> lock(gDownloadMapMutex);
+        for (auto& pair : gDownloadMap)
+        {
+            DownloadEntry* entry = pair.second;
+            if (!entry->pending && entry->future.valid() &&
+                entry->future.wait_for(std::chrono::seconds(0)) == std::future_status::ready)
+            {
+                completedIDs.push_back(pair.first);
+            }
+        }
+    }
+
+    for (const std::string& id : completedIDs)
+    {
+        std::string result;
+        std::string filename;
+        {
+            std::lock_guard<std::mutex> lock(gDownloadMapMutex);
+            auto it = gDownloadMap.find(id);
+            if (it != gDownloadMap.end())
+            {
+                result = it->second->future.get();
+                filename = std::string(it->second->filename);
+                delete it->second;
+                gDownloadMap.erase(it);
+            }
+        }
 
         if (gLunaLua.isValid())
         {
-            std::shared_ptr<Event> downloadComplete = std::make_shared<Event>("onDownloadComplete", false);
-            downloadComplete->setDirectEventName("onDownloadComplete");
-            downloadComplete->setLoopable(false);
-            gLunaLua.callEvent(downloadComplete, result, std::string(gDownloadURL), std::string(gDownloadFilename));
+            std::shared_ptr<Event> ev = std::make_shared<Event>("onDownloadComplete", false);
+            ev->setDirectEventName("onDownloadComplete");
+            ev->setLoopable(false);
+            gLunaLua.callEvent(ev, result, id, filename);
+        }
+    }
+}
+
+// Returns a download ID (the URL itself works as a unique key)
+std::string InternetSystem::StartDownloadID(std::string url, std::string savePath)
+{
+    std::lock_guard<std::mutex> lock(gDownloadMapMutex);
+
+    // If already downloading this URL, return existing ID
+    if (gDownloadMap.find(url) != gDownloadMap.end())
+        return url;
+
+    DownloadEntry* entry = new DownloadEntry();
+    entry->pending = true;
+    strncpy_s(entry->filename, sizeof(entry->filename),
+        InternetSystem::GetFilenameFromURL(url).c_str(), _TRUNCATE);
+    strncpy_s(entry->savePath, sizeof(entry->savePath),
+        savePath.c_str(), _TRUNCATE);
+    strncpy_s(entry->url, sizeof(entry->url),
+        url.c_str(), _TRUNCATE);
+
+    gDownloadMap[url] = entry;
+
+    // Also update legacy globals to point to this download
+    gDownloadPending = true;
+    strncpy_s(gDownloadFilename, sizeof(gDownloadFilename),
+        entry->filename, _TRUNCATE);
+    gDownloadProgress = 0;
+
+    entry->future = std::async(std::launch::async, [url, savePath, entry]() -> std::string
+    {
+        std::string result = InternetSystem::DownloadURL(url);
+
+        if (!savePath.empty() && !result.empty())
+        {
+            std::ofstream file(savePath);
+            if (file.is_open())
+            {
+                file << result;
+                file.close();
+            }
         }
 
-        gDownloadFilename[0] = '\0';
-        gDownloadURL[0] = '\0';
-        gDownloadSavePath[0] = '\0';
-        gDownloadProgress = 0;
+        entry->pending = false;
+        return result;
+    });
+
+    return url; // URL is the ID
+}
+
+bool InternetSystem::IsDownloadingID(std::string id)
+{
+    std::lock_guard<std::mutex> lock(gDownloadMapMutex);
+    auto it = gDownloadMap.find(id);
+    if (it == gDownloadMap.end()) return false;
+    return it->second->pending;
+}
+
+int InternetSystem::GetDownloadProgressID(std::string id)
+{
+    std::lock_guard<std::mutex> lock(gDownloadMapMutex);
+    auto it = gDownloadMap.find(id);
+    if (it == gDownloadMap.end()) return 0;
+    return it->second->progress.load();
+}
+
+std::string InternetSystem::GetDownloadFilenameID(std::string id)
+{
+    std::lock_guard<std::mutex> lock(gDownloadMapMutex);
+    auto it = gDownloadMap.find(id);
+    if (it == gDownloadMap.end()) return "";
+    return std::string(it->second->filename);
+}
+
+std::string InternetSystem::GetDownloadURLID(std::string id)
+{
+    std::lock_guard<std::mutex> lock(gDownloadMapMutex);
+    auto it = gDownloadMap.find(id);
+    if (it == gDownloadMap.end()) return "";
+    return std::string(it->second->url);
+}
+
+int InternetSystem::GetActiveDownloadCount()
+{
+    std::lock_guard<std::mutex> lock(gDownloadMapMutex);
+    int count = 0;
+    for (auto& pair : gDownloadMap)
+    {
+        if (pair.second->pending)
+            count++;
+    }
+    return count;
+}
+
+void InternetSystem::CancelDownloadID(std::string id)
+{
+    std::lock_guard<std::mutex> lock(gDownloadMapMutex);
+    auto it = gDownloadMap.find(id);
+    if (it != gDownloadMap.end())
+    {
+        delete it->second;
+        gDownloadMap.erase(it);
     }
 }

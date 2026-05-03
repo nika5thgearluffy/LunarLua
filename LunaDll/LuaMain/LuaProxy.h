@@ -935,6 +935,7 @@ namespace LuaProxy {
         void registerCharacterId(const luabind::object& namedArgs, lua_State* L);
         std::string showRichDialog(const std::string& title, const std::string& rtfText, bool isReadOnly);
         std::string userFilesDirectory();
+        bool hasFirstBooted();
 
         // Internal use profiler functions
         void __enablePerfTracker();

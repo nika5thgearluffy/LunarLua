@@ -386,6 +386,12 @@ std::string LuaProxy::Misc::userFilesDirectory()
     return gUserFilesPathUTF8 + "\\";
 }
 
+// If we first booted, this is true.
+bool LuaProxy::Misc::hasFirstBooted()
+{
+    return gFirstBooted;
+}
+
 // Internal use profiler functions
 void LuaProxy::Misc::__enablePerfTracker()
 {
