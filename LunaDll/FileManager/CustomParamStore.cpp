@@ -14,5 +14,5 @@ void loadConfigPack(const std::string &episodePath, const std::string &customDir
 {
     g_configManager.setEpisodePath(episodePath);
     g_configManager.setCustomPath(episodePath + "/" + customDirectoryName);
-    g_configManager.loadConfigPack(gAppPathUTF8 + "/PGE/configs/SMBX2-Integration");
+    g_configManager.loadConfigPack(gAppPathUTF8 + "/PGE/configs/SMBX2R-Integration");
 }
