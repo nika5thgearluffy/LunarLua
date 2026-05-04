@@ -201,6 +201,8 @@ public:
                 if (cachePtr->mFilePath == fileName)
                 {
                     cachePtr.reset();
+                    PGE_Sounds::memUsage -= cachePtr->mChunk->alen;
+                    Mix_FreeChunk(cachePtr->mChunk);
                     return;
                 }
                 cacheEntry++;
