@@ -1060,7 +1060,13 @@ void CLunaLua::bindAll()
                 def("screenWidth", (int(*)())&MonitorSystem::GetScreenResolutionWidth),
                 // Monitor.screenHeight() - Gets the specific monitor's height.
                 def("screenHeight", (int(*)(int))&MonitorSystem::GetScreenResolutionHeight),
-                def("screenHeight", (int(*)())&MonitorSystem::GetScreenResolutionHeight)
+                def("screenHeight", (int(*)())&MonitorSystem::GetScreenResolutionHeight),
+                // Monitor.dpiScale([monitorID]) - Gets the DPI scale of the monitor.
+                def("dpiScale", (float(*)(int))&MonitorSystem::getDPIScale),
+                def("dpiScale", (float(*)())&MonitorSystem::getDPIScale),
+                // Monitor.refreshRate([monitorID]) - Gets the refresh rate of the monitor.
+                def("refreshRate", (int(*)(int))&MonitorSystem::getRefreshRate),
+                def("refreshRate", (int(*)())&MonitorSystem::getRefreshRate)
             ],
             
             namespace_("Window")[
@@ -1089,8 +1095,6 @@ void CLunaLua::bindAll()
                 def("setScale", (void(*)(int))&MonitorSystem::setWindowScale),
                 // Window.findMonitor() - Finds the monitor where the window is located.
                 def("findMonitor", (int(*)())&MonitorSystem::FindWindowFromMonitor),
-                // Window.dpiScale() - Gets the DPI scale of the window.
-                def("dpiScale", (float(*)())&MonitorSystem::getDPIScale),
                 // Window.getWidthFromResolution(width) - Gets the window width based off the resolution width.
                 def("getWidthFromResolution", (int(*)(int))&MonitorSystem::getWindowWidthFromResolution),
                 // Window.getHeightFromResolution(height) - Gets the window height based off the resolution width.

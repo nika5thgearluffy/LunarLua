@@ -279,13 +279,44 @@ int MonitorSystem::getWindowHeightFromResolution(int gameHeight)
 }
 
 // Gets the DPI scale. This is accounted for 4K monitors and scaled resolutions.
+// Unfortunately, we can only get the current DPI scale from what window the monitor is at, since the SDK VS2015 is using doesn't have shellscalingapi.h
 // [CLAUDE AI IS USED FOR THIS PART OF THE CODE]
-float MonitorSystem::getDPIScale()
+float MonitorSystem::getDPIScale(int monitorID)
 {
     HDC hdc = GetDC(gMainWindowHwnd);
     float dpi = GetDeviceCaps(hdc, LOGPIXELSX) / 96.0f;
     ReleaseDC(gMainWindowHwnd, hdc);
     return dpi;
+}
+
+float MonitorSystem::getDPIScale()
+{
+    return MonitorSystem::getDPIScale(1);
+}
+
+// Get the refresh rate of a specific monitor in Hz
+// [CLAUDE AI IS USED FOR THIS PART OF THE CODE]
+int MonitorSystem::getRefreshRate(int monitorID)
+{
+    if (monitorID < 1 || monitorID > numberOfMonitors)
+        return 0;
+
+    DEVMODE devMode;
+    memset(&devMode, 0, sizeof(devMode));
+    devMode.dmSize = sizeof(devMode);
+
+    // Use the monitor's device name to get its display settings
+    if (EnumDisplaySettingsW(monitorInformation[monitorID - 1].monitorName,
+        ENUM_CURRENT_SETTINGS, &devMode))
+    {
+        return devMode.dmDisplayFrequency;
+    }
+    return 0;
+}
+
+int MonitorSystem::getRefreshRate()
+{
+    return MonitorSystem::getRefreshRate(1);
 }
 
 
