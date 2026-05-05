@@ -403,7 +403,7 @@ void __stdcall runtimeHookYoshiEatExit_internal()
     if (npcCheckIdx != -1 && previousNPCID != -1)
     {
         NPCMOB* npc = NPC::Get(npcCheckIdx);
-        if (npc->id != previousNPCID) {
+        if (npc != nullptr && npc->id != previousNPCID) {
             // NPC ID changed during yoshi mouth code
             // invoke transformation event
             executeOnNPCTransformIdx(npcCheckIdx + 1, previousNPCID, NPC_TFCAUSE_EATEN);
