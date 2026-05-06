@@ -9,6 +9,6 @@ Claude was used in this project for some indications of what to program in, but 
 If there's any generated code, a comment saying `// [CLAUDE AI USED FOR THIS PART OF THE CODE]` should be available.
 
 ## How to compile
-You'll need to install the Community version of Visual Studio 2022 to compile this repo.
+You'll need to install the Community version of Visual Studio 2022, as well as install the latest Windows 10 SDK, to compile this repo.
 
 Just open the "LunaDLL.sln" file on VS2022, then compile. If you want to compile using the batch files, you can do so by double clicking "build_with_pause.bat" once you have installed VS2022.
