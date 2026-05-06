@@ -77,6 +77,8 @@ void InitMinimalLuaState(lua_State* L) {
     lua_setglobal(L, "_smbxPath");
     lua_pushstring(L, ((std::string)GM_FULLDIR).c_str());
     lua_setglobal(L, "_episodePath");
+    lua_pushboolean(L, gFirstBooted);
+    lua_setglobal(L, "_firstBooted");
 
     luasetconst(L, "FIELD_BYTE", 1);
     luasetconst(L, "FIELD_WORD", 2);
@@ -156,9 +158,6 @@ void InitMinimalLuaState(lua_State* L) {
             def("getWidthFromResolution", (int(*)(int))&MonitorSystem::getWindowWidthFromResolution),
             // Window.getHeightFromResolution(height) - Gets the window height based off the resolution width.
             def("getHeightFromResolution", (int(*)(int))&MonitorSystem::getWindowHeightFromResolution)
-        ],
-        namespace_("Misc") [
-            def("hasFirstBooted", (bool(*)())&LuaProxy::Misc::hasFirstBooted)
         ]
     ];
 }
