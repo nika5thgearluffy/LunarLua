@@ -20,7 +20,7 @@
 #include <fstream>
 #include <mutex>
 #include <cstddef>
-#include <experimental/filesystem>
+#include <filesystem>
 #include <wininet.h>
 #include <future>
 
@@ -1265,8 +1265,8 @@ double GetOSLanguage()
 // In others words, it's the directory you go to when you "cd .." on a terminal/CMD
 std::string getParentDirectory(std::string str)
 {
-    std::experimental::filesystem::path pathToUse = str;
-    std::experimental::filesystem::path finalStr = pathToUse.parent_path();
+    std::filesystem::path pathToUse = str;
+    std::filesystem::path finalStr = pathToUse.parent_path();
     return finalStr.string();
 }
 

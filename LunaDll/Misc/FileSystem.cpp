@@ -8,7 +8,6 @@
 #include <io.h>
 #include <iostream>
 #include <fstream>
-#include <experimental/filesystem>
 
 #include "../GlobalFuncs.h"
 #include "../LuaMain/LunaPathValidator.h"

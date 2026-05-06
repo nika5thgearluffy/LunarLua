@@ -1,6 +1,7 @@
 #include "MonitorSystem.h"
 
 #include <windows.h>
+#include <shellscalingapi.h>
 
 #include "../Globals.h"
 #include "../GlobalFuncs.h"
@@ -15,6 +16,8 @@
 
 #include "../Rendering/WindowSizeHandler.h"
 #include "../Rendering/GL/GLContextManager.h"
+
+#pragma comment(lib, "Shcore.lib")
 
 // 10 monitors is the max Windows supports
 MonitorSystemMonitors monitorInformation[9];
@@ -279,14 +282,28 @@ int MonitorSystem::getWindowHeightFromResolution(int gameHeight)
 }
 
 // Gets the DPI scale. This is accounted for 4K monitors and scaled resolutions.
-// Unfortunately, we can only get the current DPI scale from what window the monitor is at, since the SDK VS2015 is using doesn't have shellscalingapi.h
 // [CLAUDE AI IS USED FOR THIS PART OF THE CODE]
 float MonitorSystem::getDPIScale(int monitorID)
 {
-    HDC hdc = GetDC(gMainWindowHwnd);
-    float dpi = GetDeviceCaps(hdc, LOGPIXELSX) / 96.0f;
-    ReleaseDC(gMainWindowHwnd, hdc);
-    return dpi;
+   if (monitorID < 1 || monitorID > numberOfMonitors)
+        return 1.0f;
+
+    // Get the HMONITOR handle for the specific monitor
+    POINT pt;
+    pt.x = monitorInformation[monitorID - 1].monitorLeft + 
+           (monitorInformation[monitorID - 1].monitorWidth / 2);
+    pt.y = monitorInformation[monitorID - 1].monitorTop + 
+           (monitorInformation[monitorID - 1].monitorHeight / 2);
+
+    HMONITOR hMonitor = MonitorFromPoint(pt, MONITOR_DEFAULTTONEAREST);
+    if (!hMonitor)
+        return 1.0f;
+
+    UINT dpiX, dpiY;
+    if (GetDpiForMonitor(hMonitor, MDT_EFFECTIVE_DPI, &dpiX, &dpiY) == S_OK)
+        return dpiX / 96.0f;
+
+    return 1.0f;
 }
 
 float MonitorSystem::getDPIScale()
