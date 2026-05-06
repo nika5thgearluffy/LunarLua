@@ -159,7 +159,7 @@ int gMusicCountOverworld = 0;
 int gMusicCountLevel = 0;
 
 // Have we first booted the engine?
-bool gFirstBooted = false;
+bool gFirstBooted = true;
 
 // If this is true, onPlayerDie won't be called
 bool gWarpingToLevelFromMap = false;

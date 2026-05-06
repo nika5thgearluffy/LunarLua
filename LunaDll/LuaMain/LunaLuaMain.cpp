@@ -1755,10 +1755,10 @@ void CLunaLua::triggerOnStart()
 
     if (!m_onStartRan)
     {
-        if (!gFirstBooted)
+        if (gFirstBooted)
         {
-            // We offically first booted if this isn't true yet
-            gFirstBooted = true;
+            // We no longer first booted if this isn't false yet
+            gFirstBooted = false;
         }
 
         // manually flag all players to have onSectionChange called following onStart

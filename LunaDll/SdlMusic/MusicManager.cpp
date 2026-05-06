@@ -260,7 +260,7 @@ void MusicManager::play(std::string alias) //Chunk will be played once, stream w
         {
 			int realID = chanID + 1;
 
-            if(chanID == 28 && !gFirstBooted)
+            if(chanID == 28 && gFirstBooted)
             {
                 if(gEpisodeSettings.episodeBootSoundID == -1)
                 {
@@ -279,7 +279,7 @@ void MusicManager::play(std::string alias) //Chunk will be played once, stream w
                 }
             }
 
-            if(!PGE_Sounds::playOverrideForAlias(alias, sounds[chanID].channel) && gFirstBooted)
+            if(!PGE_Sounds::playOverrideForAlias(alias, sounds[chanID].channel) && !gFirstBooted)
             {
                 bool isCancelled = createSFXStartLuaEvent(realID, sounds[chanID].fullPath.c_str());
 
