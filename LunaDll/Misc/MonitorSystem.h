@@ -91,6 +91,8 @@ namespace MonitorSystem{
 
     int getRefreshRate(int monitorID);
     int getRefreshRate();
+
+    std::string GetWindowTitle();
     
     luabind::object GetMonitorInfo(int monitorID, lua_State *L);
 };

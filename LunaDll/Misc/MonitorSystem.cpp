@@ -336,6 +336,13 @@ int MonitorSystem::getRefreshRate()
     return MonitorSystem::getRefreshRate(1);
 }
 
+std::string MonitorSystem::GetWindowTitle()
+{
+    std::wstring title(GetWindowTextLength(gMainWindowHwnd) + 1, L'\0');
+    GetWindowTextW(gMainWindowHwnd, &title[0], title.size());
+    return WStr2Str(title);
+}
+
 
 static luabind::object getMonitorInfo(int monitorID, lua_State *L)
 {

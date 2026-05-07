@@ -1098,7 +1098,9 @@ void CLunaLua::bindAll()
                 // Window.getWidthFromResolution(width) - Gets the window width based off the resolution width.
                 def("getWidthFromResolution", (int(*)(int))&MonitorSystem::getWindowWidthFromResolution),
                 // Window.getHeightFromResolution(height) - Gets the window height based off the resolution width.
-                def("getHeightFromResolution", (int(*)(int))&MonitorSystem::getWindowHeightFromResolution)
+                def("getHeightFromResolution", (int(*)(int))&MonitorSystem::getWindowHeightFromResolution),
+                // Window.getTitle() - Gets the window title of the game.
+                def("getTitle", (std::string(*)())&MonitorSystem::GetWindowTitle)
             ],
 
             namespace_("Keyboard")[
