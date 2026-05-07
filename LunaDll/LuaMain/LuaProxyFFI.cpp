@@ -1072,13 +1072,4 @@ extern "C" {
     {
         return gStartupSettings.runWhenUnfocused;
     }
-
-    // Gets the current window title.
-    /*FFI_EXPORT(const char*) LunaLuaGetWindowTitle()
-    {
-        LPWSTR title;
-        int error = GetWindowTextW(gMainWindowHwnd, title, 9999);
-        std::string titleFinal = CW2A(title);
-        return titleFinal.c_str();
-    }*/
 }

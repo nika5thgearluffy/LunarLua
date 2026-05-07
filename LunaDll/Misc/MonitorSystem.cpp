@@ -338,8 +338,16 @@ int MonitorSystem::getRefreshRate()
 
 std::string MonitorSystem::GetWindowTitle()
 {
-    std::wstring title(GetWindowTextLength(gMainWindowHwnd) + 1, L'\0');
+    int length = GetWindowTextLength(gMainWindowHwnd);
+    if (length == 0)
+        return "";
+
+    std::wstring title(length + 1, L'\0');
     GetWindowTextW(gMainWindowHwnd, &title[0], title.size());
+    
+    // Resize to actual length, trimming the null terminator
+    title.resize(length);
+    
     return WStr2Str(title);
 }
 
