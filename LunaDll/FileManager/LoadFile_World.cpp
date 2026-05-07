@@ -305,6 +305,11 @@ void LunaLua_loadWorldFile(WorldData& outData, std::wstring fullPath, bool isVal
 
     ImageLoader::Run();
 
+    auto player = SMBXOverworld::get();
+    // These are not initalized, so set them
+    player->momentum.width = 32;
+    player->momentum.height = 32;
+
     //move player to starting tile
     for (int i = 0; i < numLevel; i++) {
         auto level = SMBXLevel::get(i);
@@ -318,11 +323,6 @@ void LunaLua_loadWorldFile(WorldData& outData, std::wstring fullPath, bool isVal
         }
 
     }
-
-    auto player = SMBXOverworld::get();
-    // These are not initalized, so set them
-    player->momentum.width = 32;
-    player->momentum.height = 32;
 
     if (hasUnrecognizedConfigPack)
     {

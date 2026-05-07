@@ -5065,12 +5065,30 @@ void __stdcall runtimeHookUpdateBGOMomentum(int bgoId, int layerId) {
 
 static void __stdcall runtimeHookHandleMapMusicBoxCollisionInternal(int musicBoxIdx)
 {
-    SMBXMusicbox* musicBox = SMBXMusicbox::GetRaw(musicBoxIdx);
-    if (GM_WORLD_CURRENT_MUSIC != musicBox->id)
+    using namespace SMBX13;
+
+    // Get the world music box
+    auto& musicBox = Vars::WorldMusic[musicBoxIdx + 1];
+
+    if (Vars::curWorldMusic != musicBox.Type)
     {
-        if (musicBox->id != 17)
+        // Start default music if not custom
+        if (musicBox.Type != 17)
         {
-            native_playMusic(&(musicBox->id)); // sets GM_WORLD_CURRENT_MUSIC
+            Functions::StartMusic(musicBox.Type);
+        }
+        // Else use the custom ID
+        else
+        {
+            // Making sure the custom music file isn't blank...
+            if (WorldMusicBoxes[musicBoxIdx].customMusicFile != "")
+            {
+                // Change music index 17's filepath before playing the music
+                MusicManager::changeMusicIndex(1, 17, std::string(Vars::SelectWorld[Vars::selWorld].WorldPath) + WorldMusicBoxes[musicBoxIdx].customMusicFile);
+
+                // Now play!
+                Functions::StartMusic(musicBox.Type);
+            }
         }
     }
 }

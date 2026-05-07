@@ -411,7 +411,7 @@ bool KeyboardMouseSystem::RegisterDevices()
         RAWINPUTDEVICE ridMouse = {};
         ridMouse.usUsagePage = 0x01;
         ridMouse.usUsage = 0x02;  // HID_USAGE_GENERIC_MOUSE
-        ridMouse.dwFlags = RIDEV_INPUTSINK;
+        ridMouse.dwFlags = RIDEV_INPUTSINK | RIDEV_DEVNOTIFY;
         ridMouse.hwndTarget = gMainWindowHwnd;
     }
 

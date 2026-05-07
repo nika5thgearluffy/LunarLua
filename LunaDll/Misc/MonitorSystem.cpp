@@ -344,10 +344,10 @@ std::string MonitorSystem::GetWindowTitle()
 
     std::wstring title(length + 1, L'\0');
     GetWindowTextW(gMainWindowHwnd, &title[0], title.size());
-    
+
     // Resize to actual length, trimming the null terminator
     title.resize(length);
-    
+
     return WStr2Str(title);
 }
 

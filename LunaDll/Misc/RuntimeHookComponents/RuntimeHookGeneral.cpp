@@ -588,12 +588,12 @@ static void ProcessRawInput_OrigFunc(uint16_t vkey, uint16_t scanCode, uint8_t p
         case VK_CONTROL:
             if (prefixFlag == 0)
             {
-                gKeyState[keyboardIdx - 1][VK_LCONTROL] = -1;
+                gKeyState[keyboardIdx - 1][VK_LCONTROL] = keyDown ? -1 : 0;  // fix
                 vkey = VK_LCONTROL;
             }
             else if (prefixFlag == RI_KEY_E0)
             {
-                gKeyState[keyboardIdx - 1][VK_RCONTROL] = -1;
+                gKeyState[keyboardIdx - 1][VK_RCONTROL] = keyDown ? -1 : 0;  // fix
                 vkey = VK_RCONTROL;
             }
             else
@@ -604,12 +604,12 @@ static void ProcessRawInput_OrigFunc(uint16_t vkey, uint16_t scanCode, uint8_t p
         case VK_MENU:
             if (prefixFlag == 0)
             {
-                gKeyState[keyboardIdx - 1][VK_LMENU] = -1;
+                gKeyState[keyboardIdx - 1][VK_LMENU] = keyDown ? -1 : 0;  // fix
                 vkey = VK_LMENU;
             }
             else if (prefixFlag == RI_KEY_E0)
             {
-                gKeyState[keyboardIdx - 1][VK_RMENU] = -1;
+                gKeyState[keyboardIdx - 1][VK_RMENU] = keyDown ? -1 : 0;  // fix
                 vkey = VK_RMENU;
             }
             else
@@ -620,12 +620,12 @@ static void ProcessRawInput_OrigFunc(uint16_t vkey, uint16_t scanCode, uint8_t p
         case VK_SHIFT:
             if ((scanCode == 0x2a) && (prefixFlag == 0))
             {
-                gKeyState[keyboardIdx - 1][VK_LSHIFT] = -1;
+                gKeyState[keyboardIdx - 1][VK_LSHIFT] = keyDown ? -1 : 0;  // fix
                 vkey = VK_LSHIFT;
             }
             else if ((scanCode == 0x36) && (prefixFlag == 0))
             {
-                gKeyState[keyboardIdx - 1][VK_RSHIFT] = -1;
+                gKeyState[keyboardIdx - 1][VK_RSHIFT] = keyDown ? -1 : 0;  // fix
                 vkey = VK_RSHIFT;
             }
             else
@@ -665,7 +665,7 @@ static void ProcessRawInput_OrigFunc(uint16_t vkey, uint16_t scanCode, uint8_t p
             break;
         case VK_LMENU:
         case VK_RMENU:
-            gKeyState[keyboardIdx - 1][VK_MENU] = COMBOOL((gKeyState[keyboardIdx - 1][VK_LMENU] || vkey == gKeyState[keyboardIdx - 1][VK_RMENU]));
+            gKeyState[keyboardIdx - 1][VK_MENU] = COMBOOL((gKeyState[keyboardIdx - 1][VK_LMENU] || gKeyState[keyboardIdx - 1][VK_RMENU]));
             break;
         case VK_LSHIFT:
         case VK_RSHIFT:
