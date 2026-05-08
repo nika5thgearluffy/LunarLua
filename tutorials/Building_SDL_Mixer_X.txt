@@ -1,0 +1,61 @@
+HOW TO BUILD SDL MIXER X
+----------
+
+Pre-Requisites
+----
+
+1. To build and install, you'll need the following:
+
+- CMake (The latest version)
+- Visual Studio 2022
+- Git (For downloading the repositories)
+- yasm (For part of building SDL Mixer X. Use the 32 bit version. It should go to "Program Files (x86)" in your C Drive)
+
+-------
+
+Building SDL Mixer X
+----
+
+Make sure WHERE you build the project DOESN'T have any folders with spaces!!!!
+
+1. Open up cmd (Command Prompt). Run it as an Admin just in case.
+
+2. Clone the following if you haven't yet:
+git clone https://github.com/WohlSoft/AudioCodecs.git
+git clone https://github.com/WohlSoft/SDL-Mixer-X.git
+
+3. Go to the AudioCodecs commit folder. 
+cd AudioCodecs
+
+4. Run the following:
+mkdir build-x2
+cd build-x2
+
+And then run this:
+cmake -DCMAKE_BUILD_TYPE=Release -G "Visual Studio 17 2022" -A Win32 ..
+
+5. It should start making part of the build. Now run this after it's done:
+cmake --build . --config Release --target install
+
+6. It should now build an SDL2.dll file into the "out" folder in the build folder. Now type up the following:
+
+cd../.. (This backs out two folders)
+cd SDL-Mixer-X
+mkdir build-x2
+cd build-x2
+
+Then do this:
+cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX="E:/Drive/____Source_Code_Archives/_Music_Libraries/SDL-Mixer-X/build-x2/out/" -DAUDIO_CODECS_INSTALL_PATH="C:/Program Files (x86)/AudioCodecs/" -DAUDIO_CODECS_REPO_PATH="E:/Drive/____Source_Code_Archives/_Music_Libraries/AudioCodecs/" -DMIXERX_ENABLE_GPL=ON -DDOWNLOAD_AUDIO_CODECS_DEPENDENCY=OFF -DSDL_MIXER_X_SHARED=ON -G "Visual Studio 17 2022" -A Win32 ..
+
+7. From there, finally do this:
+cmake --build . --config Release --target install
+
+8. SDL Mixer X should be spat out into the "out" folder in the build folder.
+
+9. We're not done yet. We gotta put the new DLL files into SMBX2R, and also update the source code in LunarLua as well. First, copy the SDL2.dll file from "C:\(buildfolder)\AudioCodecs\build\bin" to the bin folder on your SMBX2R install. Also copy the file from "C:\(buildfolder)\SDL-Mixer-X-Final\bin" to the bin folder on your SMBX2 install. You also want to replace them on the LunarLua source code as well: "LunarLua\LunaDll\libs\sdl\bin".
+
+10. We're now gonna update the code in the sdl folder. Copy the "include" and "lib" folders in "C:\(buildfolder)\SDL-Mixer-X\build\out" and paste them to where this is at in LunarLua: "LunarLua\LunaDll\libs\sdl" and replace if it says so.
+
+11. Copy everything under "C:\(buildfolder)\SDL-Mixer-X\build\out\lib" and paste it to "LunarLua\LunaDll\libs\sdl\lib"
+
+12. Everything should now be good to go! You can rebuild LunarLua, which should be recommended if you want the internal program to detect newer SDL Mixer X stuff.
