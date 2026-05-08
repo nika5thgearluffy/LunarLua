@@ -318,10 +318,11 @@ void LunaLua_loadWorldFile(WorldData& outData, std::wstring fullPath, bool isVal
             player->currentPowerup = 1;
             player->momentum.x = level->momentum.x;
             player->momentum.y = level->momentum.y;
+            player->momentum.width = level->momentum.width;
+            player->momentum.height = level->momentum.height;
             player->currentLevelTitle = level->levelTitle;
             setPathsToVisible(&(level->momentum));
         }
-
     }
 
     if (hasUnrecognizedConfigPack)
