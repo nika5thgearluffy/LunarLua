@@ -554,9 +554,9 @@ static void SendLuaRawKeyEventRepeated(uint32_t virtKey, bool isDown, int keyboa
         auto cKey = MapVirtualKeyA(virtKey, MAPVK_VK_TO_CHAR);
         std::string blank = "";
         if (cKey != 0) {
-            gLunaLua.callEvent(keyboardReleaseEvent, static_cast<int>(virtKey), std::string(1, cKey & 0b01111111), keyboardIdx + 1);
+            gLunaLua.callEvent(keyboardReleaseEvent, static_cast<int>(virtKey), std::string(1, cKey & 0b01111111), keyboardIdx);
         } else {
-            gLunaLua.callEvent(keyboardReleaseEvent, static_cast<int>(virtKey), blank, keyboardIdx + 1);
+            gLunaLua.callEvent(keyboardReleaseEvent, static_cast<int>(virtKey), blank, keyboardIdx);
         }
     }
 }
@@ -569,11 +569,11 @@ static void SendLuaRawKeyEvent(uint32_t virtKey, bool isDown, int keyboardIdx)
         std::string blank = "";
         if (cKey != 0)
         {
-            gLunaLua.callEvent(keyboardReleaseEvent, static_cast<int>(virtKey), std::string(1, cKey & 0b01111111), keyboardIdx + 1);
+            gLunaLua.callEvent(keyboardReleaseEvent, static_cast<int>(virtKey), std::string(1, cKey & 0b01111111), keyboardIdx);
         }
         else
         {
-            gLunaLua.callEvent(keyboardReleaseEvent, static_cast<int>(virtKey), blank, keyboardIdx + 1);
+            gLunaLua.callEvent(keyboardReleaseEvent, static_cast<int>(virtKey), blank, keyboardIdx);
         }
     }
 }
@@ -618,21 +618,41 @@ static void ProcessRawInput_OrigFunc(uint16_t vkey, uint16_t scanCode, uint8_t p
             }
             break;
         case VK_SHIFT:
-            if ((scanCode == 0x2a) && (prefixFlag == 0))
+        {
+            // Use MapVirtualKey to determine left vs right shift
+            // since scan codes can vary between keyboards
+            uint16_t mappedVKey = MapVirtualKey(scanCode, MAPVK_VSC_TO_VK_EX);
+            
+            if (mappedVKey == VK_LSHIFT)
             {
-                gKeyState[keyboardIdx - 1][VK_LSHIFT] = keyDown ? -1 : 0;  // fix
+                gKeyState[keyboardIdx - 1][VK_LSHIFT] = keyDown ? -1 : 0;
                 vkey = VK_LSHIFT;
             }
-            else if ((scanCode == 0x36) && (prefixFlag == 0))
+            else if (mappedVKey == VK_RSHIFT)
             {
-                gKeyState[keyboardIdx - 1][VK_RSHIFT] = keyDown ? -1 : 0;  // fix
+                gKeyState[keyboardIdx - 1][VK_RSHIFT] = keyDown ? -1 : 0;
                 vkey = VK_RSHIFT;
             }
             else
             {
-                return;
+                // Fallback to scan code check
+                if (scanCode == 0x2a)
+                {
+                    gKeyState[keyboardIdx - 1][VK_LSHIFT] = keyDown ? -1 : 0;
+                    vkey = VK_LSHIFT;
+                }
+                else if (scanCode == 0x36)
+                {
+                    gKeyState[keyboardIdx - 1][VK_RSHIFT] = keyDown ? -1 : 0;
+                    vkey = VK_RSHIFT;
+                }
+                else
+                {
+                    return;
+                }
             }
             break;
+        }
         default:
             break;
     }
@@ -659,17 +679,17 @@ static void ProcessRawInput_OrigFunc(uint16_t vkey, uint16_t scanCode, uint8_t p
     // For key states that should or go together from left and right, handle that
     switch (vkey)
     {
+        case VK_LSHIFT:
+        case VK_RSHIFT:
+            gKeyState[keyboardIdx - 1][VK_SHIFT] = (gKeyState[keyboardIdx - 1][VK_LSHIFT] || gKeyState[keyboardIdx - 1][VK_RSHIFT]) ? 0x80 : 0x00;
+            break;
         case VK_LCONTROL:
         case VK_RCONTROL:
-            gKeyState[keyboardIdx - 1][VK_CONTROL] = COMBOOL((gKeyState[keyboardIdx - 1][VK_LCONTROL] || gKeyState[keyboardIdx - 1][VK_RCONTROL]));
+            gKeyState[keyboardIdx - 1][VK_CONTROL] = (gKeyState[keyboardIdx - 1][VK_LCONTROL] || gKeyState[keyboardIdx - 1][VK_RCONTROL]) ? 0x80 : 0x00;
             break;
         case VK_LMENU:
         case VK_RMENU:
-            gKeyState[keyboardIdx - 1][VK_MENU] = COMBOOL((gKeyState[keyboardIdx - 1][VK_LMENU] || gKeyState[keyboardIdx - 1][VK_RMENU]));
-            break;
-        case VK_LSHIFT:
-        case VK_RSHIFT:
-            gKeyState[keyboardIdx - 1][VK_SHIFT] = COMBOOL((gKeyState[keyboardIdx - 1][VK_LSHIFT] || gKeyState[keyboardIdx - 1][VK_RSHIFT]));
+            gKeyState[keyboardIdx - 1][VK_MENU] = (gKeyState[keyboardIdx - 1][VK_LMENU] || gKeyState[keyboardIdx - 1][VK_RMENU]) ? 0x80 : 0x00;
             break;
         default:
             break;
@@ -678,12 +698,18 @@ static void ProcessRawInput_OrigFunc(uint16_t vkey, uint16_t scanCode, uint8_t p
     // Send lua onRawKeyPress/Release events
     if (!repeated)
     {
-        SendLuaRawKeyEvent(vkey, keyDown, keyboardIdx);
+        if (haveFocus)
+        {
+            SendLuaRawKeyEvent(vkey, keyDown, keyboardIdx);
+        }
     }
     else
     {
-        // Send lua onRawKeyDown/Up events
-        SendLuaRawKeyEventRepeated(vkey, keyDown, keyboardIdx);
+        if (haveFocus)
+        {
+            // Send lua onRawKeyDown/Up events
+            SendLuaRawKeyEventRepeated(vkey, keyDown, keyboardIdx);
+        }
     }
     // If window is focused, and key is down, run keypress handling
     if (haveFocus)

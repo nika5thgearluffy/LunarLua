@@ -45,7 +45,7 @@ mkdir build-x2
 cd build-x2
 
 Then do this:
-cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX="E:/Drive/____Source_Code_Archives/_Music_Libraries/SDL-Mixer-X/build-x2/out/" -DAUDIO_CODECS_INSTALL_PATH="C:/Program Files (x86)/AudioCodecs/" -DAUDIO_CODECS_REPO_PATH="E:/Drive/____Source_Code_Archives/_Music_Libraries/AudioCodecs/" -DMIXERX_ENABLE_GPL=ON -DDOWNLOAD_AUDIO_CODECS_DEPENDENCY=OFF -DSDL_MIXER_X_SHARED=ON -G "Visual Studio 17 2022" -A Win32 ..
+cmake -G "Visual Studio 17 2022" -A Win32 -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX="E:/Drive/____Source_Code_Archives/_Music_Libraries/SDL-Mixer-X/build-x2/out/" -DAUDIO_CODECS_INSTALL_PATH="C:/Program Files (x86)/AudioCodecs/" -DAUDIO_CODECS_REPO_PATH="E:/Drive/____Source_Code_Archives/_Music_Libraries/AudioCodecs/" -DMIXERX_ENABLE_GPL=ON -DDOWNLOAD_AUDIO_CODECS_DEPENDENCY=OFF -DSDL_MIXER_X_SHARED=ON ..
 
 7. From there, finally do this:
 cmake --build . --config Release --target install
