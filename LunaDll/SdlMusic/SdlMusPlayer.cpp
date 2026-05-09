@@ -285,11 +285,11 @@ bool PGE_MusPlayer::MUS_IsFading()
     return (Mix_FadingMusic()==1);
 }
 
-bool PGE_MusPlayer::setSampleRate(int sampleRate=44100)
+bool PGE_MusPlayer::setSampleRate(int sampleRate=48000)
 {
     sRate=sampleRate;
     Mix_CloseAudio();
-    if (Mix_OpenAudio(sRate, AUDIO_S16, 2, gGeneralConfig.getAudioBufferLength()) != 0)
+    if (Mix_OpenAudio(sRate, AUDIO_F32, 2, gGeneralConfig.getAudioBufferLength()) != 0)
     {
         return false;
     }
