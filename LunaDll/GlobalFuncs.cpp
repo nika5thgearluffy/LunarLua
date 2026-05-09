@@ -1316,3 +1316,23 @@ void ExitSMBX2(int processCode)
     // Now finally exit
     _exit(processCode);
 }
+
+std::string GetShortPath(std::string longPath)
+{
+    std::wstring widePath = Str2WStr(longPath);
+    
+    // Get required buffer size
+    DWORD shortPathLen = GetShortPathNameW(widePath.c_str(), NULL, 0);
+    if (shortPathLen == 0)
+        return longPath;  // failed, return original
+    
+    std::wstring shortPath(shortPathLen, L'\0');
+    DWORD result = GetShortPathNameW(widePath.c_str(), &shortPath[0], shortPathLen);
+    if (result == 0)
+        return longPath;  // failed, return original
+    
+    // Trim null terminator
+    shortPath.resize(result);
+    
+    return WStr2Str(shortPath);
+}

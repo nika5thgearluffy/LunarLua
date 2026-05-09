@@ -195,3 +195,5 @@ std::string getParentDirectory(std::string str);
 
 extern int StartSMBX2Editor();
 extern void ExitSMBX2(int processCode);
+
+std::string GetShortPath(std::string longPath);

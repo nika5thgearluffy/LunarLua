@@ -343,6 +343,12 @@ void PGE_MusPlayer::MUS_openFile(const char *musFile)
         musicGotDeferred = false;
     }
 
+    // Before we load the music file, this is needed to check for long filepaths
+    // Windows beyond 260 characters would end up using MS-DOS-based filenames/paths depending on
+    // how long the filepath is, so we need to try to get the correct path just in case
+    //musFile = std::string(GetShortPath(musFile)).c_str();
+
+    // Now load the music file
     play_mus = Mix_LoadMUS( musFile );
 
     if(!play_mus)
