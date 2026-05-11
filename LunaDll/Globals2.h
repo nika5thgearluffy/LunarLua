@@ -42,6 +42,9 @@ struct EpisodeSettings
     // Whether the player should have an easier powerdown instead of one based off SMB1. This phases out anotherPowerdownLibrary.
     bool easierPowerdown;
 
+    // If the episode should suppress close-to-the-limit message boxes, this should be set to true.
+    bool suppressCloseLimitMessages;
+
     EpisodeSettings() :
         episodeDirectory(L""), episodeDirectoryWithoutRoot(L""),
         usingCustomSplash(false), episodeBootImage(L""),
@@ -51,7 +54,8 @@ struct EpisodeSettings
         episodeWidth(800), episodeHeight(600),
         showPauseOverlay(true),
         defaultLifeCount(3), decreaseLivesAfterDeath(true),
-        easierPowerdown(false)
+        easierPowerdown(false),
+        suppressCloseLimitMessages(false)
     {
     }
 };

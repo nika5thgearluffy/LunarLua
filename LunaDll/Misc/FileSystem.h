@@ -16,6 +16,8 @@ namespace FileSystem{
     std::string GetMD5Hash(std::string filePath);
 
     bool HasEnoughDiskSpace(std::wstring path, int requiredBytesOfUse);
+    
+    bool CreateBlankFile(std::string path);
 };
 
 #endif

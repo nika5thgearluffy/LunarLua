@@ -27,6 +27,8 @@
 
 #include "CustomParamStore.h"
 
+#include "../Globals2.h"
+
 static bool verifyCompatibility(const std::string &fileId, const std::string &configId)
 {
     if(fileId.empty() || configId.empty())
@@ -865,10 +867,7 @@ void LunaLua_loadLevelFile(LevelData &outData, std::wstring fullPath, bool isVal
             msg += "\r\n\r\n";
         }
     }
-    if ((nearLimitWarnings.size() > 0) && (
-            (msg.size() > 0) ||
-            (TestModeIsEnabled())
-       ))
+    if ((nearLimitWarnings.size() > 0) && ((msg.size() > 0) || (TestModeIsEnabled())) && !gEpisodeSettings.suppressCloseLimitMessages)
     {
         msg += "This level is approaching the limit for objects of the following types:\r\n";
         for (const auto& limitMsg : nearLimitWarnings)

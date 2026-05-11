@@ -172,3 +172,9 @@ bool FileSystem::HasEnoughDiskSpace(std::wstring path, int requiredBytesOfUse)
     }
     return false;
 }
+
+bool FileSystem::CreateBlankFile(std::string path)
+{
+    std::ofstream file(path);
+    return file.is_open();
+}

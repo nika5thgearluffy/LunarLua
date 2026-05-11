@@ -141,6 +141,12 @@ static void Episode_SetEpisodeIni()
             gEpisodeSettings.easierPowerdown = episodeConfig.value("easier-powerdown", false).toBool();
         }
         episodeConfig.endGroup();
+        if(episodeConfig.beginGroup("engine-settings"))
+        {
+            // If this is true, no close-to-limit messages will pop up regarding any entities (NPCs, Blocks, etc.)
+            gEpisodeSettings.suppressCloseLimitMessages = episodeConfig.value("suppress-close-to-limit-messages", false).toBool();
+        }
+        episodeConfig.endGroup();
     }
 }
 

@@ -1129,7 +1129,9 @@ void CLunaLua::bindAll()
                 // File.folderExists(folder) - Checks to see if a folder exists.
                 def("folderExists", (bool(*)(std::string))&FileSystem::DirectoryExists),
                 // File.getMD5Hash(filepath) - Get an MD5 hash of a file.
-                def("getMD5Hash", (std::string(*)(std::string))&FileSystem::GetMD5Hash)
+                def("getMD5Hash", (std::string(*)(std::string))&FileSystem::GetMD5Hash),
+                // File.createBlank() - Creates a blank file. This will be extended to optionally create files with contents later.
+                def("createBlank", (bool(*)(std::string))&FileSystem::CreateBlankFile)
             ],
 
             namespace_("Language")[

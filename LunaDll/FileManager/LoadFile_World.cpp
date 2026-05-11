@@ -21,6 +21,8 @@
 
 #include "CustomParamStore.h"
 
+#include "../Globals2.h"
+
 
 WorldMusicBoxes_Struct WorldMusicBoxes[999];
 
@@ -357,7 +359,7 @@ void LunaLua_loadWorldFile(WorldData& outData, std::wstring fullPath, bool isVal
             msg += "\r\n\r\n";
         }
     }
-    if ((nearLimitWarnings.size() > 0) && ((msg.size() > 0)))
+    if ((nearLimitWarnings.size() > 0) && ((msg.size() > 0)) && !gEpisodeSettings.suppressCloseLimitMessages)
     {
         msg += "This world is approaching the limit for objects of the following types:\r\n";
         for (const auto& limitMsg : nearLimitWarnings)
