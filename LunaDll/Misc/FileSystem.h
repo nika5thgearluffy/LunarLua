@@ -17,7 +17,7 @@ namespace FileSystem{
 
     bool HasEnoughDiskSpace(std::wstring path, int requiredBytesOfUse);
     
-    bool CreateBlankFile(std::string path);
+    bool CreateAFile(std::string path, std::string fileData = "");
 };
 
 #endif

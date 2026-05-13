@@ -173,8 +173,30 @@ bool FileSystem::HasEnoughDiskSpace(std::wstring path, int requiredBytesOfUse)
     return false;
 }
 
-bool FileSystem::CreateBlankFile(std::string path)
+// Creates a file, with optionally data to include.
+bool FileSystem::CreateAFile(std::string path, std::string fileData)
 {
     std::ofstream file(path);
-    return file.is_open();
+    if (fileData.empty())
+    {
+        return file.is_open();
+    }
+    else
+    {
+        const int chunkSize = 4096;
+        size_t offset = 0;
+        if (!file.is_open())
+        {
+            return false;
+        }
+        while (offset < fileData.size())
+        {
+            size_t toWrite = std::min((size_t)chunkSize, fileData.size() - offset);
+            file.write(fileData.c_str() + offset, toWrite);
+            offset += toWrite;
+        }
+        file.close();
+        return true;
+    }
+    return false;
 }

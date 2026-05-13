@@ -1040,7 +1040,12 @@ void CLunaLua::bindAll()
                 def("filename", (std::string(*)())&LuaProxy::Episode::filename),
                 // Episode.count() - Gets the total count of all episodes
                 def("count", (int(*)())&LuaProxy::Episode::count),
-                // Episode.changeEpisodeDirectory(id) - Changes the episode directory to the one the ID specifies.
+                // Episode.load(name[, saveSlot, playerCount, playerID]) - Loads an episode of the given name. Optionally, a save slot, player count, and/or player ID for players >= 2 can be given.
+                def("load", (bool(*)(std::string))&LuaProxy::Misc::loadEpisode),
+                def("load", (bool(*)(std::string, int))&LuaProxy::Misc::loadEpisode),
+                def("load", (bool(*)(std::string, int, int))&LuaProxy::Misc::loadEpisode),
+                def("load", (bool(*)(std::string, int, int, int))&LuaProxy::Misc::loadEpisode),
+                // Episode.changeEpisodeDirectory(id) - Changes the episode directory to the one the ID specifies. If loading an episode instead, use Episode.load, since this is only used for Level.load/Mario Challenge
                 def("changeEpisodeDirectory", (void(*)(int))&LuaProxy::Episode::changeEpisodeDirectory)
             ],
 
@@ -1130,8 +1135,9 @@ void CLunaLua::bindAll()
                 def("folderExists", (bool(*)(std::string))&FileSystem::DirectoryExists),
                 // File.getMD5Hash(filepath) - Get an MD5 hash of a file.
                 def("getMD5Hash", (std::string(*)(std::string))&FileSystem::GetMD5Hash),
-                // File.createBlank() - Creates a blank file. This will be extended to optionally create files with contents later.
-                def("createBlank", (bool(*)(std::string))&FileSystem::CreateBlankFile)
+                // File.create(filepath[, dataToAppend]) - Creates a file. Data can be optionally appended.
+                def("create", (bool(*)(std::string))&FileSystem::CreateAFile),
+                def("create", (bool(*)(std::string, std::string))&FileSystem::CreateAFile)
             ],
 
             namespace_("Language")[
