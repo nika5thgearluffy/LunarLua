@@ -789,6 +789,14 @@ static void SfxPlayObjCallback(int channel)
 
 std::shared_ptr<LuaProxy::Audio::PlayingSfxInstance> LuaProxy::Audio::SfxPlayObj(Mix_Chunk &chunk, int loops)
 {
+    const char* chunkFilename = PGE_Sounds::SND_findFilenameFromChunkData(&chunk);
+    bool isCancelled = createSFXStartLuaEvent(-1, chunkFilename);
+    
+    if (isCancelled)
+    {
+        return std::make_shared<LuaProxy::Audio::PlayingSfxInstance>(-1);
+    }
+
     std::unique_lock<std::mutex> lck(g_SfxPlayObjMutex);
 
     if (!g_SfxPlayObjCallbackSet)
@@ -807,6 +815,14 @@ std::shared_ptr<LuaProxy::Audio::PlayingSfxInstance> LuaProxy::Audio::SfxPlayObj
 
 std::shared_ptr<LuaProxy::Audio::PlayingSfxInstance> LuaProxy::Audio::SfxPlayObjVol(Mix_Chunk &chunk, int loops, int volume)
 {
+    const char* chunkFilename = PGE_Sounds::SND_findFilenameFromChunkData(&chunk);
+    bool isCancelled = createSFXStartLuaEvent(-1, chunkFilename);
+    
+    if (isCancelled)
+    {
+        return std::make_shared<LuaProxy::Audio::PlayingSfxInstance>(-1);
+    }
+
     std::unique_lock<std::mutex> lck(g_SfxPlayObjMutex);
 
     if (!g_SfxPlayObjCallbackSet)
@@ -826,6 +842,14 @@ std::shared_ptr<LuaProxy::Audio::PlayingSfxInstance> LuaProxy::Audio::SfxPlayObj
 
 std::shared_ptr<LuaProxy::Audio::PlayingSfxInstance> LuaProxy::Audio::SfxPlayObjTimed(Mix_Chunk &chunk, int loops, int ticks)
 {
+    const char* chunkFilename = PGE_Sounds::SND_findFilenameFromChunkData(&chunk);
+    bool isCancelled = createSFXStartLuaEvent(-1, chunkFilename);
+    
+    if (isCancelled)
+    {
+        return std::make_shared<LuaProxy::Audio::PlayingSfxInstance>(-1);
+    }
+
     std::unique_lock<std::mutex> lck(g_SfxPlayObjMutex);
 
     if (!g_SfxPlayObjCallbackSet)
@@ -844,8 +868,16 @@ std::shared_ptr<LuaProxy::Audio::PlayingSfxInstance> LuaProxy::Audio::SfxPlayObj
 
 std::shared_ptr<LuaProxy::Audio::PlayingSfxInstance> LuaProxy::Audio::SfxPlayObjTimedVol(Mix_Chunk &chunk, int loops, int ticks, int volume)
 {
-    std::unique_lock<std::mutex> lck(g_SfxPlayObjMutex);
+    const char* chunkFilename = PGE_Sounds::SND_findFilenameFromChunkData(&chunk);
+    bool isCancelled = createSFXStartLuaEvent(-1, chunkFilename);
+    
+    if (isCancelled)
+    {
+        return std::make_shared<LuaProxy::Audio::PlayingSfxInstance>(-1);
+    }
 
+    std::unique_lock<std::mutex> lck(g_SfxPlayObjMutex);
+    
     if (!g_SfxPlayObjCallbackSet)
     {
         Mix_ChannelFinished(SfxPlayObjCallback);
@@ -862,6 +894,14 @@ std::shared_ptr<LuaProxy::Audio::PlayingSfxInstance> LuaProxy::Audio::SfxPlayObj
 
 std::shared_ptr<LuaProxy::Audio::PlayingSfxInstance> LuaProxy::Audio::SfxFadeInObj(Mix_Chunk &chunk, int loops, int ms)
 {
+    const char* chunkFilename = PGE_Sounds::SND_findFilenameFromChunkData(&chunk);
+    bool isCancelled = createSFXStartLuaEvent(-1, chunkFilename);
+    
+    if (isCancelled)
+    {
+        return std::make_shared<LuaProxy::Audio::PlayingSfxInstance>(-1);
+    }
+
     std::unique_lock<std::mutex> lck(g_SfxPlayObjMutex);
 
     if (!g_SfxPlayObjCallbackSet)
@@ -880,6 +920,14 @@ std::shared_ptr<LuaProxy::Audio::PlayingSfxInstance> LuaProxy::Audio::SfxFadeInO
 
 std::shared_ptr<LuaProxy::Audio::PlayingSfxInstance> LuaProxy::Audio::SfxFadeInObjVol(Mix_Chunk &chunk, int loops, int ms, int volume)
 {
+    const char* chunkFilename = PGE_Sounds::SND_findFilenameFromChunkData(&chunk);
+    bool isCancelled = createSFXStartLuaEvent(-1, chunkFilename);
+    
+    if (isCancelled)
+    {
+        return std::make_shared<LuaProxy::Audio::PlayingSfxInstance>(-1);
+    }
+
     std::unique_lock<std::mutex> lck(g_SfxPlayObjMutex);
 
     if (!g_SfxPlayObjCallbackSet)
@@ -898,6 +946,14 @@ std::shared_ptr<LuaProxy::Audio::PlayingSfxInstance> LuaProxy::Audio::SfxFadeInO
 
 std::shared_ptr<LuaProxy::Audio::PlayingSfxInstance> LuaProxy::Audio::SfxFadeInObjTimed(Mix_Chunk &chunk, int loops, int ms, int ticks)
 {
+    const char* chunkFilename = PGE_Sounds::SND_findFilenameFromChunkData(&chunk);
+    bool isCancelled = createSFXStartLuaEvent(-1, chunkFilename);
+    
+    if (isCancelled)
+    {
+        return std::make_shared<LuaProxy::Audio::PlayingSfxInstance>(-1);
+    }
+
     std::unique_lock<std::mutex> lck(g_SfxPlayObjMutex);
 
     if (!g_SfxPlayObjCallbackSet)
@@ -916,6 +972,14 @@ std::shared_ptr<LuaProxy::Audio::PlayingSfxInstance> LuaProxy::Audio::SfxFadeInO
 
 std::shared_ptr<LuaProxy::Audio::PlayingSfxInstance> LuaProxy::Audio::SfxFadeInObjTimedVol(Mix_Chunk &chunk, int loops, int ms, int ticks, int volume)
 {
+    const char* chunkFilename = PGE_Sounds::SND_findFilenameFromChunkData(&chunk);
+    bool isCancelled = createSFXStartLuaEvent(-1, chunkFilename);
+    
+    if (isCancelled)
+    {
+        return std::make_shared<LuaProxy::Audio::PlayingSfxInstance>(-1);
+    }
+
     std::unique_lock<std::mutex> lck(g_SfxPlayObjMutex);
 
     if (!g_SfxPlayObjCallbackSet)

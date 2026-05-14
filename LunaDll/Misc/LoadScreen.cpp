@@ -12,8 +12,10 @@
 #include <lua.hpp>
 #include "LoadScreen.h"
 #include "../LuaMain/LunaPathValidator.h"
+
 #include "MonitorSystem.h"
 #include "../LuaMain/LuaProxy.h"
+#include "FileSystem.h"
 
 static bool lunaLoadScreenEnabled = false;
 static std::thread* loadThread = nullptr;
@@ -159,6 +161,11 @@ void InitMinimalLuaState(lua_State* L) {
         ],
         namespace_("Misc")[
             def("hasFirstBooted", (bool(*)())&LuaProxy::Misc::hasFirstBooted)
+        ],
+        namespace_("File")[
+            // File.create(filepath[, dataToAppend]) - Creates a file. Data can be optionally appended.
+            def("create", (bool(*)(std::string))&FileSystem::CreateAFile),
+            def("create", (bool(*)(std::string, std::string))&FileSystem::CreateAFile)
         ]
     ];
 }
