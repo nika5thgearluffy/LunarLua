@@ -166,12 +166,15 @@ int MonitorSystem::GetScreenY()
 // This will center the window to the screen. Useful for auto-moving the window to the center if you want to reset where X2 was when starting up the engine. monitorID will center to that specific monitor.
 void MonitorSystem::CenterWindow(int monitorID)
 {
-    int x, y;
-    x = MonitorSystem::GetScreenCenterXPosition(monitorID);
-    y = MonitorSystem::GetScreenCenterYPosition(monitorID);
+    if (!MonitorSystem::IsFullscreen())
+    {
+        int x, y;
+        x = MonitorSystem::GetScreenCenterXPosition(monitorID);
+        y = MonitorSystem::GetScreenCenterYPosition(monitorID);
 
-    // When getting everything set, center the window!
-    SetWindowPos(gMainWindowHwnd, NULL, x, y, 0, 0, SWP_NOSIZE | SWP_NOZORDER | SWP_NOACTIVATE);
+        // When getting everything set, center the window!
+        SetWindowPos(gMainWindowHwnd, NULL, x, y, 0, 0, SWP_NOSIZE | SWP_NOZORDER | SWP_NOACTIVATE);
+    }
 }
 
 void MonitorSystem::CenterWindow()
@@ -189,20 +192,26 @@ static void SetWindowPosMS(int x, int y, int width, int height)
 // Sets the window position of the game.
 void MonitorSystem::SetWindowPosition(int x, int y)
 {
-    // Account for DPI and window width/height differences
-    float dpi = MonitorSystem::getDPIScale();
-    auto currentSize = gWindowSizeHandler.getWindowSize();
-    int windowWidth = MonitorSystem::getWindowWidthFromResolution(currentSize.x, currentSize.y) * dpi;
-    int windowHeight = MonitorSystem::getWindowHeightFromResolution(currentSize.x, currentSize.y) * dpi;
+    if (!MonitorSystem::IsFullscreen())
+    {
+        // Account for DPI and window width/height differences
+        float dpi = MonitorSystem::getDPIScale();
+        auto currentSize = gWindowSizeHandler.getWindowSize();
+        int windowWidth = MonitorSystem::getWindowWidthFromResolution(currentSize.x, currentSize.y) * dpi;
+        int windowHeight = MonitorSystem::getWindowHeightFromResolution(currentSize.x, currentSize.y) * dpi;
 
-    // Now set the position
-    SetWindowPosMS(x, y, windowWidth, windowHeight);
+        // Now set the position
+        SetWindowPosMS(x, y, windowWidth, windowHeight);
+    }
 }
 
 // Sets the window size of the game.
 void MonitorSystem::setWindowSize(int width, int height)
 {
-    SetWindowPosMS(MonitorSystem::GetScreenXPosition(), MonitorSystem::GetScreenYPosition(), width, height);
+    if (!MonitorSystem::IsFullscreen())
+    {
+        SetWindowPosMS(MonitorSystem::GetScreenXPosition(), MonitorSystem::GetScreenYPosition(), width, height);
+    }
 }
 
 // Sets the window scale of the game.
@@ -349,6 +358,33 @@ std::string MonitorSystem::GetWindowTitle()
     title.resize(length);
 
     return WStr2Str(title);
+}
+
+bool MonitorSystem::IsFullscreen()
+{
+    if (gMainWindowHwnd != NULL)
+    {
+        WINDOWPLACEMENT wndpl;
+        wndpl.length = sizeof(WINDOWPLACEMENT);
+        if (GetWindowPlacement(gMainWindowHwnd, &wndpl))
+        {
+            return (wndpl.showCmd == SW_MAXIMIZE);
+        }
+    }
+    return false;
+}
+
+void MonitorSystem::SetFullscreen(bool enable)
+{
+    // Toggling fullscreen without maximizing the window/double clicking the window.
+    if (MonitorSystem::IsFullscreen() && !enable)
+    {
+        ShowWindow(gMainWindowHwnd, SW_RESTORE);
+    }
+    else if (!MonitorSystem::IsFullscreen() && enable)
+    {
+        ShowWindow(gMainWindowHwnd, SW_MAXIMIZE);
+    }
 }
 
 

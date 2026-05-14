@@ -93,6 +93,9 @@ namespace MonitorSystem{
     int getRefreshRate();
 
     std::string GetWindowTitle();
+
+    bool IsFullscreen();
+    void SetFullscreen(bool enable);
     
     luabind::object GetMonitorInfo(int monitorID, lua_State *L);
 };

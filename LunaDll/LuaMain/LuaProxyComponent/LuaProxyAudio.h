@@ -135,6 +135,7 @@ namespace LuaProxy
             void SetDistance(uint8_t distance);
             void Set3DPosition(int16_t angle, uint8_t distance);
             void SetReverseStereo(bool flip);
+            bool IsFinished();
         };
 
         std::shared_ptr<LuaProxy::Audio::PlayingSfxInstance> SfxPlayObj(Mix_Chunk &chunk, int loops);

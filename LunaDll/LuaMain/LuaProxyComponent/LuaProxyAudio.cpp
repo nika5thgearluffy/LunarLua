@@ -1089,3 +1089,8 @@ void LuaProxy::Audio::PlayingSfxInstance::SetReverseStereo(bool flip)
     if (mFinished) return;
     Mix_SetReverseStereo(mChannel, flip ? 1 : 0);
 }
+
+bool LuaProxy::Audio::PlayingSfxInstance::IsFinished()
+{
+    return mFinished;
+}

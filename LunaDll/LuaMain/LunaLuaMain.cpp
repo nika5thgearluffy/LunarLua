@@ -1001,6 +1001,7 @@ void CLunaLua::bindAll()
                     .def("IsPlaying", &LuaProxy::Audio::PlayingSfxInstance::IsPlaying)
                     .def("IsPaused", &LuaProxy::Audio::PlayingSfxInstance::IsPaused)
                     .def("IsFading", &LuaProxy::Audio::PlayingSfxInstance::IsFading)
+                    .def("IsFinished", &LuaProxy::Audio::PlayingSfxInstance::IsFinished)
                     .def("Volume", &LuaProxy::Audio::PlayingSfxInstance::Volume)
                     .def("SetPanning", &LuaProxy::Audio::PlayingSfxInstance::SetPanning)
                     .def("SetDistance", &LuaProxy::Audio::PlayingSfxInstance::SetDistance)
@@ -1105,7 +1106,11 @@ void CLunaLua::bindAll()
                 // Window.getHeightFromResolution(height) - Gets the window height based off the resolution width.
                 def("getHeightFromResolution", (int(*)(int))&MonitorSystem::getWindowHeightFromResolution),
                 // Window.title() - Gets the window title of the game.
-                def("title", (std::string(*)())&MonitorSystem::GetWindowTitle)
+                def("title", (std::string(*)())&MonitorSystem::GetWindowTitle),
+                // Window.fullscreen() - Gets if the window is in fullscreen or not.
+                def("fullscreen", (bool(*)())&MonitorSystem::IsFullscreen),
+                // Window.setFullscreen(bool) - Sets fullscreen. Bool should either be true or false.
+                def("setFullscreen", (void(*)(bool))&MonitorSystem::SetFullscreen)
             ],
 
             namespace_("Keyboard")[
