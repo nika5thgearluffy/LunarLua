@@ -125,7 +125,9 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="..\LunaLoader\LunaLoaderPatch.h" />
+    <ClInclude Include="DefinesKeyboard.h" />
     <ClInclude Include="Episode\EpisodeMain.h" />
+    <ClInclude Include="Episode\PlayerInput.h" />
     <ClInclude Include="EventStateMachine.h" />
     <ClInclude Include="FileManager\config_manager.h" />
     <ClInclude Include="FileManager\CustomParamStore.h" />
@@ -342,6 +344,7 @@
   <ItemGroup>
     <ClCompile Include="..\LunaLoader\LunaLoaderPatch.cpp" />
     <ClCompile Include="Episode\EpisodeMain.cpp" />
+    <ClCompile Include="Episode\PlayerInput.cpp" />
     <ClCompile Include="EventStateMachine.cpp" />
     <ClCompile Include="FileManager\config_manager.cpp" />
     <ClCompile Include="FileManager\CustomParamStore.cpp" />

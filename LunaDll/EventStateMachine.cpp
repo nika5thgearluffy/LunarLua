@@ -12,6 +12,7 @@
 
 #include "Misc/InternetSystem.h"
 #include "Misc/BackgroundWorker.h"
+#include "Episode/PlayerInput.h"
 
 // Global instance
 EventStateMachine g_EventHandler;
@@ -222,6 +223,12 @@ void EventStateMachine::sendOnDraw(void) {
 
     // Runs the background worker poll
     BackgroundWorker_Poll();
+
+    // Runs the player input overhaul
+    if (gDisablePlayerKeysLegacy)
+    {
+        gPlayerInput.Update();
+    }
     
     // -- Now call onDraw --
     sendSimpleLuaEvent("onDraw");

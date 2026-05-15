@@ -6,11 +6,9 @@
 #include <vector>
 #include <windows.h>
 
-#include "../../DefinesKeyboard.h"
+#include "../DefinesKeyboard.h"
 
 #define GM_MAX_PLAYER_INPUTS = 11
-
-extern bool gPlayerInputOverhaulToggled;
 
 struct NewSMBXInput
 {
@@ -87,8 +85,8 @@ struct NewSMBXInputKeyboard
         down = VK_DOWN;
         left = VK_LEFT;
         right = VK_RIGHT;
-        jump = VK_X; // VK_Z is the default config for 1.3, I switched them for now
-        run = VK_Z; // VK_X is the default config for 1.3, I switched them for now
+        jump = VK_X; // VK_Z is the default config for 1.3
+        run = VK_Z; // VK_X is the default config for 1.3
         dropitem = VK_SHIFT;
         pause = VK_ESCAPE;
         altjump = VK_A;
@@ -133,13 +131,13 @@ struct NewSMBXInputController
         left = 2;
         right = 3;
 
-        jump = 1;
-        run = 2;
+        jump = 0;
+        run = 3;
         dropitem = 10;
         pause = 7;
         altjump = 11;
-        altrun = 3;
-        special = 0;
+        altrun = 2;
+        special = 1;
         leftTrigger = 4;
         rightTrigger = 5;
 
@@ -174,5 +172,7 @@ class PlayerInput {
         void RefreshAllInputs(bool isWritten, bool isRead);
         void ResetAllInputs();
 };
+
+extern PlayerInput gPlayerInput;
 
 #endif

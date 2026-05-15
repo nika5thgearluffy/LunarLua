@@ -4,12 +4,17 @@
 #include <vector>
 #include <windows.h>
 
-#include "../../SMBXInternal/PlayerMOB.h"
-#include "../../Defines.h"
-#include "../../Globals.h"
-#include "../../GlobalFuncs.h"
+#include "../SMBXInternal/PlayerMOB.h"
+#include "../Defines.h"
+#include "../Globals.h"
+#include "../GlobalFuncs.h"
 
-bool gPlayerInputOverhaulToggled = true;
+#include "../SMBXInternal/Variables.h"
+#include "../SMBXInternal/Types.h"
+#include "../SMBXInternal/Functions.h"
+
+PlayerInput gPlayerInput;
+
 NewSMBXInputKeyboard g_playerKeyboardInputs[1];
 NewSMBXInputController g_playerControllerInputs[1];
 NewSMBXInput g_playerInputPressing[1];
@@ -18,15 +23,13 @@ PlayerInput::PlayerInput()
 {
     // Read the inputs from inputs.ini
     gPlayerInput.RefreshAllInputs(false, true);
-
-    // Set to disable all the legacy player keys
-    gDisablePlayerKeysLegacy = true;
 }
 
 PlayerInput::~PlayerInput() {}
 
 bool PlayerInput::Toggle(bool enable)
 {
+    // Set to either to enable/disable the new player input system
     if(enable)
     {
         gDisablePlayerKeysLegacy = false;
@@ -325,12 +328,13 @@ void PlayerInput::SetPressing(int type, int playerIdx, bool value)
 
 void PlayerInput::Update()
 {
-    for(int i = 1; i <= GM_PLAYERS_COUNT; i++)
+    using namespace SMBX13;
+    for(int i = 1; i <= Vars::numPlayers; i++)
     {
-        PlayerMOB* p = Player::Get(i);
+        auto p = Vars::Player[i];
         int playerIdxC = i - 1;
         int keyboardIdx = g_playerKeyboardInputs[playerIdxC].keyboardIdx;
-        
+
         bool upPressing = (gKeyState[keyboardIdx - 1][g_playerKeyboardInputs[playerIdxC].up] & 0x80) != 0;
         bool downPressing = (gKeyState[keyboardIdx - 1][g_playerKeyboardInputs[playerIdxC].down] & 0x80) != 0;
         bool leftPressing = (gKeyState[keyboardIdx - 1][g_playerKeyboardInputs[playerIdxC].left] & 0x80) != 0;
@@ -347,67 +351,67 @@ void PlayerInput::Update()
 
         if(upPressing)
         {
-            p->keymap.upKeyState = COMBOOL(true);
+            p.Controls.Up = true;
             g_playerInputPressing[playerIdxC].upPressing = true;
         }
         
         if(downPressing)
         {
-            p->keymap.downKeyState = COMBOOL(true);
+            p.Controls.Down = true;
             g_playerInputPressing[playerIdxC].downPressing = true;
         }
         
         if(leftPressing)
         {
-            p->keymap.leftKeyState = COMBOOL(true);
+            p.Controls.Left = true;
             g_playerInputPressing[playerIdxC].leftPressing = true;
         }
         
         if(rightPressing)
         {
-            p->keymap.rightKeyState = COMBOOL(true);
+            p.Controls.Right = true;
             g_playerInputPressing[playerIdxC].rightPressing = true;
         }
         
         if(jumpPressing)
         {
-            p->keymap.jumpKeyState = COMBOOL(true);
+            p.Controls.Jump = true;
             g_playerInputPressing[playerIdxC].jumpPressing = true;
-            
+
             if(gIsOverworld)
             {
                 // Dumb bug related to entering levels on the map
-                p->Unknown17A = COMBOOL(true);
+                p.UnStart = true;
             }
         }
 
         if(altJumpPressing)
         {
-            p->keymap.altJumpKeyState = COMBOOL(true);
+            p.Controls.AltJump = true;
             g_playerInputPressing[playerIdxC].altjumpPressing = true;
         }
 
         if(runPressing)
         {
-            p->keymap.runKeyState = COMBOOL(true);
+            p.Controls.Run = true;
             g_playerInputPressing[playerIdxC].runPressing = true;
         }
 
         if(altRunPressing)
         {
-            p->keymap.altRunKeyState = COMBOOL(true);
+            p.Controls.AltRun = true;
             g_playerInputPressing[playerIdxC].altrunPressing = true;
         }
 
         if(dropItemPressing)
         {
-            p->keymap.dropItemKeyState = COMBOOL(true);
+            p.Controls.Drop = true;
             g_playerInputPressing[playerIdxC].dropitemPressing = true;
         }
 
         if(pausePressing)
         {
-            p->keymap.pauseKeyState = COMBOOL(true);
+            p.Controls.Start = true;
             g_playerInputPressing[playerIdxC].pausePressing = true;
         }
 
@@ -431,67 +435,67 @@ void PlayerInput::Update()
 
         if(!upPressing)
         {
-            p->keymap.upKeyState = COMBOOL(false);
+            p.Controls.Up = false;
             g_playerInputPressing[playerIdxC].upPressing = false;
         }
         
         if(!downPressing)
         {
-            p->keymap.downKeyState = COMBOOL(false);
+            p.Controls.Down = false;
             g_playerInputPressing[playerIdxC].downPressing = false;
         }
         
         if(!leftPressing)
         {
-            p->keymap.leftKeyState = COMBOOL(false);
+            p.Controls.Left = false;
             g_playerInputPressing[playerIdxC].leftPressing = false;
         }
         
         if(!rightPressing)
         {
-            p->keymap.rightKeyState = COMBOOL(false);
+            p.Controls.Right = false;
             g_playerInputPressing[playerIdxC].rightPressing = false;
         }
         
         if(!jumpPressing)
         {
-            p->keymap.jumpKeyState = COMBOOL(false);
+            p.Controls.Jump = false;
             g_playerInputPressing[playerIdxC].jumpPressing = false;
 
             if(gIsOverworld)
             {
                 // Dumb bug related to entering levels on the map
-                p->Unknown17A = COMBOOL(false);
+                p.UnStart = false;
             }
         }
 
         if(!altJumpPressing)
         {
-            p->keymap.altJumpKeyState = COMBOOL(false);
+            p.Controls.AltJump = false;
             g_playerInputPressing[playerIdxC].altjumpPressing = false;
         }
 
         if(!runPressing)
         {
-            p->keymap.runKeyState = COMBOOL(false);
+            p.Controls.Run = false;
             g_playerInputPressing[playerIdxC].runPressing = false;
         }
 
         if(!altRunPressing)
         {
-            p->keymap.altRunKeyState = COMBOOL(false);
+            p.Controls.AltRun = false;
             g_playerInputPressing[playerIdxC].altrunPressing = false;
         }
 
         if(!dropItemPressing)
         {
-            p->keymap.dropItemKeyState = COMBOOL(false);
+            p.Controls.Drop = false;
             g_playerInputPressing[playerIdxC].dropitemPressing = false;
         }
 
         if(!pausePressing)
         {
-            p->keymap.pauseKeyState = COMBOOL(false);
+            p.Controls.Start = false;
             g_playerInputPressing[playerIdxC].pausePressing = false;
         }
 

@@ -782,6 +782,10 @@
     <ClInclude Include="Misc\BackgroundWorker.h">
       <Filter>Misc</Filter>
     </ClInclude>
+    <ClInclude Include="Episode\PlayerInput.h">
+      <Filter>Episode</Filter>
+    </ClInclude>
+    <ClInclude Include="DefinesKeyboard.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="LuaMain\LuaHelper.cpp">
@@ -1417,9 +1421,6 @@
     <ClCompile Include="libs\luabind-deboostified\src$filename">
       <Filter>libs\luabind-deboostified</Filter>
     </ClCompile>
-    <ClCompile Include="libs\luabind-deboostified\src$filename">
-      <Filter>libs\luabind-deboostified</Filter>
-    </ClCompile>
     <ClCompile Include="Rendering\WindowSizeHandler.cpp">
       <Filter>Rendering</Filter>
     </ClCompile>
@@ -1536,6 +1537,9 @@
     </ClCompile>
     <ClCompile Include="Misc\BackgroundWorker.cpp">
       <Filter>Misc</Filter>
+    </ClCompile>
+    <ClCompile Include="Episode\PlayerInput.cpp">
+      <Filter>Episode</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
