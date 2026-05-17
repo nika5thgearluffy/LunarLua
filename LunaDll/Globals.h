@@ -281,3 +281,6 @@ extern int gLuaMaxInt;
 
 extern std::thread* gBackgroundWorkerThread;
 extern std::atomic<bool> gBackgroundWorkerRunning;
+
+extern bool gLegacyPauseMenu;
+extern bool gLegacyMessageBox;

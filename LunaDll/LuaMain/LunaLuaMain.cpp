@@ -772,7 +772,12 @@ void CLunaLua::bindAll()
                 def("__disablePerfTracker", &LuaProxy::Misc::__disablePerfTracker),
                 def("__getPerfTrackerData", &LuaProxy::Misc::__getPerfTrackerData),
                 def("__getNPCPropertyTableAddress", &NPC::GetPropertyTableAddress),
-                def("__getBlockPropertyTableAddress", &Blocks::GetPropertyTableAddress)
+                def("__getBlockPropertyTableAddress", &Blocks::GetPropertyTableAddress),
+                // 
+                def("__legacyPauseMenu", (void(*)(bool))&LuaProxy::Misc::__legacyPauseMenu),
+                def("__legacyMessageBox", (void(*)(bool))&LuaProxy::Misc::__legacyMessageBox),
+                def("__legacyPauseMenu", (bool(*)())&LuaProxy::Misc::__legacyPauseMenu),
+                def("__legacyMessageBox", (bool(*)())&LuaProxy::Misc::__legacyMessageBox)
             ],
 
             namespace_("FileFormats")[

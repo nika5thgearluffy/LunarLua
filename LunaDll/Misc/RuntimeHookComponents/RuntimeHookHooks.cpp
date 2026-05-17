@@ -1106,6 +1106,7 @@ void __stdcall runtimeHookMsgbox(short* pPlayerIdx)
     bool isCancelled = false; // We want to be sure that it doesn't return on the normal menu
                               // A note here: If the message is set, then the message box will called
                               // However, if a message is not set, then this function is called when the menu opens.
+    bool shouldActuallyCancel = true;
 
     if ((GM_STR_MSGBOX) && (GM_STR_MSGBOX.length() > 0)) {
         if (gLunaLua.isValid()) {
@@ -1114,6 +1115,14 @@ void __stdcall runtimeHookMsgbox(short* pPlayerIdx)
             messageBoxEvent->setLoopable(false);
             gLunaLua.callEvent(messageBoxEvent, (std::string)GM_STR_MSGBOX, *pPlayerIdx);
             isCancelled = messageBoxEvent->native_cancelled();
+        }
+        if (gLegacyMessageBox)
+        {
+            if (!isCancelled)
+            {
+                Renderer::QueueStateStacker renderStack;
+                msgbox_OrigFunc(pPlayerIdx);
+            }
         }
     }
     else
@@ -1125,12 +1134,14 @@ void __stdcall runtimeHookMsgbox(short* pPlayerIdx)
             gLunaLua.callEvent(messageBoxEvent, *pPlayerIdx);
             isCancelled = messageBoxEvent->native_cancelled();
         }
-    }
-
-    if (!isCancelled)
-    {
-        Renderer::QueueStateStacker renderStack;
-        msgbox_OrigFunc(pPlayerIdx);
+        if (gLegacyPauseMenu)
+        {
+            if (!isCancelled)
+            {
+                Renderer::QueueStateStacker renderStack;
+                msgbox_OrigFunc(pPlayerIdx);
+            }
+        }
     }
 }
 

@@ -941,6 +941,12 @@ namespace LuaProxy {
         void __enablePerfTracker();
         void __disablePerfTracker();
         luabind::object __getPerfTrackerData(lua_State* L);
+
+        // Legacy setters and getters
+        void __legacyPauseMenu(bool toggle);
+        bool __legacyPauseMenu();
+        void __legacyMessageBox(bool toggle);
+        bool __legacyMessageBox();
     }
 
     namespace Graphics{

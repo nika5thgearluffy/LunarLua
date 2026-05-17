@@ -196,3 +196,7 @@ int gLuaMaxInt = 2147483647;
 // Background worker thread, which is used to run a loop process outside of the game loop
 std::thread* gBackgroundWorkerThread = nullptr;
 std::atomic<bool> gBackgroundWorkerRunning(false);
+
+// Legacy pause menu & message box variables.
+bool gLegacyPauseMenu = true;
+bool gLegacyMessageBox = true;

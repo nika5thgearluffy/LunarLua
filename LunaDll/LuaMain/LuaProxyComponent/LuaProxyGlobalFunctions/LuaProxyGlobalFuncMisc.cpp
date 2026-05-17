@@ -420,3 +420,25 @@ luabind::object LuaProxy::Misc::__getPerfTrackerData(lua_State* L)
     }
     return retTable;
 }
+
+// Legacy-related toggles and state getters.
+void LuaProxy::Misc::__legacyPauseMenu(bool toggle)
+{
+    gLegacyPauseMenu = toggle;
+}
+
+bool LuaProxy::Misc::__legacyPauseMenu()
+{
+    return gLegacyPauseMenu;
+}
+
+void LuaProxy::Misc::__legacyMessageBox(bool toggle)
+{
+    gLegacyMessageBox = toggle;
+}
+
+bool LuaProxy::Misc::__legacyMessageBox()
+{
+    return gLegacyMessageBox;
+}
+
