@@ -24,6 +24,26 @@
 #ifndef LUABIND_BIND_HPP_INCLUDED
 #define LUABIND_BIND_HPP_INCLUDED
 
+#if _MSVC_LANG >= 201703L || __cplusplus >= 201703L
+namespace std
+{
+    template<typename Arg, typename Result>
+    struct unary_function
+    {
+        typedef Arg argument_type;
+        typedef Result result_type;
+    };
+
+    template<typename Arg1, typename Arg2, typename Result>
+    struct binary_function
+    {
+        typedef Arg1 first_argument_type;
+        typedef Arg2 second_argument_type;
+        typedef Result result_type;
+    };
+}
+#endif
+
 #include <luabind/config.hpp>
 #include <luabind/class.hpp>
 #include <luabind/function.hpp>
