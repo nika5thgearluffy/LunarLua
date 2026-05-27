@@ -39,6 +39,7 @@ using std::max;
 #include "Misc/MonitorSystem.h"
 #include "Misc/InternetSystem.h"
 #include "Misc/BackgroundWorker.h"
+#include "Episode/PlayerInput.h"
 
 static bool LevelCustomSounds = false;
 
@@ -244,6 +245,9 @@ void LunaDLLInit()
 
     // Read the episode.ini file
     ReadEpisodeIni();
+
+    // Reset all inputs if inputs.ini is not found
+    gPlayerInput.ResetAllInputs();
 
     TrySkipPatch();
 

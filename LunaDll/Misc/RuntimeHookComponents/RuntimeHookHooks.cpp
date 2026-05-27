@@ -52,6 +52,8 @@
 
 #include "../../Misc/KeyboardMouseSystem.h"
 
+#include "../../Episode/PlayerInput.h"
+
 void CheckIPCQuitRequest();
 
 extern HHOOK HookWnd;
@@ -201,6 +203,8 @@ extern int __stdcall LoadWorld()
             gPlayerStoredCharacters[i-1] = Player::Get(i)->Identity;
         }
     }
+
+    gPlayerInput.RefreshAllInputs(false, true);
 
     return GM_PLAYERS_COUNT;
 }
@@ -1508,6 +1512,8 @@ extern void __stdcall RenderLevelHook()
     Renderer::Get().StartFrameRender();
     g_EventHandler.hookLevelRenderStart();
 
+    gPlayerInput.Update();
+
     short oldRenderDoneCameraUpdate = g_renderDoneCameraUpdate;
     g_renderDoneCameraUpdate = 0;
     RenderLevelReal();
@@ -1603,6 +1609,8 @@ extern void __stdcall RenderWorldHook()
     }
 
     RenderWorldReal();
+
+    gPlayerInput.Update();
     
     if (g_GLEngine.IsEnabled() && !Renderer::IsAltThreadActive())
     {
