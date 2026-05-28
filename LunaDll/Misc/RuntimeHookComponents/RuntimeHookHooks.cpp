@@ -204,8 +204,6 @@ extern int __stdcall LoadWorld()
         }
     }
 
-    gPlayerInput.RefreshAllInputs(false, true);
-
     return GM_PLAYERS_COUNT;
 }
 

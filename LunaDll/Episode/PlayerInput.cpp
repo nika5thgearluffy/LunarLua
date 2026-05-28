@@ -329,189 +329,192 @@ void PlayerInput::SetPressing(int type, int playerIdx, bool value)
 void PlayerInput::Update()
 {
     using namespace SMBX13;
-    for(int i = 1; i <= Vars::numPlayers; i++)
+    if (gDisablePlayerKeysLegacy)
     {
-        auto p = Vars::Player[i];
-        int playerIdxC = i - 1;
-        int keyboardIdx = g_playerKeyboardInputs[playerIdxC].keyboardIdx;
+        for(int i = 1; i <= Vars::numPlayers; i++)
+        {
+            auto p = Vars::Player[i];
+            int playerIdxC = i - 1;
+            int keyboardIdx = g_playerKeyboardInputs[playerIdxC].keyboardIdx;
 
-        bool upPressing = (gKeyState[keyboardIdx - 1][g_playerKeyboardInputs[playerIdxC].up] & 0x80) != 0;
-        bool downPressing = (gKeyState[keyboardIdx - 1][g_playerKeyboardInputs[playerIdxC].down] & 0x80) != 0;
-        bool leftPressing = (gKeyState[keyboardIdx - 1][g_playerKeyboardInputs[playerIdxC].left] & 0x80) != 0;
-        bool rightPressing = (gKeyState[keyboardIdx - 1][g_playerKeyboardInputs[playerIdxC].right] & 0x80) != 0;
-        bool jumpPressing = (gKeyState[keyboardIdx - 1][g_playerKeyboardInputs[playerIdxC].jump] & 0x80) != 0;
-        bool altJumpPressing = (gKeyState[keyboardIdx - 1][g_playerKeyboardInputs[playerIdxC].altjump] & 0x80) != 0;
-        bool runPressing = (gKeyState[keyboardIdx - 1][g_playerKeyboardInputs[playerIdxC].run] & 0x80) != 0;
-        bool altRunPressing = (gKeyState[keyboardIdx - 1][g_playerKeyboardInputs[playerIdxC].altrun] & 0x80) != 0;
-        bool dropItemPressing = (gKeyState[keyboardIdx - 1][g_playerKeyboardInputs[playerIdxC].dropitem] & 0x80) != 0;
-        bool pausePressing = (gKeyState[keyboardIdx - 1][g_playerKeyboardInputs[playerIdxC].pause] & 0x80) != 0;
-        bool specialPressing = (gKeyState[keyboardIdx - 1][g_playerKeyboardInputs[playerIdxC].special] & 0x80) != 0;
-        bool leftTriggerPressing = (gKeyState[keyboardIdx - 1][g_playerKeyboardInputs[playerIdxC].leftTrigger] & 0x80) != 0;
-        bool rightTriggerPressing = (gKeyState[keyboardIdx - 1][g_playerKeyboardInputs[playerIdxC].rightTrigger] & 0x80) != 0;
+            bool upPressing = (gKeyState[keyboardIdx - 1][g_playerKeyboardInputs[playerIdxC].up] & 0x80) != 0;
+            bool downPressing = (gKeyState[keyboardIdx - 1][g_playerKeyboardInputs[playerIdxC].down] & 0x80) != 0;
+            bool leftPressing = (gKeyState[keyboardIdx - 1][g_playerKeyboardInputs[playerIdxC].left] & 0x80) != 0;
+            bool rightPressing = (gKeyState[keyboardIdx - 1][g_playerKeyboardInputs[playerIdxC].right] & 0x80) != 0;
+            bool jumpPressing = (gKeyState[keyboardIdx - 1][g_playerKeyboardInputs[playerIdxC].jump] & 0x80) != 0;
+            bool altJumpPressing = (gKeyState[keyboardIdx - 1][g_playerKeyboardInputs[playerIdxC].altjump] & 0x80) != 0;
+            bool runPressing = (gKeyState[keyboardIdx - 1][g_playerKeyboardInputs[playerIdxC].run] & 0x80) != 0;
+            bool altRunPressing = (gKeyState[keyboardIdx - 1][g_playerKeyboardInputs[playerIdxC].altrun] & 0x80) != 0;
+            bool dropItemPressing = (gKeyState[keyboardIdx - 1][g_playerKeyboardInputs[playerIdxC].dropitem] & 0x80) != 0;
+            bool pausePressing = (gKeyState[keyboardIdx - 1][g_playerKeyboardInputs[playerIdxC].pause] & 0x80) != 0;
+            bool specialPressing = (gKeyState[keyboardIdx - 1][g_playerKeyboardInputs[playerIdxC].special] & 0x80) != 0;
+            bool leftTriggerPressing = (gKeyState[keyboardIdx - 1][g_playerKeyboardInputs[playerIdxC].leftTrigger] & 0x80) != 0;
+            bool rightTriggerPressing = (gKeyState[keyboardIdx - 1][g_playerKeyboardInputs[playerIdxC].rightTrigger] & 0x80) != 0;
 
-        if(upPressing)
-        {
-            p.Controls.Up = true;
-            g_playerInputPressing[playerIdxC].upPressing = true;
-        }
-        
-        if(downPressing)
-        {
-            p.Controls.Down = true;
-            g_playerInputPressing[playerIdxC].downPressing = true;
-        }
-        
-        if(leftPressing)
-        {
-            p.Controls.Left = true;
-            g_playerInputPressing[playerIdxC].leftPressing = true;
-        }
-        
-        if(rightPressing)
-        {
-            p.Controls.Right = true;
-            g_playerInputPressing[playerIdxC].rightPressing = true;
-        }
-        
-        if(jumpPressing)
-        {
-            p.Controls.Jump = true;
-            g_playerInputPressing[playerIdxC].jumpPressing = true;
-
-            if(gIsOverworld)
+            if(upPressing)
             {
-                // Dumb bug related to entering levels on the map
-                p.UnStart = true;
+                p.Controls.Up = true;
+                g_playerInputPressing[playerIdxC].upPressing = true;
             }
-        }
-
-        if(altJumpPressing)
-        {
-            p.Controls.AltJump = true;
-            g_playerInputPressing[playerIdxC].altjumpPressing = true;
-        }
-
-        if(runPressing)
-        {
-            p.Controls.Run = true;
-            g_playerInputPressing[playerIdxC].runPressing = true;
-        }
-
-        if(altRunPressing)
-        {
-            p.Controls.AltRun = true;
-            g_playerInputPressing[playerIdxC].altrunPressing = true;
-        }
-
-        if(dropItemPressing)
-        {
-            p.Controls.Drop = true;
-            g_playerInputPressing[playerIdxC].dropitemPressing = true;
-        }
-
-        if(pausePressing)
-        {
-            p.Controls.Start = true;
-            g_playerInputPressing[playerIdxC].pausePressing = true;
-        }
-
-        if(specialPressing)
-        {
-            g_playerInputPressing[playerIdxC].specialPressing = true;
-        }
-        
-        if(leftTriggerPressing)
-        {
-            g_playerInputPressing[playerIdxC].leftTriggerPressing = true;
-        }
-        
-        if(rightTriggerPressing)
-        {
-            g_playerInputPressing[playerIdxC].rightTriggerPressing = true;
-        }
-
-
-
-
-        if(!upPressing)
-        {
-            p.Controls.Up = false;
-            g_playerInputPressing[playerIdxC].upPressing = false;
-        }
-        
-        if(!downPressing)
-        {
-            p.Controls.Down = false;
-            g_playerInputPressing[playerIdxC].downPressing = false;
-        }
-        
-        if(!leftPressing)
-        {
-            p.Controls.Left = false;
-            g_playerInputPressing[playerIdxC].leftPressing = false;
-        }
-        
-        if(!rightPressing)
-        {
-            p.Controls.Right = false;
-            g_playerInputPressing[playerIdxC].rightPressing = false;
-        }
-        
-        if(!jumpPressing)
-        {
-            p.Controls.Jump = false;
-            g_playerInputPressing[playerIdxC].jumpPressing = false;
-
-            if(gIsOverworld)
+            
+            if(downPressing)
             {
-                // Dumb bug related to entering levels on the map
-                p.UnStart = false;
+                p.Controls.Down = true;
+                g_playerInputPressing[playerIdxC].downPressing = true;
             }
-        }
+            
+            if(leftPressing)
+            {
+                p.Controls.Left = true;
+                g_playerInputPressing[playerIdxC].leftPressing = true;
+            }
+            
+            if(rightPressing)
+            {
+                p.Controls.Right = true;
+                g_playerInputPressing[playerIdxC].rightPressing = true;
+            }
+            
+            if(jumpPressing)
+            {
+                p.Controls.Jump = true;
+                g_playerInputPressing[playerIdxC].jumpPressing = true;
 
-        if(!altJumpPressing)
-        {
-            p.Controls.AltJump = false;
-            g_playerInputPressing[playerIdxC].altjumpPressing = false;
-        }
+                if(gIsOverworld)
+                {
+                    // Dumb bug related to entering levels on the map
+                    p.UnStart = true;
+                }
+            }
 
-        if(!runPressing)
-        {
-            p.Controls.Run = false;
-            g_playerInputPressing[playerIdxC].runPressing = false;
-        }
+            if(altJumpPressing)
+            {
+                p.Controls.AltJump = true;
+                g_playerInputPressing[playerIdxC].altjumpPressing = true;
+            }
 
-        if(!altRunPressing)
-        {
-            p.Controls.AltRun = false;
-            g_playerInputPressing[playerIdxC].altrunPressing = false;
-        }
+            if(runPressing)
+            {
+                p.Controls.Run = true;
+                g_playerInputPressing[playerIdxC].runPressing = true;
+            }
 
-        if(!dropItemPressing)
-        {
-            p.Controls.Drop = false;
-            g_playerInputPressing[playerIdxC].dropitemPressing = false;
-        }
+            if(altRunPressing)
+            {
+                p.Controls.AltRun = true;
+                g_playerInputPressing[playerIdxC].altrunPressing = true;
+            }
 
-        if(!pausePressing)
-        {
-            p.Controls.Start = false;
-            g_playerInputPressing[playerIdxC].pausePressing = false;
-        }
+            if(dropItemPressing)
+            {
+                p.Controls.Drop = true;
+                g_playerInputPressing[playerIdxC].dropitemPressing = true;
+            }
 
-        if(!specialPressing)
-        {
-            g_playerInputPressing[playerIdxC].specialPressing = false;
-        }
-        
-        if(!leftTriggerPressing)
-        {
-            g_playerInputPressing[playerIdxC].leftTriggerPressing = false;
-        }
-        
-        if(!rightTriggerPressing)
-        {
-            g_playerInputPressing[playerIdxC].rightTriggerPressing = false;
+            if(pausePressing)
+            {
+                p.Controls.Start = true;
+                g_playerInputPressing[playerIdxC].pausePressing = true;
+            }
+
+            if(specialPressing)
+            {
+                g_playerInputPressing[playerIdxC].specialPressing = true;
+            }
+            
+            if(leftTriggerPressing)
+            {
+                g_playerInputPressing[playerIdxC].leftTriggerPressing = true;
+            }
+            
+            if(rightTriggerPressing)
+            {
+                g_playerInputPressing[playerIdxC].rightTriggerPressing = true;
+            }
+
+
+
+
+            if(!upPressing)
+            {
+                p.Controls.Up = false;
+                g_playerInputPressing[playerIdxC].upPressing = false;
+            }
+            
+            if(!downPressing)
+            {
+                p.Controls.Down = false;
+                g_playerInputPressing[playerIdxC].downPressing = false;
+            }
+            
+            if(!leftPressing)
+            {
+                p.Controls.Left = false;
+                g_playerInputPressing[playerIdxC].leftPressing = false;
+            }
+            
+            if(!rightPressing)
+            {
+                p.Controls.Right = false;
+                g_playerInputPressing[playerIdxC].rightPressing = false;
+            }
+            
+            if(!jumpPressing)
+            {
+                p.Controls.Jump = false;
+                g_playerInputPressing[playerIdxC].jumpPressing = false;
+
+                if(gIsOverworld)
+                {
+                    // Dumb bug related to entering levels on the map
+                    p.UnStart = false;
+                }
+            }
+
+            if(!altJumpPressing)
+            {
+                p.Controls.AltJump = false;
+                g_playerInputPressing[playerIdxC].altjumpPressing = false;
+            }
+
+            if(!runPressing)
+            {
+                p.Controls.Run = false;
+                g_playerInputPressing[playerIdxC].runPressing = false;
+            }
+
+            if(!altRunPressing)
+            {
+                p.Controls.AltRun = false;
+                g_playerInputPressing[playerIdxC].altrunPressing = false;
+            }
+
+            if(!dropItemPressing)
+            {
+                p.Controls.Drop = false;
+                g_playerInputPressing[playerIdxC].dropitemPressing = false;
+            }
+
+            if(!pausePressing)
+            {
+                p.Controls.Start = false;
+                g_playerInputPressing[playerIdxC].pausePressing = false;
+            }
+
+            if(!specialPressing)
+            {
+                g_playerInputPressing[playerIdxC].specialPressing = false;
+            }
+            
+            if(!leftTriggerPressing)
+            {
+                g_playerInputPressing[playerIdxC].leftTriggerPressing = false;
+            }
+            
+            if(!rightTriggerPressing)
+            {
+                g_playerInputPressing[playerIdxC].rightTriggerPressing = false;
+            }
         }
     }
 }
@@ -529,7 +532,7 @@ void PlayerInput::RefreshAllInputs(bool isWritten, bool isRead)
         IniProcessing inputConfig(appDirToIni);
         for(int i = 0; i <= 1; i++)
         {
-            if(inputConfig.beginGroup("Player " + std::to_string(i + 1) + " Controls"));
+            if(inputConfig.beginGroup("Player " + std::to_string(i + 1) + " Controls"))
             {
                 if(isWritten)
                 {

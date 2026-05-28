@@ -366,6 +366,7 @@
     <ClCompile Include="LuaMain\LuaProxyComponent\LuaProxyFileFormats.cpp" />
     <ClCompile Include="LuaMain\LuaProxyComponent\LuaProxyGlobalFunctions\LuaProxyGlobalFuncEpisode.cpp" />
     <ClCompile Include="LuaMain\LuaProxyFFIGraphics.cpp" />
+    <ClCompile Include="LuaMain\LuaProxyFFIPlayer.cpp" />
     <ClCompile Include="LuaMain\LunaPathValidator.cpp" />
     <ClCompile Include="Misc\AsmPatch.cpp" />
     <ClCompile Include="Misc\BackgroundWorker.cpp" />
