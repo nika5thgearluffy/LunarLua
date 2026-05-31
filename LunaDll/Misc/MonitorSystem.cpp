@@ -215,7 +215,7 @@ void MonitorSystem::setWindowSize(int width, int height)
 }
 
 // Sets the window scale of the game.
-void MonitorSystem::setWindowScale(int scale)
+void MonitorSystem::setWindowScale(double scale)
 {
     gWindowSizeHandler.SetNewWindowScale(scale);
     gWindowSizeHandler.Recalculate();

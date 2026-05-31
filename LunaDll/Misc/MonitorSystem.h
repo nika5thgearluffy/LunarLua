@@ -73,7 +73,7 @@ namespace MonitorSystem{
 
     void SetWindowPosition(int x, int y);
     void setWindowSize(int width, int height);
-    void setWindowScale(int scale);
+    void setWindowScale(double scale);
 
     int getWindowWidth();
     int getWindowHeight();

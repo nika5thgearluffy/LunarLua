@@ -1103,7 +1103,7 @@ void CLunaLua::bindAll()
                 // Window.setSize(width, height) - Sets the window size of the game.
                 def("setSize", (void(*)(int, int))&MonitorSystem::setWindowSize),
                 // Window.setScale(scale) - Sets the window scale of the game.
-                def("setScale", (void(*)(int))&MonitorSystem::setWindowScale),
+                def("setScale", (void(*)(double))&MonitorSystem::setWindowScale),
                 // Window.findMonitor() - Finds the monitor where the window is located.
                 def("findMonitor", (int(*)())&MonitorSystem::FindWindowFromMonitor),
                 // Window.getWidthFromResolution(width) - Gets the window width based off the resolution width.
