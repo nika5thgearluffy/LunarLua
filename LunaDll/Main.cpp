@@ -4,6 +4,7 @@
 #include <algorithm>
 using std::min;//Workaround for GDI+ that requires MINMAX be presented
 using std::max;
+
 #include <Windows.h>
 #include <GdiPlus.h>
 #include <io.h>

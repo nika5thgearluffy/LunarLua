@@ -1156,33 +1156,41 @@ void CLunaLua::bindAll()
             ],
             
             namespace_("Internet")[
-                // Internet.downloadFile(url, filePath) - Downloads and parses a file as a string. This can be used to retrieve JSON files and such.
-                def("downloadFile", (void(*)(std::string, std::string))&InternetSystem::StartDownload),
-                // Internet.isDownloading() - If the game is downloading a file, this is true.
-                def("isDownloading", (bool(*)())&InternetSystem::IsDownloading),
-                // Internet.downloadFilename() - Gets the current download's filename. Blank if not downloading anything.
-                def("downloadFilename", (std::string(*)())&InternetSystem::DownloadFilename),
-                // Internet.downloadURL() - Gets the current download's URL. Blank if not downloading anything.
-                def("downloadURL", (std::string(*)())&InternetSystem::DownloadURL),
-                // Internet.downloadProgress() - Gets the current download's progress. Displays as 0 - 100 (Without the percent)
-                def("downloadProgress", (int(*)())&InternetSystem::DownloadProgress),
-                // Internet.getDownloadFilename(url) - Gets the download filename from the URL.
-                def("getDownloadFilename", (std::string(*)(std::string))&InternetSystem::GetFilenameFromURL),
-
-                // Internet.startDownload(url, filePath) - Start a file download. Call this with a variable.
-                def("startDownload", &InternetSystem::StartDownloadID),
-                // Internet.isCurrentlyDownloading(download) - Checks if something is already downloading.
-                def("isCurrentlyDownloading", &InternetSystem::IsDownloadingID),
-                // Internet.getProgress(download) - Gets the progress of a download.
-                def("getProgress", &InternetSystem::GetDownloadProgressID),
-                // Internet.getFilename(download) - Gets the filename of a download.
-                def("getFilename", &InternetSystem::GetDownloadFilenameID),
-                // Internet.getURL(download) - Gets the URL of a download.
-                def("getURL", &InternetSystem::GetDownloadURLID),
-                // Internet.cancelDownload(downloaD) - Sets to cancel a download if something is already downloading.
+                // **DOWNLOAD FUNCTIONS**
+                // Internet.downloadFile(url, filePath) - Start a file download. Call this with a variable.
+                def("downloadFile", &InternetSystem::StartDownloadID),
+                // Internet.isDownloading(download) - Checks if something is already downloading.
+                def("isDownloading", &InternetSystem::IsDownloadingID),
+                // Internet.downloadProgress(download) - Gets the progress of a download.
+                def("downloadProgress", &InternetSystem::GetDownloadProgressID),
+                // Internet.downloadFilename(download) - Gets the filename of a download.
+                def("downloadFilename", &InternetSystem::GetDownloadFilenameID),
+                // Internet.downloadURL(download) - Gets the URL of a download.
+                def("downloadURL", &InternetSystem::GetDownloadURLID),
+                // Internet.cancelDownload(download) - Sets to cancel a download if something is already downloading.
                 def("cancelDownload", &InternetSystem::CancelDownloadID),
                 // Internet.downloadCount() - The total count of current downloads.
-                def("downloadCount", &InternetSystem::GetActiveDownloadCount)
+                def("downloadCount", &InternetSystem::GetActiveDownloadCount),
+
+                // **UDP FUNCTIONS**
+                // Internet.ipAddress() - Gets the current IP address of the computer.
+                def("ipAddress", &InternetSystem::GetLocalIP),
+                // Internet.socketSendPacket(targetIP, port, data) - Sends a packet via socket.
+                def("socketSendPacket", &InternetSystem::SendPacket),
+                // Internet.socketStartListening(port) - Starts listening onto a port via socket.
+                def("socketStartListening", &InternetSystem::StartListening),
+                // Internet.socketRecievePacket() - Receive packets from a socket.
+                def("socketReceivePacket", &InternetSystem::ReceivePacket),
+                // Internet.socketClose() - Close sockets.
+                def("socketClose", &InternetSystem::CloseSockets),
+                // Internet.broadcastEnable() - Enables broadcast.
+                def("broadcastEnable", &InternetSystem::EnableBroadcast),
+                // Internet.broadcastSend(port, data) - Sends broadcast data.
+                def("broadcastSend", &InternetSystem::SendBroadcast),
+                // Internet.broadcastReceive(senderIP) - Receives broadcast data.
+                def("broadcastReceive", &InternetSystem::ReceiveBroadcastData),
+                // Internet.broadcastGetLastSender() - Returns the last broadcast sender.
+                def("broadcastGetLastSender", &InternetSystem::GetLastBroadcastSender)
             ],
             
             namespace_("BackgroundWorker")[

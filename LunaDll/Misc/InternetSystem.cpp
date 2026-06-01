@@ -1,13 +1,36 @@
 #include "InternetSystem.h"
 
+#include <winsock2.h>
+#include <ws2tcpip.h>
+
 #include <windows.h>
+
 #include <wininet.h>
+
 #include <future>
 #include <fstream>
 
 #include "../Globals.h"
 
 #pragma comment(lib, "wininet.lib")
+#pragma comment(lib, "ws2_32.lib")
+
+// Socket packets
+// [CLAUDE AI WAS USED FOR THIS PART OF THE CODE]
+static SOCKET gSendSocket = INVALID_SOCKET;
+static SOCKET gRecvSocket = INVALID_SOCKET;
+static bool gWsaInitialized = false;
+
+// [CLAUDE AI WAS USED FOR THIS PART OF THE CODE]
+static void EnsureWSAInit()
+{
+    if (!gWsaInitialized)
+    {
+        WSADATA wsaData;
+        WSAStartup(MAKEWORD(2, 2), &wsaData);
+        gWsaInitialized = true;
+    }
+}
 
 // This downloads a file and parses it as a string
 // [CLAUDE AI WAS USED FOR THIS PART OF THE CODE]
@@ -88,93 +111,10 @@ std::string InternetSystem::GetFilenameFromURL(std::string url)
     return filename;
 }
 
-int InternetSystem::DownloadProgress()
-{
-    return gDownloadProgress;
-}
-
-bool InternetSystem::IsDownloading()
-{
-    return gDownloadPending;
-}
-
-std::string InternetSystem::DownloadFilename()
-{
-    return std::string(gDownloadFilename);
-}
-
-std::string InternetSystem::DownloadURL()
-{
-    return std::string(gDownloadURL);
-}
-
-// [CLAUDE AI WAS USED FOR THIS PART OF THE CODE]
-void InternetSystem::StartDownload(std::string url, std::string savePath)
-{
-    if (gDownloadPending)
-        return;
-
-    gDownloadPending = true;
-
-    strncpy_s(gDownloadFilename, sizeof(gDownloadFilename), GetFilenameFromURL(url).c_str(), _TRUNCATE);
-    strncpy_s(gDownloadURL, sizeof(gDownloadURL), url.c_str(), _TRUNCATE);
-    strncpy_s(gDownloadSavePath, sizeof(gDownloadSavePath), savePath.c_str(), _TRUNCATE);
-    gDownloadProgress = 0;
-
-    gDownloadFuture = std::async(std::launch::async, []() -> std::string {
-        // Use globals directly instead of capturing strings
-        std::string result = DownloadURL(std::string(gDownloadURL));
-
-        if (gDownloadSavePath[0] != '\0' && !result.empty())
-        {
-            std::ofstream file(gDownloadSavePath);
-            if (file.is_open())
-            {
-                file << result;
-                file.close();
-            }
-        }
-
-        return result;
-    });
-
-    if (gLunaLua.isValid())
-    {
-        std::shared_ptr<Event> downloadStart = std::make_shared<Event>("onDownloadStart", false);
-        downloadStart->setDirectEventName("onDownloadStart");
-        downloadStart->setLoopable(false);
-        gLunaLua.callEvent(downloadStart, std::string(gDownloadURL), std::string(gDownloadFilename));
-    }
-}
-
 // Call this every frame from your game tick
 // [CLAUDE AI WAS USED FOR THIS PART OF THE CODE]
 void InternetSystem::Poll()
 {
-    // Legacy single download poll - kept for compatibility
-    if (gDownloadPending)
-    {
-        if (gDownloadFuture.valid() &&
-            gDownloadFuture.wait_for(std::chrono::seconds(0)) == std::future_status::ready)
-        {
-            std::string result = gDownloadFuture.get();
-            gDownloadPending = false;
-
-            if (gLunaLua.isValid())
-            {
-                std::shared_ptr<Event> ev = std::make_shared<Event>("onDownloadComplete", false);
-                ev->setDirectEventName("onDownloadComplete");
-                ev->setLoopable(false);
-                gLunaLua.callEvent(ev, result, std::string(gDownloadURL), std::string(gDownloadFilename));
-            }
-
-            gDownloadURL[0] = '\0';
-            gDownloadFilename[0] = '\0';
-            gDownloadSavePath[0] = '\0';
-            gDownloadProgress = 0;
-        }
-    }
-
     // Multi-download poll
     std::vector<std::string> completedIDs;
     {
@@ -236,11 +176,13 @@ std::string InternetSystem::StartDownloadID(std::string url, std::string savePat
 
     gDownloadMap[url] = entry;
 
-    // Also update legacy globals to point to this download
-    gDownloadPending = true;
-    strncpy_s(gDownloadFilename, sizeof(gDownloadFilename),
-        entry->filename, _TRUNCATE);
-    gDownloadProgress = 0;
+    if (gLunaLua.isValid())
+    {
+        std::shared_ptr<Event> downloadStart = std::make_shared<Event>("onDownloadStart", false);
+        downloadStart->setDirectEventName("onDownloadStart");
+        downloadStart->setLoopable(false);
+        gLunaLua.callEvent(downloadStart, url, InternetSystem::GetFilenameFromURL(url));
+    }
 
     entry->future = std::async(std::launch::async, [url, savePath, entry]() -> std::string
     {
@@ -316,4 +258,179 @@ void InternetSystem::CancelDownloadID(std::string id)
         delete it->second;
         gDownloadMap.erase(it);
     }
+}
+
+
+// Gets the current local IP address.
+std::string InternetSystem::GetLocalIP()
+{
+    WSADATA wsaData;
+    WSAStartup(MAKEWORD(2, 2), &wsaData);
+
+    char hostname[256];
+    gethostname(hostname, sizeof(hostname));
+
+    addrinfo hints = {};
+    hints.ai_family = AF_INET;  // IPv4
+    addrinfo* result = nullptr;
+    getaddrinfo(hostname, nullptr, &hints, &result);
+
+    std::string ip = "";
+    if (result)
+    {
+        sockaddr_in* addr = reinterpret_cast<sockaddr_in*>(result->ai_addr);
+        char ipStr[INET_ADDRSTRLEN];
+        inet_ntop(AF_INET, &addr->sin_addr, ipStr, sizeof(ipStr));
+        ip = ipStr;
+        freeaddrinfo(result);
+    }
+
+    return ip;
+}
+
+bool InternetSystem::SendPacket(std::string targetIP, int port, std::string data)
+{
+    EnsureWSAInit();
+
+    if (gSendSocket == INVALID_SOCKET)
+        gSendSocket = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP);
+
+    sockaddr_in addr = {};
+    addr.sin_family = AF_INET;
+    addr.sin_port = htons(port);
+    inet_pton(AF_INET, targetIP.c_str(), &addr.sin_addr);
+
+    int result = sendto(gSendSocket, data.c_str(), data.size(), 0,
+        reinterpret_cast<sockaddr*>(&addr), sizeof(addr));
+
+    return result != SOCKET_ERROR;
+}
+
+bool InternetSystem::StartListening(int port)
+{
+    EnsureWSAInit();
+
+    if (gRecvSocket != INVALID_SOCKET)
+        closesocket(gRecvSocket);
+
+    gRecvSocket = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP);
+    if (gRecvSocket == INVALID_SOCKET)
+        return false;
+
+    // Set non-blocking so it doesn't hang the game loop
+    u_long mode = 1;
+    ioctlsocket(gRecvSocket, FIONBIO, &mode);
+
+    sockaddr_in addr = {};
+    addr.sin_family = AF_INET;
+    addr.sin_port = htons(port);
+    addr.sin_addr.s_addr = INADDR_ANY;
+
+    return bind(gRecvSocket, reinterpret_cast<sockaddr*>(&addr), sizeof(addr)) != SOCKET_ERROR;
+}
+
+std::string InternetSystem::ReceivePacket()
+{
+    if (gRecvSocket == INVALID_SOCKET)
+        return "";
+
+    char buffer[4096];
+    sockaddr_in senderAddr = {};
+    int senderLen = sizeof(senderAddr);
+
+    int received = recvfrom(gRecvSocket, buffer, sizeof(buffer) - 1, 0,
+        reinterpret_cast<sockaddr*>(&senderAddr), &senderLen);
+
+    if (received == SOCKET_ERROR)
+        return "";  // no data available (non-blocking)
+
+    buffer[received] = '\0';
+    return std::string(buffer, received);
+}
+
+void InternetSystem::CloseSockets()
+{
+    if (gSendSocket != INVALID_SOCKET)
+    {
+        closesocket(gSendSocket);
+        gSendSocket = INVALID_SOCKET;
+    }
+    if (gRecvSocket != INVALID_SOCKET)
+    {
+        closesocket(gRecvSocket);
+        gRecvSocket = INVALID_SOCKET;
+    }
+    if (gWsaInitialized)
+    {
+        WSACleanup();
+        gWsaInitialized = false;
+    }
+}
+
+bool InternetSystem::EnableBroadcast()
+{
+    EnsureWSAInit();
+
+    if (gSendSocket == INVALID_SOCKET)
+        gSendSocket = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP);
+
+    // Enable broadcast on the socket
+    BOOL broadcastEnable = TRUE;
+    return setsockopt(gSendSocket, SOL_SOCKET, SO_BROADCAST,
+        reinterpret_cast<char*>(&broadcastEnable), sizeof(broadcastEnable)) != SOCKET_ERROR;
+}
+
+bool InternetSystem::SendBroadcast(int port, std::string data)
+{
+    EnsureWSAInit();
+
+    if (gSendSocket == INVALID_SOCKET)
+        gSendSocket = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP);
+
+    sockaddr_in addr = {};
+    addr.sin_family = AF_INET;
+    addr.sin_port = htons(port);
+    addr.sin_addr.s_addr = INADDR_BROADCAST;  // 255.255.255.255
+
+    int result = sendto(gSendSocket, data.c_str(), data.size(), 0,
+        reinterpret_cast<sockaddr*>(&addr), sizeof(addr));
+
+    return result != SOCKET_ERROR;
+}
+
+std::string InternetSystem::ReceiveBroadcast(std::string senderIP)
+{
+    if (gRecvSocket == INVALID_SOCKET)
+        return "";
+
+    char buffer[4096];
+    sockaddr_in senderAddr = {};
+    int senderLen = sizeof(senderAddr);
+
+    int received = recvfrom(gRecvSocket, buffer, sizeof(buffer) - 1, 0,
+        reinterpret_cast<sockaddr*>(&senderAddr), &senderLen);
+
+    if (received == SOCKET_ERROR)
+        return "";
+
+    buffer[received] = '\0';
+
+    // Get sender IP so you know who sent the broadcast
+    char ipStr[INET_ADDRSTRLEN];
+    inet_ntop(AF_INET, &senderAddr.sin_addr, ipStr, sizeof(ipStr));
+    senderIP = std::string(ipStr);
+
+    return std::string(buffer, received);
+}
+
+static std::string gLastBroadcastSenderIP = "";
+
+std::string InternetSystem::ReceiveBroadcastData()
+{
+    return InternetSystem::ReceiveBroadcast(gLastBroadcastSenderIP);
+}
+
+std::string InternetSystem::GetLastBroadcastSender()
+{
+    return gLastBroadcastSenderIP;
 }

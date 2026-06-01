@@ -294,25 +294,36 @@ int MonitorSystem::getWindowHeightFromResolution(int gameHeight)
 // [CLAUDE AI IS USED FOR THIS PART OF THE CODE]
 float MonitorSystem::getDPIScale(int monitorID)
 {
-   if (monitorID < 1 || monitorID > numberOfMonitors)
+    if (Luna_IsWindowsWin8OrNewer())
+    {
+        // Windows 8.1+ - use GetDpiForMonitor
+        if (monitorID < 1 || monitorID > numberOfMonitors)
+            return 1.0f;
+
+        POINT pt;
+        pt.x = monitorInformation[monitorID - 1].monitorLeft + 
+               (monitorInformation[monitorID - 1].monitorWidth / 2);
+        pt.y = monitorInformation[monitorID - 1].monitorTop + 
+               (monitorInformation[monitorID - 1].monitorHeight / 2);
+
+        HMONITOR hMonitor = MonitorFromPoint(pt, MONITOR_DEFAULTTONEAREST);
+        if (!hMonitor)
+            return 1.0f;
+
+        UINT dpiX, dpiY;
+        if (GetDpiForMonitor(hMonitor, MDT_EFFECTIVE_DPI, &dpiX, &dpiY) == S_OK)
+            return dpiX / 96.0f;
+
         return 1.0f;
-
-    // Get the HMONITOR handle for the specific monitor
-    POINT pt;
-    pt.x = monitorInformation[monitorID - 1].monitorLeft + 
-           (monitorInformation[monitorID - 1].monitorWidth / 2);
-    pt.y = monitorInformation[monitorID - 1].monitorTop + 
-           (monitorInformation[monitorID - 1].monitorHeight / 2);
-
-    HMONITOR hMonitor = MonitorFromPoint(pt, MONITOR_DEFAULTTONEAREST);
-    if (!hMonitor)
-        return 1.0f;
-
-    UINT dpiX, dpiY;
-    if (GetDpiForMonitor(hMonitor, MDT_EFFECTIVE_DPI, &dpiX, &dpiY) == S_OK)
-        return dpiX / 96.0f;
-
-    return 1.0f;
+    }
+    else
+    {
+        // Windows 7 fallback - use GetDeviceCaps
+        HDC hdc = GetDC(gMainWindowHwnd);
+        float dpi = GetDeviceCaps(hdc, LOGPIXELSX) / 96.0f;
+        ReleaseDC(gMainWindowHwnd, hdc);
+        return dpi;
+    }
 }
 
 float MonitorSystem::getDPIScale()

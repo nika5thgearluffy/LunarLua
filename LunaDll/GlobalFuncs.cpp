@@ -39,6 +39,7 @@
 
 #include "Episode/EpisodeMain.h"
 #include "Misc/BackgroundWorker.h"
+#include "Misc/InternetSystem.h"
 
 void splitStr(std::vector<std::string>& dest, const std::string& str, const char* separator)
 {
@@ -1299,20 +1300,29 @@ int StartSMBX2Editor()
     }
 }
 
+// [CLAUDE AI USED FOR THIS PART OF THE CODE]
 void ExitSMBX2(int processCode)
 {
-    // This needs to be called so that USB detection and monitor detection unloads. If it doesn't, bugs will happen
-    // [CLAUDE AI USED FOR THIS PART OF THE CODE]
+    // There's some extra things needed to be done before closing SMBX2R. If these aren't done, possible bugs will happen on the OS.
+
+    // Close USB detection notifications
     if (hDevNotify) {
         UnregisterDeviceNotification(hDevNotify);
         hDevNotify = nullptr;
     }
+
+    // Close monitor notifications
     if (hMonitorNotify) {
         UnregisterDeviceNotification(hMonitorNotify);
         hMonitorNotify = nullptr;
     }
+
     // Don't forget to exit the background worker too
     BackgroundWorker_Stop();
+
+    // Close all Sockets in case if there is any
+    InternetSystem::CloseSockets();
+
     // Now finally exit
     _exit(processCode);
 }
