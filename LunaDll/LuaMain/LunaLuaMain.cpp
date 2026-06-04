@@ -746,18 +746,14 @@ void CLunaLua::bindAll()
                 def("exitGame", &LuaProxy::Misc::exitGame),
                 def("exitEngine", &LuaProxy::Misc::exitEngine),
                 def("didGameOver", &LuaProxy::Misc::didGameOver),
-                // Misc.loadEpisode
-                // Episode name only
+                // Misc.loadEpisode(episodeName[, saveSlot, numOfPlayers, extraPlayerIDs]) - Loads an episode that's given. Optionally, a save slot/number of players/extra player IDs for players greater than 1/2 can be given. -- Use "Episode.load" instead. --
                 def("loadEpisode", (bool(*)(std::string))&LuaProxy::Misc::loadEpisode),
-                // Episode name and save slot
                 def("loadEpisode", (bool(*)(std::string, int))&LuaProxy::Misc::loadEpisode),
-                // Episode name, save slot, and number of players
                 def("loadEpisode", (bool(*)(std::string, int, int))&LuaProxy::Misc::loadEpisode),
-                // Episode name, save slot, number of players, and other player IDs in case
                 def("loadEpisode", (bool(*)(std::string, int, int, int))&LuaProxy::Misc::loadEpisode),
-                // Gets the user files directory for globally every episode
+                // Misc.userFilesDirectory() - Gets the user files directory for globally every episode.
                 def("userFilesDirectory", (std::string(*)())&LuaProxy::Misc::userFilesDirectory),
-                // Returns true if first booted (False before onStart loads for the first time)
+                // Misc.hasFirstBooted() - Returns true if first booted (False before onStart loads for the first time). This is useful for the editor, where if you cross-load levels from different episodes, you can have this check for if the engine already loaded to prevent save data erasures.
                 def("hasFirstBooted", (bool(*)())&LuaProxy::Misc::hasFirstBooted),
                 def("pause", (void(*)(void))&LuaProxy::Misc::pause),
                 def("pause", (void(*)(bool))&LuaProxy::Misc::pause),
@@ -953,11 +949,16 @@ void CLunaLua::bindAll()
                 def("MusicGetPitch", (double(*)())&LuaProxy::Audio::MusicGetPitch),
                 def("MusicGetSpeed", (double(*)())&LuaProxy::Audio::MusicGetSpeed),
 
+                // Audio.MusicGet([hasArguments]) - Gets the current music that is playing. Optionally, hasArguments can be false to get the filepath without the SDL Mixer X arguments.
                 def("MusicGet", (std::string(*)(bool))&LuaProxy::Audio::MusicGet),
                 def("MusicGet", (std::string(*)())&LuaProxy::Audio::MusicGet),
+                // Audio.MusicGetArguments() = Gets the SDL Mixer X arguments of the current music that is playing. Blank if none.
                 def("MusicGetArguments", (std::string(*)())&LuaProxy::Audio::MusicGetArguments),
+                // Audio.MusicCount() - Gets the count of the music separated into 3 numbers on a table: Overworld, Special, and Level.
                 def("MusicCount", &LuaProxy::Audio::MusicCount),
+                // Audio.MusicGetIndex(musicType, musicID) - Gets the filepath of a music ID in a specific music type. Types are described above.
                 def("MusicGetIndex", (std::string(*)(int, int))&LuaProxy::Audio::MusicGetIndex),
+                // Audio.MusicChangeIndex(musicType, musicID, filePath) - Replaces the filepath of a music ID in a specific music type with the one specified under filePath. The music changes automatically if the specific music ID that's being changed is currently playing.
                 def("MusicChangeIndex", (void(*)(int, int, std::string))&LuaProxy::Audio::MusicChangeIndex),
 
                 //SFX
@@ -984,9 +985,13 @@ void CLunaLua::bindAll()
                 def("SfxIsFading", (int(*)(int))&LuaProxy::Audio::SfxIsFading),
                 def("SfxVolume", (int(*)(int, int))&LuaProxy::Audio::SfxVolume),
 
+                // Audio.SfxCount() - Gets the total amount of vanilla SFXs that's on the engine.
                 def("SfxCount", (int(*)())&LuaProxy::Audio::SfxCount),
+                // Audio.SfxGetFilenameFromChunk(chunk) - Gets the filepath from a specified Mixer X chunk.
                 def("SfxGetFilenameFromChunk", (std::string(*)(Mix_Chunk*))&LuaProxy::Audio::SfxGetFilenameFromChunk),
+                // Audio.SfxClear(filePath) - Clears a specific SFX from the cache of the engine. The sound should NOT be playing before this is called!!
                 def("SfxClear", (void(*)(std::string))&LuaProxy::Audio::SfxClear),
+                // Audio.SfxInCache(filePath) - Returns true if the SFX specifed is in the cache.
                 def("SfxInCache", (bool(*)(std::string))&LuaProxy::Audio::SfxInCache),
 
                 def("SfxSetPanning", (int(*)(int, int, int))&LuaProxy::Audio::SfxSetPanning),
