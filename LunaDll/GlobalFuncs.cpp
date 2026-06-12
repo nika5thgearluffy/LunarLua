@@ -934,6 +934,13 @@ void DebugClear(HANDLE hConsole)
     }
 }
 
+void DebugClose()
+{
+    HANDLE hStdout;
+    hStdout = GetStdHandle(STD_OUTPUT_HANDLE);
+    CloseHandle(hStdout);
+}
+
 #ifdef BUILD_WITH_ATL_STUFF
 // WIP
 #include <atlbase.h>

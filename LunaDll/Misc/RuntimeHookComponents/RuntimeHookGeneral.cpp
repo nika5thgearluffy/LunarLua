@@ -1957,45 +1957,27 @@ void TrySkipPatch()
     //   5: HUD
     PATCH(0x939977).NOP().NOP().CALL(GetRenderBelowPriorityHook<100>()).Apply();
 
-    /*// [CLAUDE AI WAS USED IN THIS PART OF THE CODE]
+    // [CLAUDE AI WAS USED IN THIS PART OF THE CODE]
     // World map rendering priority hooks
     // Verified against SMBX 1.3 ASM - UpdateGraphics2 (0x8FEB10)
 
-    // Before tiles (-95)
-    PATCH(0x8FF25E).NOP().NOP().CALL(GetRenderBelowPriorityHook<-95>())
-        .bytes(0x8B, 0x15, 0xA4, 0x57, 0xB2, 0x00)  // re-emit: mov edx,[TilesCount]
-        .bytes(0x8B, 0x3D, 0x08, 0x12, 0x40, 0x00)  // re-emit: mov edi,[__vbaFpI4]
-        .Apply();
+    // Tiles (-95)
+    /*PATCH(0x8FF2A0).NOP().NOP().CALL(GetRenderBelowPriorityHook<-95>()).Apply();
 
-    // Before scenes (-90) - re-emit: mov dx,[SceneryCount] (7 bytes: 66:8B15 A657B200)
-    PATCH(0x8FF3E7).NOP().NOP().CALL(GetRenderBelowPriorityHook<-90>())
-        .bytes(0x66, 0x8B, 0x15, 0xA6, 0x57, 0xB2, 0x00)
-        .Apply();
+    // Scenery (-90)
+    PATCH(0x8FF425).NOP().NOP().CALL(GetRenderBelowPriorityHook<-90>()).Apply();
 
-    // Before level icons first pass (-85) - re-emit: mov ecx,[GM_LEVEL_COUNT] (6 bytes)
-    PATCH(0x8FF82E).NOP().NOP().CALL(GetRenderBelowPriorityHook<-85>())
-        .bytes(0x8B, 0x0D, 0x60, 0x59, 0xB2, 0x00)  // re-emit: mov ecx,[GM_LEVEL_COUNT]
-        .bytes(0xB8, 0x01, 0x00, 0x00, 0x00)          // re-emit: mov eax,1
-        .Apply();
+    // World paths (-85)
+    PATCH(0x8FF86F).NOP().NOP().CALL(GetRenderBelowPriorityHook<-85>()).Apply();
 
-    // Before paths (-80) - fixed
-    PATCH(0x900463).NOP().NOP().CALL(GetRenderBelowPriorityHook<-80>())
-        .bytes(0x8B, 0x0D, 0xE0, 0x58, 0xB2, 0x00)        // re-emit: mov ecx,[pathsCount]
-        .bytes(0xB8, 0x01, 0x00, 0x00, 0x00)                // re-emit: mov eax,1
-        .bytes(0x89, 0x8D, 0x90, 0xFE, 0xFF, 0xFF)          // re-emit: mov [ebp-170],ecx
-        .Apply();
+    // World levels (-80)
+    PATCH(0x90049F).NOP().NOP().CALL(GetRenderBelowPriorityHook<-80>()).Apply();
 
-    // Before level icons second pass (-75)
-    PATCH(0x90063B).NOP().NOP().CALL(GetRenderBelowPriorityHook<-75>())
-        .bytes(0x8B, 0x15, 0x60, 0x59, 0xB2, 0x00)  // re-emit: mov edx,[GM_LEVEL_COUNT]
-        .bytes(0xB8, 0x01, 0x00, 0x00, 0x00)          // re-emit: mov eax,1
-        .bytes(0x89, 0x95, 0x88, 0xFE, 0xFF, 0xFF)          // re-emit: mov [ebp-178],edx
-        .Apply();
+    // ...wait, what's this one? (-75)
+    PATCH(0x90067D).NOP().NOP().CALL(GetRenderBelowPriorityHook<-75>()).Apply();
 
-    // After all world elements (-70) - 8 bytes available, safe
-    PATCH(0x900E72).NOP().NOP().CALL(GetRenderBelowPriorityHook<-70>())
-        .bytes(0x66, 0x83, 0x3D, 0x36, 0x51, 0xB2, 0x00, 0xFF)  // re-emit: cmp word ptr [unkIsWorldEditor_B25136],FFFF
-        .Apply();*/
+    // Rest of world elements (-70)
+    PATCH(0x901404).NOP().NOP().CALL(GetRenderBelowPriorityHook<-70>()).Apply();*/
 
     // Change Mode Hook
     // Runs when the game starts or the game mode changes.

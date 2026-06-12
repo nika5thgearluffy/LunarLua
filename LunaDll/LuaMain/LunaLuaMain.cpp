@@ -605,7 +605,10 @@ void CLunaLua::setupDefaults()
     _G["inputConfig2"] = LuaProxy::InputConfig(2);
 
     _G["console"] = LuaProxy::Console();
+    // Capital case alternative
+    _G["Console"] = LuaProxy::Console();
 
+    // Shouldn't this print to the actual console?
     _G["print"] = object();
 }
 
@@ -1340,6 +1343,8 @@ void CLunaLua::bindAll()
             .def("print", &LuaProxy::Console::print)
             .def("println", &LuaProxy::Console::println)
             .def("clear", &LuaProxy::Console::clear)
+            .def("show", &LuaProxy::Console::show)
+            .def("isEnabled", &LuaProxy::Console::isEnabled)
         ];
     if(m_type == LUNALUA_WORLD){
         module(L)

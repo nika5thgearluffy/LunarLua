@@ -133,6 +133,7 @@ void sendPUTRequest(const std::string& server, const std::string& data);
 void InitDebugConsole();
 int DebugPrint(const char * format, ...);
 void DebugClear(HANDLE hConsole);
+void DebugClose();
 void dumpTypeLibrary(IDispatch* dispatchToDump, std::wostream& toOutput);
 
 // Window Helper Funcs
