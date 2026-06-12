@@ -863,7 +863,6 @@ std::wstring getLatestConfigFile(const std::wstring& configname)
 
 void InitDebugConsole()
 {
-
     CONSOLE_SCREEN_BUFFER_INFO coninfo;
 
     // allocate a console for this app
@@ -936,9 +935,7 @@ void DebugClear(HANDLE hConsole)
 
 void DebugClose()
 {
-    HANDLE hStdout;
-    hStdout = GetStdHandle(STD_OUTPUT_HANDLE);
-    CloseHandle(hStdout);
+    PostMessage(GetConsoleWindow(), WM_CLOSE, 0, 0);
 }
 
 #ifdef BUILD_WITH_ATL_STUFF

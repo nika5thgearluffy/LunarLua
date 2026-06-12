@@ -23,12 +23,16 @@ void LuaProxy::Console::clear()
     DebugClear(hStdout);
 }
 
-void LuaProxy::Console::show()
+void LuaProxy::Console::show(bool enable)
 {
-    if (GetConsoleWindow() == NULL)
+    if (enable && GetConsoleWindow() == NULL)
     {
         InitDebugConsole();
         AsmRange::StartChecking();
+    }
+    else if (GetConsoleWindow() != NULL)
+    {
+        ShowWindow(GetConsoleWindow(), enable ? SW_SHOWNOACTIVATE : SW_HIDE);
     }
 }
 
