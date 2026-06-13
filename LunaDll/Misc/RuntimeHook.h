@@ -671,4 +671,8 @@ void __stdcall runtimeHookPlayerKillLavaSolidExit(short* playerIdxPtr);
 void __stdcall runtimeHookPlayerCountCollisionsForWeakLava(short* playerIdxPtr);
 void __stdcall runtimeHookPlayerBlockCollisionEnd(void);
 
+
+
+void SubclassConsoleWindow();
+
 #endif

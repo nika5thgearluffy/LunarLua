@@ -1294,6 +1294,33 @@ LRESULT CALLBACK MsgHOOKProc(int nCode, WPARAM wParam, LPARAM lParam)
     return CallNextHookEx(HookWnd, nCode, wParam, lParam);
 }
 
+
+
+static WNDPROC gOrigConsoleWndProc = nullptr;
+
+static LRESULT CALLBACK ConsoleWndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
+{
+    if (msg == WM_CLOSE)
+    {
+        // Intercept close - hide instead of closing
+        ShowWindow(hwnd, SW_HIDE);
+        return 0;  // return 0 to prevent default close behavior
+    }
+    return CallWindowProc(gOrigConsoleWndProc, hwnd, msg, wParam, lParam);
+}
+
+void SubclassConsoleWindow()
+{
+    HWND consoleHwnd = GetConsoleWindow();
+    if (consoleHwnd == NULL) return;
+
+    // Replace the console's WndProc with ours, save the original
+    gOrigConsoleWndProc = (WNDPROC)SetWindowLongPtr(consoleHwnd, GWLP_WNDPROC, 
+        (LONG_PTR)ConsoleWndProc);
+}
+
+
+
 void ParseArgs(const std::vector<std::wstring>& args)
 {
 
@@ -1589,6 +1616,7 @@ void TrySkipPatch()
     if (gStartupSettings.console)
     {
         InitDebugConsole();
+        SubclassConsoleWindow();
         AsmRange::StartChecking();
     }
 

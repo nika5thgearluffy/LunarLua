@@ -1,6 +1,7 @@
 #include "../LuaProxy.h"
 #include "../../GlobalFuncs.h"
 #include "../../Misc/AsmPatch.h"
+#include "../../Misc/RuntimeHook.h"
 
 LuaProxy::Console::Console() :
     m_isDefaultConsole(true)
@@ -28,6 +29,7 @@ void LuaProxy::Console::show(bool enable)
     if (enable && GetConsoleWindow() == NULL)
     {
         InitDebugConsole();
+        SubclassConsoleWindow();
         AsmRange::StartChecking();
     }
     else if (GetConsoleWindow() != NULL)
