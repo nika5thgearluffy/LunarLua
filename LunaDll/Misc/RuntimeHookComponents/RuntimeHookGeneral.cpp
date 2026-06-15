@@ -1296,27 +1296,20 @@ LRESULT CALLBACK MsgHOOKProc(int nCode, WPARAM wParam, LPARAM lParam)
 
 
 
-static WNDPROC gOrigConsoleWndProc = nullptr;
-
-static LRESULT CALLBACK ConsoleWndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
+static BOOL WINAPI ConsoleCtrlHandler(DWORD ctrlType)
 {
-    if (msg == WM_CLOSE)
+    if (ctrlType == CTRL_CLOSE_EVENT)
     {
-        // Intercept close - hide instead of closing
-        ShowWindow(hwnd, SW_HIDE);
-        return 0;  // return 0 to prevent default close behavior
+        // Hide instead of closing
+        ShowWindow(GetConsoleWindow(), SW_HIDE);
+        return TRUE;  // TRUE means we handled it, don't do default behavior
     }
-    return CallWindowProc(gOrigConsoleWndProc, hwnd, msg, wParam, lParam);
+    return FALSE;
 }
 
 void SubclassConsoleWindow()
 {
-    HWND consoleHwnd = GetConsoleWindow();
-    if (consoleHwnd == NULL) return;
-
-    // Replace the console's WndProc with ours, save the original
-    gOrigConsoleWndProc = (WNDPROC)SetWindowLongPtr(consoleHwnd, GWLP_WNDPROC, 
-        (LONG_PTR)ConsoleWndProc);
+    SetConsoleCtrlHandler(ConsoleCtrlHandler, TRUE);
 }
 
 

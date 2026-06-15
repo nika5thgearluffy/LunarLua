@@ -674,5 +674,6 @@ void __stdcall runtimeHookPlayerBlockCollisionEnd(void);
 
 
 void SubclassConsoleWindow();
+void CheckConsolePending();
 
 #endif
