@@ -80,4 +80,7 @@ void TestModeCheckPendingIPCRequest(void);
 
 void TestModeSendNotification(const std::string& notificationCmd);
 
+// Sets up a new level to test in-game
+bool testModeSetupNewLevel(std::string filename);
+
 #endif

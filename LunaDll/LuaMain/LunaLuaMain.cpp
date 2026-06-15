@@ -41,7 +41,10 @@
 
 #include "../Rendering/WindowSizeHandler.h"
 
+#include "../Misc/TestMode.h"
+
 #include "../Episode/EpisodeMain.h"
+
 #include "../Misc/MonitorSystem.h"
 #include "../Misc/KeyboardMouseSystem.h"
 #include "../Misc/FileSystem.h"
@@ -1224,7 +1227,9 @@ void CLunaLua::bindAll()
                 // Editor.getItem() - Gets an item that is selected from the SMBX2R Editor. Only runs on the editor.
                 def("getItem", (std::string(*)()) &GetEditorPlacedItem),
                 // Editor.open() - Opens the SMBX2R editor when executed. A return code is returned on Lua itself.
-                def("open", (int(*)())&StartSMBX2Editor)
+                def("open", (int(*)())&StartSMBX2Editor),
+                // Editor.setTestModeLevel(level) - Sets a new level to test in the editor. Returns true/false depending on if the level has been found or not.
+                def("setTestModeLevel", (bool(*)(std::string))&testModeSetupNewLevel)
             ],
 
             LUAHELPER_DEF_CLASS(NativeInputConfig)
