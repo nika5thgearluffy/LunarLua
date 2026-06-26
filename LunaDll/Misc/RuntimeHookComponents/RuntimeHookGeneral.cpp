@@ -1300,6 +1300,7 @@ static BOOL WINAPI ConsoleCtrlHandler(DWORD ctrlType)
 {
     if (ctrlType == CTRL_CLOSE_EVENT)
     {
+        Sleep(10);
         // Hide instead of closing
         ShowWindow(GetConsoleWindow(), SW_HIDE);
         return TRUE;  // TRUE means we handled it, don't do default behavior

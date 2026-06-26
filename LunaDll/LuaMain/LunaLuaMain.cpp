@@ -1204,6 +1204,15 @@ void CLunaLua::bindAll()
                 def("broadcastGetLastSender", &InternetSystem::GetLastBroadcastSender)
             ],
             
+            namespace_("Git")[
+                // Git.getCommitHash(folder) - Gets the commit hash from a specific git folder. This can be used to retrieve the hash for displaying update versions on your episodes.
+                def("getCommitHash", &InternetSystem::GetGitCommitHash),
+                // Git.getCommitHashShort(folder) - Same as last, except it shortens it down to a GitHub-styled hash.
+                def("getCommitHashShort", &InternetSystem::GetGitCommitHashShort),
+                // Git.getBranch(folder) - Gets the branch of a specific git folder.
+                def("getBranch", &InternetSystem::GetGitBranch)
+            ],
+            
             namespace_("BackgroundWorker")[
                 // BackgroundWorker.getResult(key, value) - Gets a result from a global background process.
                 def("getResult", (std::string(*)(std::string))&BackgroundWorker_GetResult),

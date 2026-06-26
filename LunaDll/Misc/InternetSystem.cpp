@@ -434,3 +434,104 @@ std::string InternetSystem::GetLastBroadcastSender()
 {
     return gLastBroadcastSenderIP;
 }
+
+
+// Reads a Git commit hash from the specified folder under "data"
+std::string InternetSystem::GetGitCommitHash(std::string folderToUse)
+{
+    std::string gitDir = folderToUse + "\\.git\\";
+    std::string headPath = gitDir + "HEAD";
+    
+    // Check if .git folder exists
+    if (!file_existsX(headPath))
+        return "unknown";
+    
+    // Read HEAD file
+    std::string headContent;
+    if (!readFile(headContent, headPath))
+        return "unknown";
+    
+    // Trim whitespace/newlines
+    headContent.erase(headContent.find_last_not_of(" \t\r\n") + 1);
+    
+    // Check if HEAD contains a ref or a direct hash
+    // ref format: "ref: refs/heads/branchname"
+    // direct hash format: "a1b2c3d4e5f6..."
+    if (headContent.substr(0, 5) == "ref: ")
+    {
+        // Follow the ref to get the actual hash
+        std::string refPath = gitDir + headContent.substr(5);
+        // Convert forward slashes to backslashes
+        std::replace(refPath.begin(), refPath.end(), '/', '\\');
+        
+        std::string hashContent;
+        if (!readFile(hashContent, refPath))
+        {
+            // Ref file not found, try packed-refs
+            std::string packedRefsPath = gitDir + "packed-refs";
+            std::string packedRefs;
+            if (readFile(packedRefs, packedRefsPath))
+            {
+                std::string refName = headContent.substr(5);
+                std::istringstream stream(packedRefs);
+                std::string line;
+                while (std::getline(stream, line))
+                {
+                    if (line.find(refName) != std::string::npos)
+                    {
+                        // Line format: "hash refname"
+                        size_t spacePos = line.find(' ');
+                        if (spacePos != std::string::npos)
+                            return line.substr(0, spacePos);
+                    }
+                }
+            }
+            return "unknown";
+        }
+        
+        // Trim and return hash
+        hashContent.erase(hashContent.find_last_not_of(" \t\r\n") + 1);
+        return hashContent;
+    }
+    else
+    {
+        // HEAD directly contains the hash (detached HEAD state)
+        return headContent;
+    }
+}
+
+// Short version (first 7 chars, like GitHub shows)
+std::string InternetSystem::GetGitCommitHashShort(std::string folderToUse)
+{
+    std::string hash = InternetSystem::GetGitCommitHash(folderToUse);
+    if (hash == "unknown" || hash.length() < 7)
+        return hash;
+    return hash.substr(0, 7);
+}
+
+// Get current branch name too while we're at it
+std::string InternetSystem::GetGitBranch(std::string folderToUse)
+{
+    std::string headPath = folderToUse + "\\.git\\HEAD";
+    
+    if (!file_existsX(headPath))
+        return "unknown";
+    
+    std::string headContent;
+    if (!readFile(headContent, headPath))
+        return "unknown";
+    
+    headContent.erase(headContent.find_last_not_of(" \t\r\n") + 1);
+    
+    if (headContent.substr(0, 5) == "ref: ")
+    {
+        // Extract branch name from "ref: refs/heads/branchname"
+        std::string ref = headContent.substr(5);
+        size_t lastSlash = ref.find_last_of('/');
+        if (lastSlash != std::string::npos)
+            return ref.substr(lastSlash + 1);
+        return ref;
+    }
+    
+    return "detached";
+}

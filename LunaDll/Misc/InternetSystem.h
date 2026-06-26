@@ -38,6 +38,11 @@ namespace InternetSystem{
     std::string ReceiveBroadcast(std::string senderIP);
     std::string ReceiveBroadcastData();
     std::string GetLastBroadcastSender();
+    
+    // Git functions
+    std::string GetGitCommitHash(std::string folderToUse);
+    std::string GetGitCommitHashShort(std::string folderToUse);
+    std::string GetGitBranch(std::string folderToUse);
 };
 
 #endif
