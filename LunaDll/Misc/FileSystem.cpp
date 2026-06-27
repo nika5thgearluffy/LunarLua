@@ -105,6 +105,11 @@ bool FileSystem::DirectoryExists(std::string directory)
     return (dwAttrib != INVALID_FILE_ATTRIBUTES && (dwAttrib & FILE_ATTRIBUTE_DIRECTORY));
 }
 
+bool FileSystem::RemoveDirectory(std::string path)
+{
+    return ::RemoveDirectoryA(path.c_str()) != 0;
+}
+
 // Gets an MD5 hash of a file.
 std::string FileSystem::GetMD5Hash(std::string filePath)
 {

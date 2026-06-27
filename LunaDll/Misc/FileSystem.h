@@ -12,6 +12,7 @@ namespace FileSystem{
 
     bool CreateDirectory(std::string pathToDirectory);
     bool DirectoryExists(std::string directory);
+    bool RemoveDirectory(std::string path);
 
     std::string GetMD5Hash(std::string filePath);
 
