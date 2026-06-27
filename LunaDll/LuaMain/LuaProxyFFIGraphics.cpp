@@ -74,6 +74,19 @@ FFI_EXPORT uint32_t __fastcall FFI_ImageGetDataPtr(LunaImageRef* img)
     return 0;
 }
 
+FFI_EXPORT LunaImageRef* __fastcall FFI_ImageFromData(int width, int height, const uint8_t* data)
+{
+    CLunaFFILock ffiLock(__FUNCTION__);
+    std::lock_guard<std::mutex> graphicsLock(g_graphicsMutex);
+
+    std::shared_ptr<LunaImage> img = LunaImage::fromData(width, height, data);
+    if (img)
+    {
+        return new std::shared_ptr<LunaImage>(img);
+    }
+    return nullptr;
+}
+
 // GLDraw things
 
 static void GLPlaceAttributes(std::vector<GLShaderVariableEntry>& out, GLShaderVariableType type, FFI_GL_Draw_Var* vars, unsigned int count)

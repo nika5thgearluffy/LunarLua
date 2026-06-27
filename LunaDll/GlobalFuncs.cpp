@@ -1305,8 +1305,21 @@ int StartSMBX2Editor()
 }
 
 // [CLAUDE AI USED FOR THIS PART OF THE CODE]
-void ExitSMBX2(int processCode)
+static bool gExitEventFired = false;
+
+void FireExitEvent()
 {
+    if (gExitEventFired) return;
+    gExitEventFired = true;
+    
+    if (gLunaLua.isValid())
+    {
+        std::shared_ptr<Event> exitEvent = std::make_shared<Event>("onEngineExit", false);
+        exitEvent->setDirectEventName("onEngineExit");
+        exitEvent->setLoopable(false);
+        gLunaLua.callEvent(exitEvent);
+    }
+
     // There's some extra things needed to be done before closing SMBX2R. If these aren't done, possible bugs will happen on the OS.
 
     // Close USB detection notifications
@@ -1326,6 +1339,12 @@ void ExitSMBX2(int processCode)
 
     // Close all Sockets in case if there is any
     InternetSystem::CloseSockets();
+}
+
+void ExitSMBX2(int processCode)
+{
+    // Run the onExitEngine Lua event and everything needed to close SMBX2R
+    FireExitEvent();
 
     // Now finally exit
     _exit(processCode);

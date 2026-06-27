@@ -1193,6 +1193,14 @@ LRESULT CALLBACK HandleWndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lPara
                 // Don't call OnMouseMove because lParam is screen coords rather than client coords, so probably not suitable
                 gMouseHandler.OnMouseWheelEvent(MouseHandler::WHEEL_H, GET_WHEEL_DELTA_WPARAM(wParam));
                 break;
+            case WM_CLOSE:
+            {
+                // Run the Lua exit engine event and everything needed to close SMBX2R
+                FireExitEvent();
+
+                // Let default handler close the window
+                return DefWindowProc(hwnd, uMsg, wParam, lParam);
+            }
         }
     }
 

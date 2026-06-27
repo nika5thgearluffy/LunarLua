@@ -1158,7 +1158,11 @@ void CLunaLua::bindAll()
                 def("getMD5Hash", (std::string(*)(std::string))&FileSystem::GetMD5Hash),
                 // File.create(filepath[, dataToAppend]) - Creates a file. Data can be optionally appended.
                 def("create", (bool(*)(std::string))&FileSystem::CreateAFile),
-                def("create", (bool(*)(std::string, std::string))&FileSystem::CreateAFile)
+                def("create", (bool(*)(std::string, std::string))&FileSystem::CreateAFile),
+                // File.base64Encode(stringData) - Converts a string data to the Base64 format.
+                def("base64Encode", (std::string(*)(std::string))&FileSystem::Base64Encode),
+                // File.base64Decode(stringData) - Decodes a Base64 format string back to its original string.
+                def("base64Decode", (std::string(*)(std::string))&FileSystem::Base64Decode)
             ],
 
             namespace_("Language")[

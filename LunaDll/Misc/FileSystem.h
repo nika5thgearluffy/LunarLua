@@ -18,6 +18,9 @@ namespace FileSystem{
     bool HasEnoughDiskSpace(std::wstring path, int requiredBytesOfUse);
     
     bool CreateAFile(std::string path, std::string fileData = "");
+    
+    std::string Base64Encode(std::string data);
+    std::string Base64Decode(std::string data);
 };
 
 #endif
