@@ -199,3 +199,5 @@ extern void FireExitEvent();
 extern void ExitSMBX2(int processCode);
 
 std::string GetShortPath(std::string longPath);
+
+extern bool IsRunningUnderWine();

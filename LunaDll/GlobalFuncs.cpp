@@ -40,6 +40,7 @@
 #include "Episode/EpisodeMain.h"
 #include "Misc/BackgroundWorker.h"
 #include "Misc/InternetSystem.h"
+#include "Misc/ClipboardSystem.h"
 
 void splitStr(std::vector<std::string>& dest, const std::string& str, const char* separator)
 {
@@ -1337,6 +1338,9 @@ void FireExitEvent()
     // Don't forget to exit the background worker too
     BackgroundWorker_Stop();
 
+    // Stop monitoring the clipboard
+    ClipboardSystem::StopMonitoring();
+
     // Close all Sockets in case if there is any
     InternetSystem::CloseSockets();
 }
@@ -1368,4 +1372,16 @@ std::string GetShortPath(std::string longPath)
     shortPath.resize(result);
     
     return WStr2Str(shortPath);
+}
+
+
+bool IsRunningUnderWine()
+{
+    HMODULE hNtdll = GetModuleHandleA("ntdll.dll");
+    if (hNtdll == nullptr)
+        return false;
+    
+    // Wine exports "wine_get_version" from ntdll.dll
+    // which doesn't exist on real Windows
+    return GetProcAddress(hNtdll, "wine_get_version") != nullptr;
 }

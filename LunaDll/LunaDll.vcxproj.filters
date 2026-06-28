@@ -786,6 +786,9 @@
       <Filter>Episode</Filter>
     </ClInclude>
     <ClInclude Include="DefinesKeyboard.h" />
+    <ClInclude Include="Misc\ClipboardSystem.h">
+      <Filter>Misc</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="LuaMain\LuaHelper.cpp">
@@ -1409,9 +1412,6 @@
     <ClCompile Include="libs\luabind-deboostified\src$filename">
       <Filter>libs\luabind-deboostified</Filter>
     </ClCompile>
-    <ClCompile Include="libs\luabind-deboostified\src$filename">
-      <Filter>libs\luabind-deboostified</Filter>
-    </ClCompile>
     <ClCompile Include="Rendering\WindowSizeHandler.cpp">
       <Filter>Rendering</Filter>
     </ClCompile>
@@ -1534,6 +1534,9 @@
     </ClCompile>
     <ClCompile Include="LuaMain\LuaProxyFFIPlayer.cpp">
       <Filter>LuaMain</Filter>
+    </ClCompile>
+    <ClCompile Include="Misc\ClipboardSystem.cpp">
+      <Filter>Misc</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

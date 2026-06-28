@@ -761,7 +761,7 @@ void EpisodeMain::LoadWorldMapLevel(std::string levelName, int warpIdx)
     if (fileExists(Str2WStr(fullPathS)))
     {
         /*// Unpause the game
-        g_EventHandler.requestUnpause();
+        //g_EventHandler.requestUnpause();
 
         // Set the filename
         Vars::FileName = fullPathVB6;
@@ -772,20 +772,29 @@ void EpisodeMain::LoadWorldMapLevel(std::string levelName, int warpIdx)
         // Stop music
         Functions::StopMusic();
 
+        // Exit Lua
+        gLunaLua.exitContext();
+
+        // Get rid of any additional custom graphics loaded
+        gCachedFileMetadata.purge();
+
         // We're not on the map anymore
         Vars::LevelSelect = false;
 
+        // Clear the world map
+        Functions::ClearWorld();
+
         // Clear the level if existing
         Functions::ClearLevel();
-
-        // Do GameThing
-        Functions::GameThing();
 
         // show loadscreen
         LunaLoadScreenStart();
 
         // Now open the level
-        runtimeHookLoadLevel(fullPathVB6Pointer);
+        Functions::OpenLevel(fullPathVB6);
+        
+        // Do GameThing
+        Functions::GameThing();
 
         // hide loadscreen
         LunaLoadScreenKill();*/

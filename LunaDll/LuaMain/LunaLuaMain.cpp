@@ -50,6 +50,7 @@
 #include "../Misc/FileSystem.h"
 #include "../Misc/InternetSystem.h"
 #include "../Misc/BackgroundWorker.h"
+#include "../Misc/ClipboardSystem.h"
 
 /*static*/ DWORD CLunaFFILock::currentLockTlsIdx = TlsAlloc();
 
@@ -253,8 +254,6 @@ void CLunaLua::init(LuaLunaType type, std::wstring codePath, std::wstring levelP
         osTable["execute"] = object();
         osTable["exit"] = object();
         //osTable["getenv"] = object();
-        //osTable["remove"] = object();
-        //osTable["rename"] = object();
         osTable["setlocal"] = object();
         osTable["tmpname"] = object();
     }
@@ -1142,6 +1141,19 @@ void CLunaLua::bindAll()
                 // Mouse.get(index) - Returns mouse information that's on the idx specified. Note that invalid mouses and anything higher than 10 will return an invalid table.
                 def("get", (luabind::object(*)(int, lua_State*))&MouseSystem::GetInfoFromIdx)
             ],
+            
+            namespace_("Clipboard")[
+                // Clipboard.getText() - Gets text from the clipboard.
+                def("getText", (std::string(*)())&ClipboardSystem::GetText),
+                // Clipboard.setText(text) - Sets text to the clipboard.
+                def("setText", (std::string(*)(std::string))&ClipboardSystem::SetText),
+                // Clipboard.hasText() - Returns if the clipboard has text or not.
+                def("hasText", (bool(*)())&ClipboardSystem::HasText),
+                // Clipboard.clear() - Clears the data from the clipboard.
+                def("clear", (void(*)())&ClipboardSystem::Clear)
+            ],
+            
+            
             
             namespace_("File")[
                 // File.getSize(filePath) - Returns a file's size, in bytes.

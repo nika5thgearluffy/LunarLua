@@ -200,3 +200,6 @@ std::atomic<bool> gBackgroundWorkerRunning(false);
 // Legacy pause menu & message box variables.
 bool gLegacyPauseMenu = true;
 bool gLegacyMessageBox = true;
+
+// Clipboard history stuff
+bool gUseManualHistory = false;

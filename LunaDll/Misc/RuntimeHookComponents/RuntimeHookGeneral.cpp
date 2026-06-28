@@ -33,6 +33,7 @@
 
 #include "../../Misc/MonitorSystem.h"
 #include "../../Misc/KeyboardMouseSystem.h"
+#include "../../Misc/ClipboardSystem.h"
 
 // ntddvdeo.h doesn't exist, so declare this
 // [CLAUDE AI USED FOR THIS PART OF THE CODE]
@@ -343,46 +344,13 @@ static void CalculateWindowSizeAdjusted(HWND hwnd, LPRECT lpRect, WPARAM dragCor
 static void ProcessPasteKeystroke()
 {
     // Ctrl-V
-    if (OpenClipboard(nullptr) == 0)
-    {
-        // Couldn't open clipboard
-        return;
-    }
+    std::string pastedText = ClipboardSystem::GetText();
 
-    // Get unicode text handle
-    bool textIsUnicode = true;
-    HANDLE hData = GetClipboardData(CF_UNICODETEXT);
-    if (hData == nullptr)
-    {
-        // Couldn't get text handle, try non-unicode
-        hData = GetClipboardData(CF_TEXT);
-        textIsUnicode = false;
-        if (hData == nullptr)
-        {
-            // Couldn't get any text
-            CloseClipboard();
-            return;
-        }
-    }
-
-    // Lock data
-    void* dataPtr = GlobalLock(hData);
-    if (dataPtr == nullptr)
-    {
-        // Couldn't get pointer
-        GlobalUnlock(hData);
-        CloseClipboard();
-    }
-
-    // Convert to std::string
-    std::string pastedText = textIsUnicode ? WStr2Str(static_cast<const wchar_t*>(dataPtr)) : std::string(static_cast<const char*>(dataPtr));
-
-    // Unlock Data and close clipboard
-    GlobalUnlock(hData);
-    CloseClipboard();
+    if (!pastedText.empty())
+        ClipboardSystem::History_Add(pastedText);
 
     // Call event
-    if ((pastedText.length() > 0) && gLunaLua.isValid()) {
+    if (((pastedText.length() > 0) || pastedText != "") && gLunaLua.isValid()) {
         std::shared_ptr<Event> pasteTextEvent = std::make_shared<Event>("onPasteText", false);
         pasteTextEvent->setDirectEventName("onPasteText");
         pasteTextEvent->setLoopable(false);
@@ -1201,6 +1169,15 @@ LRESULT CALLBACK HandleWndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lPara
                 // Let default handler close the window
                 return DefWindowProc(hwnd, uMsg, wParam, lParam);
             }
+            case WM_CLIPBOARDUPDATE:
+            {
+                if (ClipboardSystem::HasText())
+                {
+                    std::string text = ClipboardSystem::GetText();
+                    ClipboardSystem::History_Add(text);
+                }
+                break;
+            }
         }
     }
 
@@ -1266,6 +1243,9 @@ LRESULT CALLBACK MsgHOOKProc(int nCode, WPARAM wParam, LPARAM lParam)
 
                 // Setup monitors...
                 MonitorSystem::SetupMonitors();
+                
+                // Initalize the clipboard system...
+                ClipboardSystem::Init();
 
                 // ...and the hDevNotify for monitors too
                 // [CLAUDE AI USED FOR THIS PART OF THE CODE]

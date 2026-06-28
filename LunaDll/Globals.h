@@ -284,3 +284,5 @@ extern std::atomic<bool> gBackgroundWorkerRunning;
 
 extern bool gLegacyPauseMenu;
 extern bool gLegacyMessageBox;
+
+extern bool gUseManualHistory;
