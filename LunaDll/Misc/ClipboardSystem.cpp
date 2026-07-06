@@ -137,19 +137,10 @@ void ClipboardSystem::History_Clear()
 
 void ClipboardSystem::Init()
 {
-    if (IsRunningUnderWine())
-    {
-        // Wine: use manual history only, skip WinRT
-        gUseManualHistory = true;
-    }
-    else
-    {
-        // Real Windows: try WinRT clipboard history
-        // For now fall back to manual since WinRT needs extra setup
-        gUseManualHistory = true;
-        // TODO: WinRT history support here when needed
-    }
-    
+    // Use the in-game clipboard history
+    gUseManualHistory = true;
+
+    // Start monitoring the history
     ClipboardSystem::StartMonitoring();
 }
 

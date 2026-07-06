@@ -85,6 +85,12 @@ namespace MonitorSystem{
 
     int getWindowHeightFromResolution(int gameWidth, int gameHeight);
     int getWindowHeightFromResolution(int gameHeight);
+    
+    float GetWindowScaleX();
+    float GetWindowScaleY();
+
+    int getGameWidthFromWindow();
+    int getGameHeightFromWindow();
 
     float getDPIScale(int monitorID);
     float getDPIScale();

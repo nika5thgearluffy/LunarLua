@@ -290,6 +290,47 @@ int MonitorSystem::getWindowHeightFromResolution(int gameHeight)
     return MonitorSystem::getWindowHeightFromResolution(g_GLContextManager.GetMainFBWidth(), gameHeight);
 }
 
+// Convert window pixel coords to game resolution coords
+// accounts for letterbox offset and scale
+// [CLAUDE AI IS USED FOR THIS PART OF THE CODE]
+float MonitorSystem::GetWindowScaleX()
+{
+    const auto winState = gWindowSizeHandler.getStateThreadSafe();
+    return (float)winState.fbScale.x;
+}
+
+float MonitorSystem::GetWindowScaleY()
+{
+    const auto winState = gWindowSizeHandler.getStateThreadSafe();
+    return (float)winState.fbScale.y;
+}
+
+// Get the actual game resolution from the current window size
+// (inverse of getWindowWidthFromResolution)
+int MonitorSystem::getGameWidthFromWindow()
+{
+    RECT clientRect;
+    if (GetClientRect(gMainWindowHwnd, &clientRect))
+    {
+        float dpiScale = MonitorSystem::getDPIScale();
+        return (int)((clientRect.right - clientRect.left) / dpiScale);
+    }
+    return 800;  // fallback
+}
+
+int MonitorSystem::getGameHeightFromWindow()
+{
+    RECT clientRect;
+    if (GetClientRect(gMainWindowHwnd, &clientRect))
+    {
+        float dpiScale = MonitorSystem::getDPIScale();
+        return (int)((clientRect.bottom - clientRect.top) / dpiScale);
+    }
+    return 600;  // fallback
+}
+
+
+
 // Gets the DPI scale. This is accounted for 4K monitors and scaled resolutions.
 // [CLAUDE AI IS USED FOR THIS PART OF THE CODE]
 float MonitorSystem::getDPIScale(int monitorID)

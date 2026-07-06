@@ -1098,6 +1098,10 @@ void CLunaLua::bindAll()
                 def("x", (int(*)())&MonitorSystem::GetScreenXPosition),
                 // Window.y() - Gets the current Y window position.
                 def("y", (int(*)())&MonitorSystem::GetScreenYPosition),
+                // Window.scaleX() - Gets the current X window position of the game itself relative to the window position.
+                def("scaleX", (float(*)())&MonitorSystem::GetWindowScaleX),
+                // Window.scaleY() - Gets the current Y window position of the game itself relative to the window position.
+                def("scaleY", (float(*)())&MonitorSystem::GetWindowScaleY),
                 // Window.width() - Gets the window width of the game.
                 def("width", (int(*)())&MonitorSystem::getWindowWidth),
                 // Window.height() - Gets the window height of the game.
@@ -1120,6 +1124,10 @@ void CLunaLua::bindAll()
                 def("getWidthFromResolution", (int(*)(int))&MonitorSystem::getWindowWidthFromResolution),
                 // Window.getHeightFromResolution(height) - Gets the window height based off the resolution width.
                 def("getHeightFromResolution", (int(*)(int))&MonitorSystem::getWindowHeightFromResolution),
+                // Window.getWidthFromWindow() - Gets the game width based off the window width.
+                def("getWidthFromWindow", (int(*)())&MonitorSystem::getGameWidthFromWindow),
+                // Window.getHeightFromWindow() - Gets the game height based off the window height.
+                def("getHeightFromWindow", (int(*)())&MonitorSystem::getGameHeightFromWindow),
                 // Window.title() - Gets the window title of the game.
                 def("title", (std::string(*)())&MonitorSystem::GetWindowTitle),
                 // Window.fullscreen() - Gets if the window is in fullscreen or not.
