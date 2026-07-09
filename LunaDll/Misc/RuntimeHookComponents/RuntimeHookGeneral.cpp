@@ -1362,7 +1362,10 @@ void ParseArgs(const std::vector<std::wstring>& args)
 
         if (levelPath.length() > 0)
         {
-            //Get the episode directory
+            // Make sure this is true if we're testing a level
+            gIsTestingLevel = true;
+
+            // Get the episode directory
             std::string levelPathS = WStr2Str(levelPath);
             std::string levelPathNoFileS = splitFilenameFromPath(levelPathS);
             std::string levelPathNoFileResolvedS = replaceFowardSlashesWithBackSlashes(levelPathNoFileS);
