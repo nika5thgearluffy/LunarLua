@@ -4,6 +4,10 @@
 
 #include "../../../Episode/EpisodeMain.h"
 
+#include "../../../SMBXInternal/Types.h"
+#include "../../../SMBXInternal/Variables.h"
+#include "../../../SMBXInternal/Functions.h"
+
 std::string LuaProxy::Level::filename()
 {
     return (std::string)GM_LVLFILENAME_PTR;
@@ -23,4 +27,12 @@ void LuaProxy::Level::worldLoad(std::string fileName, int warpIdx)
 void LuaProxy::Level::worldLoad(std::string fileName)
 {
     gEpisodeMain.LoadWorldMapLevel(fileName, 0);
+}
+
+// Forms paths when specifying a level ID.
+void LuaProxy::Level::worldPath(int levelID, bool shouldSkipAnimation)
+{
+    // Don't forget to set level beat code for applying where to unlock paths!
+    using namespace SMBX13;
+    Functions::LevelPath(levelID, 5, (VB6Bool)shouldSkipAnimation);
 }

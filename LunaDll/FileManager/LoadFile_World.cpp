@@ -323,7 +323,7 @@ void LunaLua_loadWorldFile(WorldData& outData, std::wstring fullPath, bool isVal
             player->momentum.width = level->momentum.width;
             player->momentum.height = level->momentum.height;
             player->currentLevelTitle = level->levelTitle;
-            setPathsToVisible(&(level->momentum));
+            //setPathsToVisible(&(level->momentum));
         }
     }
 

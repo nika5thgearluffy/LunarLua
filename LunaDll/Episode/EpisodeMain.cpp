@@ -370,6 +370,21 @@ void EpisodeMain::LaunchEpisode(std::wstring wldPathWS, int saveSlot, int player
 
         Functions::LoadGame(); //--LoadGame (line 4998)--
     } //--End If (line 4999)--
+    else
+    {
+        // Make the start level visible since it's not visible on wldx files for some reason
+        VB6Bool shouldSkipAnimation = true;
+        for (int i = 1; i <= Vars::numWorldLevels; i++)
+        {
+            if (Vars::WorldLevel[i].Start)
+            {
+                // Make the start level visible
+                Vars::WorldLevel[i].Active = true;
+                // Now show the paths starting from the start level
+                Functions::LevelPath(i, 5, shouldSkipAnimation);
+            }
+        }
+    }
 
     // get if the illparkwhereiwant cheat is active
     if(Vars::WorldUnlock) //--If WorldUnlock = True Then (line 5000)--
