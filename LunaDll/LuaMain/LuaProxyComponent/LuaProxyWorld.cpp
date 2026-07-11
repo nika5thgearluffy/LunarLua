@@ -2,6 +2,11 @@
 #include "../../SMBXInternal/Overworld.h"
 #include "../../Misc/MiscFuncs.h"
 #include "../../SMBXInternal/Menu.h"
+#include "../../SMBXInternal/WorldLevel.h"
+
+#include "../../SMBXInternal/Types.h"
+#include "../../SMBXInternal/Variables.h"
+#include "../../SMBXInternal/Functions.h"
 
 LuaProxy::World::World()
 {}
@@ -135,4 +140,12 @@ short LuaProxy::World::playerPowerup() const
 void LuaProxy::World::setPlayerPowerup(short playerPowerup)
 {
     SMBXOverworld::get()->currentPowerup = playerPowerup;
+}
+
+// Forms paths when specifying a level ID.
+void LuaProxy::World::unlockPath(int levelID, bool shouldSkipAnimation)
+{
+    // Don't forget to set level beat code for applying where to unlock paths!
+    using namespace SMBX13;
+    Functions::LevelPath(levelID, 5, (VB6Bool)shouldSkipAnimation);
 }

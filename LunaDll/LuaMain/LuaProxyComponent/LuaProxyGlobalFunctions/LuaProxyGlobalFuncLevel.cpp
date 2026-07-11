@@ -28,11 +28,3 @@ void LuaProxy::Level::worldLoad(std::string fileName)
 {
     gEpisodeMain.LoadWorldMapLevel(fileName, 0);
 }
-
-// Forms paths when specifying a level ID.
-void LuaProxy::Level::worldPath(int levelID, bool shouldSkipAnimation)
-{
-    // Don't forget to set level beat code for applying where to unlock paths!
-    using namespace SMBX13;
-    Functions::LevelPath(levelID, 5, (VB6Bool)shouldSkipAnimation);
-}

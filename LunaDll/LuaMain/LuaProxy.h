@@ -625,6 +625,7 @@ namespace LuaProxy {
         short getCurrentDirection() const;
         short playerPowerup() const;
         void setPlayerPowerup(short playerPowerup);
+        void unlockPath(int levelID, bool shouldSkipAnimation);
     };
 
     class Tile
@@ -901,7 +902,6 @@ namespace LuaProxy {
         std::string name();
         void worldLoad(std::string fileName, int warpIdx);
         void worldLoad(std::string fileName);
-        void worldPath(int levelID, bool shouldSkipAnimation);
     }
 
     namespace Misc{

@@ -1394,6 +1394,11 @@ void CLunaLua::bindAll()
                     def("getOverworldHudState", &LuaProxy::Graphics::getOverworldHudState)
                 ],
 
+                namespace_("Map")[
+                    // Map.unlockPath(levelID, shouldSkipAnimation) - Unlocks paths depending on the level set.
+                    def("unlockPath", &LuaProxy::World::unlockPath)
+                ],
+
                 LUAHELPER_DEF_CLASS(World)
                 .property("playerX", &LuaProxy::World::playerX, &LuaProxy::World::setPlayerX)
                 .property("playerY", &LuaProxy::World::playerY, &LuaProxy::World::setPlayerY)
@@ -1491,7 +1496,7 @@ void CLunaLua::bindAll()
                         def("findByFilename", &LuaProxy::LevelObject::findByFilename),
                         def("load", (void(*)(std::string))&LuaProxy::Level::worldLoad),
                         def("load", (void(*)(std::string, int))&LuaProxy::Level::worldLoad),
-                        def("unlockPaths", (void(*)(int, bool))&LuaProxy::Level::worldPath)
+                        def("getIntersecting", &LuaProxy::LevelObject::getIntersecting)
                 ]
                 .def("__eq", LUAPROXY_DEFUSERDATAINEDXCOMPARE(LuaProxy::LevelObject, m_index))
                 .property("idx", &LuaProxy::LevelObject::idx)
