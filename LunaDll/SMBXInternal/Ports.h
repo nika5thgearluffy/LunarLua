@@ -10,6 +10,7 @@ namespace SMBX13 {
         void __stdcall PlayerEffects(int16_t& A);
         void __stdcall KillPlayer(int16_t& A);
         void __stdcall EveryonesDead();
+        void __stdcall PlayerHurt(int16_t& A);
 
         //extern int MacroTimer_SMB3ExitEnd;
         //extern int MacroTimer_SMB3ExitEnd_Get();

@@ -630,7 +630,7 @@ void __stdcall runtimeHookNPCCollisionGroup(void);
 
 void __stdcall runtimeHookLevelPauseCheck(void);
 
-void __stdcall runtimeHookPlayerHarm(void);
+bool __stdcall runtimeHookPlayerHarm(short playerIdx);
 void __stdcall runtimeHookPlayerKill(short* playerIdxPtr);
 bool __stdcall runtimeHookPlayerDie(short* playerIdxPtr);
 bool __stdcall runtimeHookAllPlayersDead(void);

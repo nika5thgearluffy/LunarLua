@@ -16,6 +16,7 @@ bool __stdcall runtimeHookPlayerDie(short* playerIdxPtr);
 void __stdcall runtimeHookBattleModeWin(int playerIdx);
 void __stdcall runtimeHookGameover();
 bool __stdcall runtimeHookAllPlayersDead(void);
+bool __stdcall runtimeHookPlayerHarm(short playerIdx);
 
 // Fix enablement
 bool SMBX13::Ports::_enablePowerupPowerdownPositionFixes = true;
@@ -147,10 +148,10 @@ void __stdcall SMBX13::Ports::PlayerEffects(int16_t& A) {
         }
         // Player shrinking effect
         else if (_.Effect == 2) {
-            if (gEpisodeSettings.easierPowerdown && _.State >= 3)
+            /*if (gEpisodeSettings.easierPowerdown && _.State >= 3)
             {
                 _.Effect = 13;
-            }
+            }*/
             if (_.Duck == true) {
                 // Fixes a block collision bug
                 _.StandUp = true;
@@ -1443,5 +1444,274 @@ void __stdcall SMBX13::Ports::EveryonesDead() {
         MenuCursor = 0;*/
     }
     //DoEvents();
+    #pragma warning( pop )
+}
+
+
+// This is an automatically translated copy of PlayerHurt() from modPlayer.bas
+// It accounts for:
+// - TBD
+void __stdcall SMBX13::Ports::PlayerHurt(int16_t& A) {
+    using namespace SMBX13::Types;
+    using namespace SMBX13::Vars;
+    using namespace SMBX13::Functions;
+    #pragma warning( push )
+    #pragma warning( disable: 4244 ) // Disable loss of precision warning
+    // Return if player harm is cancelled
+    if (runtimeHookPlayerHarm((short)A))
+    {
+        return;
+    }
+    if (((GodMode == true) || (GameOutro == true)) || (BattleOutro > 0)) { return; }
+    Location_t tempLocation = {};
+    int16_t B = 0;
+    {
+        auto& _ = Player[A];
+        if (((((_.Dead == true) || (_.TimeToLive > 0)) || (_.Stoned == true)) || (_.Immune > 0)) || (_.Effect > 0)) { return; }
+        // netplay stuffs
+        if (nPlay.Online == true) {
+            if ((nPlay.Allow == false) && (A != (nPlay.MySlot + 1))) { return; }
+            if (A == (nPlay.MySlot + 1)) {
+                // Netplay.sendData Netplay.PutPlayerLoc(nPlay.MySlot) & "1a" & A & "|" & .State & LB
+            }
+        }
+        _.DoubleJump = false;
+        _.GrabSpeed = 0;
+        _.GrabTime = 0;
+        _.Slide = false;
+        _.SlideKill = false;
+        _.CanFly = false;
+        _.CanFly2 = false;
+        _.FlyCount = 0;
+        _.RunCount = 0;
+        if (_.Fairy == true) {
+            PlaySound(87);
+            _.Immune = 30;
+            _.Effect = 8;
+            _.Effect2 = 4;
+            _.Fairy = false;
+            _.FairyTime = 0;
+            SizeCheck(B);
+            NewEffect(63, _.Location);
+            if (_.Character == 5) {
+                _.FrameCount = -10;
+                _.Location.SpeedX = (3 * -_.Direction);
+                _.Location.SpeedY = -7.01;
+                _.StandingOnNPC = 0;
+                _.FireBallCD = 20;
+                PlaySound(78);
+            }
+            return;
+        }
+        if (GameMenu == true) {
+            if (_.State > 1) {
+                _.Hearts = 2;
+            }
+            else {
+                _.Hearts = 1;
+            }
+        }
+        if (NPC[_.HoldingNPC].Type == 13) { _.HoldingNPC = 0; }
+        if (LevelMacro == 0) {
+            if (_.Immune == 0) {
+                if (_.Mount == 1) {
+                    _.Mount = 0;
+                    PlaySound(35);
+                    UnDuck(A);
+                    tempLocation = _.Location;
+                    tempLocation.SpeedX = (5 * -_.Direction);
+                    if (_.MountType == 1) {
+                        NewEffect(26, tempLocation);
+                    }
+                    else if (_.MountType == 2) {
+                        NewEffect(101, tempLocation);
+                    }
+                    else {
+                        NewEffect(102, tempLocation);
+                    }
+                    _.Location.Y = (_.Location.Y + _.Location.Height);
+                    _.Location.Height = Physics.PlayerHeight[_.State][_.Character];
+                    _.Location.Y = (_.Location.Y - _.Location.Height);
+                    _.Immune = 150;
+                    _.Immune2 = true;
+                }
+                else if (_.Mount == 3) {
+                    UnDuck(A);
+                    PlaySound(49);
+                    _.Immune = 100;
+                    _.Immune2 = true;
+                    _.CanJump = false;
+                    _.Location.SpeedX = 0;
+                    if (_.Location.SpeedY > Physics.PlayerJumpVelocity) {
+                        _.Location.SpeedY = Physics.PlayerJumpVelocity;
+                    }
+                    _.Jump = 0;
+                    _.Mount = 0;
+                    _.YoshiBlue = false;
+                    _.YoshiRed = false;
+                    _.GroundPound = false;
+                    _.GroundPound2 = false;
+                    _.YoshiYellow = false;
+                    _.Dismount = _.Immune;
+                    numNPCs = (numNPCs + 1);
+                    if ((_.YoshiNPC > 0) || (_.YoshiPlayer > 0)) {
+                        YoshiSpit(A);
+                    }
+                    {
+                        auto& _ = NPC[numNPCs];
+                        _.Direction = Player[A].Direction;
+                        _.Active = true;
+                        _.TimeLeft = 100;
+                        if (Player[A].MountType == 1) {
+                            _.Type = 95;
+                        }
+                        else if (Player[A].MountType == 2) {
+                            _.Type = 98;
+                        }
+                        else if (Player[A].MountType == 3) {
+                            _.Type = 99;
+                        }
+                        else if (Player[A].MountType == 4) {
+                            _.Type = 100;
+                        }
+                        else if (Player[A].MountType == 5) {
+                            _.Type = 148;
+                        }
+                        else if (Player[A].MountType == 6) {
+                            _.Type = 149;
+                        }
+                        else if (Player[A].MountType == 7) {
+                            _.Type = 150;
+                        }
+                        else if (Player[A].MountType == 8) {
+                            _.Type = 228;
+                        }
+                        _.Special = 1;
+                        _.Location.Height = 32;
+                        _.Location.Width = 32;
+                        _.Location.Y = ((Player[A].Location.Y + Player[A].Location.Height) - 33);
+                        _.Location.X = ::floor(((Player[A].Location.X + (Player[A].Location.Width / 2)) - 16));
+                        _.Location.SpeedY = 0.5;
+                        _.Location.SpeedX = 0;
+                        _.CantHurt = 10;
+                        _.CantHurtPlayer = A;
+                    }
+                    _.Location.Height = Physics.PlayerHeight[_.State][_.Character];
+                }
+                else {
+                    if ((_.Character == 3) || (_.Character == 4)) {
+                        if ((_.Hearts == 3) && ((((_.State == 2) || (_.State == 4)) || (_.State == 5)) || (_.State == 6))) {
+                            _.State = 2;
+                            _.Immune = 150;
+                            _.Immune2 = true;
+                            _.Hearts = (_.Hearts - 1);
+                            PlaySound(76);
+                            return;
+                        }
+                        else {
+                            _.Hearts = (_.Hearts - 1);
+                            if (_.Hearts == 0) {
+                                _.State = 1;
+                            }
+                            else if ((_.State == 3) && (_.Hearts == 2)) {
+                                _.Effect = 227;
+                                _.Effect2 = 0;
+                                PlaySound(5);
+                                return;
+                            }
+                            else if ((_.State == 7) && (_.Hearts == 2)) {
+                                _.Effect = 228;
+                                _.Effect2 = 0;
+                                PlaySound(5);
+                                return;
+                            }
+                            else {
+                                _.State = 2;
+                            }
+                        }
+                    }
+                    else if (_.Character == 5) {
+                        _.Hearts = (_.Hearts - 1);
+                        if (_.Hearts > 0) {
+                            if (_.Hearts == 1) {
+                                _.State = 1;
+                            }
+                            else {
+                                _.State = 2;
+                            }
+                            if (_.State < 1) { _.State = 1; }
+                            if (_.Mount == 0) {
+                                _.FrameCount = -10;
+                                _.Location.SpeedX = (3 * -_.Direction);
+                                _.Location.SpeedY = -7.01;
+                                _.FireBallCD = 30;
+                                _.SwordPoke = 0;
+                            }
+                            _.Immune = 150;
+                            _.Immune2 = true;
+                            PlaySound(78);
+                            return;
+                        }
+                    }
+                    if (_.State > 1) {
+                        PlaySound(5);
+                        _.StateNPC = 0;
+                        if (gEpisodeSettings.easierPowerdown && _.State >= 3)
+                        {
+                            _.Effect = 13;
+                            return;
+                        }
+                        _.Effect = 2;
+                    }
+                    else {
+                        PlayerDead(A);
+                        Player[A].HoldingNPC = 0;
+                        if (_.Mount == 2) {
+                            _.Mount = 0;
+                            numNPCs = (numNPCs + 1);
+                            {
+                                auto& _ = NPC[numNPCs];
+                                _.Direction = Player[A].Direction;
+                                if (_.Direction == 1) { _.Frame = 4; }
+                                _.Frame = (_.Frame + SpecialFrame[2]);
+                                _.Active = true;
+                                _.TimeLeft = 100;
+                                _.Type = 56;
+                                _.Location.Height = 128;
+                                _.Location.Width = 128;
+                                _.Location.Y = ::floor(Player[A].Location.Y);
+                                _.Location.X = ::floor(Player[A].Location.X);
+                                _.Location.SpeedY = 0;
+                                _.Location.SpeedX = 0;
+                                _.CantHurt = 10;
+                                _.CantHurtPlayer = A;
+                            }
+                            _.Location.Height = Physics.PlayerHeight[_.State][_.Character];
+                            _.Location.Width = Physics.PlayerWidth[_.State][_.Character];
+                            _.Location.X = ((_.Location.X + 64) - (Physics.PlayerWidth[_.State][_.Character] / 2));
+                            _.ForceHitSpot3 = true;
+                            _.Location.Y = (NPC[numNPCs].Location.Y - _.Location.Height);
+                            for (B = 1; B <= numNPCs; B++) {
+                                if (NPC[B].standingOnPlayer == A) {
+                                    NPC[B].standingOnPlayer = 0;
+                                    NPC[B].Location.SpeedY = 0;
+                                    NPC[B].Location.Y = ((NPC[numNPCs].Location.Y - 0.1) - NPC[B].standingOnPlayerY);
+                                    NPC[B].standingOnPlayerY = 0;
+                                    if (NPC[B].Type == 22) { NPC[B].Special = 0; }
+                                    if (NPC[B].Type == 50) {
+                                        NPC[B].Killed = 9;
+                                        NPC[B].Special = 0;
+                                    }
+                                    else if (NPC[B].Type == 49) {
+                                        NPC[B].Special = 0;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
     #pragma warning( pop )
 }

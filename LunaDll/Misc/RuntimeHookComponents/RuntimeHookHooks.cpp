@@ -1730,7 +1730,7 @@ void __stdcall runtimeHookGameMenu()
 		else if(gEpisodeLoadedOnBoot)
 		{
 			GameAutostart autostarter;
-			if(!gStartupSettings.waitForIPC && !TestModeIsEnabled() && gEpisodeLoadedOnBoot)
+			if(((!gStartupSettings.waitForIPC && !TestModeIsEnabled()) || (!gIsTestingLevel)) && gEpisodeLoadedOnBoot)
 			{
 				std::string selectedEpisode = "";
 				std::wstring selectedEpisodePath = gStartupSettings.epSettings.wldPath;
@@ -4503,7 +4503,7 @@ __declspec(naked) void __stdcall runtimeHookLevelPauseCheck(void)
     }
 }
 
-static int __stdcall runtimeHookPlayerHarmInternal(short* playerIdxPtr)
+bool __stdcall runtimeHookPlayerHarm(short playerIdx)
 {
     bool playerHarmCancelled = false;
 
@@ -4511,39 +4511,12 @@ static int __stdcall runtimeHookPlayerHarmInternal(short* playerIdxPtr)
         std::shared_ptr<Event> playerHarmEvent = std::make_shared<Event>("onPlayerHarm", true);
         playerHarmEvent->setDirectEventName("onPlayerHarm");
         playerHarmEvent->setLoopable(false);
-        gLunaLua.callEvent(playerHarmEvent, *playerIdxPtr);
+        gLunaLua.callEvent(playerHarmEvent, playerIdx);
 
         playerHarmCancelled = playerHarmEvent->native_cancelled();
     }
 
-    return playerHarmCancelled ? -1 : 0;
-}
-
-__declspec(naked) void __stdcall runtimeHookPlayerHarm(void)
-{
-    // 009B52FC | 0F8F 550B0000              | jg smbx.9B5E57
-    __asm {
-        jg wasntPlayerHarm
-        push eax
-        push ecx
-        push edx
-        push dword ptr ss:[ebp+8]
-        call runtimeHookPlayerHarmInternal
-        cmp eax, 0
-        jne cancelPlayerHarm
-        pop edx
-        pop ecx
-        pop eax
-        push 0x9B5302
-        ret
-    cancelPlayerHarm:
-        pop edx
-        pop ecx
-        pop eax
-    wasntPlayerHarm:
-        push 0x9B5E57
-        ret
-    }
+    return playerHarmCancelled;
 }
 
 __declspec(naked) void __stdcall killPlayer_OrigFunc(short* playerIdxPtr)
