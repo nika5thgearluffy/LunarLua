@@ -427,6 +427,8 @@ class VBTranslator:
         return args
 
     def translateArgsCall(self, var : VisualBasic6Parser.ArgsCallContext, funcName : str) -> str:
+        if var is None:  # Handle no-argument calls if there are none
+            return ""
         return ", ".join(self.translateArgsCallToList(var, funcName))
 
     def translateICS_InBlock(self, stmt : VisualBasic6Parser.ImplicitCallStmt_InBlockContext):
