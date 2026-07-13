@@ -1450,7 +1450,7 @@ void __stdcall SMBX13::Ports::EveryonesDead() {
 
 // This is an automatically translated copy of PlayerHurt() from modPlayer.bas
 // It accounts for:
-// - TBD
+// - Running another effect when easier powerdown is active
 void __stdcall SMBX13::Ports::PlayerHurt(int16_t& A) {
     using namespace SMBX13::Types;
     using namespace SMBX13::Vars;
@@ -1708,6 +1708,168 @@ void __stdcall SMBX13::Ports::PlayerHurt(int16_t& A) {
                                 }
                             }
                         }
+                    }
+                }
+            }
+        }
+    }
+    #pragma warning( pop )
+}
+
+// This is an automatically translated copy of LinkFrame() from modPlayer.bas
+// It accounts for:
+// - Toggling the link run effect and SFX on or off
+void __stdcall SMBX13::Ports::LinkFrame(int16_t& A) {
+    using namespace SMBX13::Types;
+    using namespace SMBX13::Vars;
+    using namespace SMBX13::Functions;
+    #pragma warning( push )
+    #pragma warning( disable: 4244 ) // Disable loss of precision warning
+    Location_t tempLocation = {};
+    {
+        auto& _ = Player[A];
+        if (_.FrameCount == -10) {
+            if (_.SwordPoke == 0) {
+                // Hurt Frame
+                if (((((_.Location.SpeedY == 0) || (_.StandingOnNPC != 0)) || (_.Slope != 0)) || (_.Wet > 0)) || (_.Immune == 0)) {
+                    _.FrameCount = 0;
+                }
+                else {
+                    _.Frame = 11;
+                    return;
+                }
+            }
+            else {
+                _.FrameCount = 0;
+            }
+        }
+        if (_.Stoned == true) {
+            _.Frame = 12;
+            if (_.Location.SpeedX != 0) {
+                if (((_.Location.SpeedY == 0) || (_.Slope > 0)) || (_.StandingOnNPC != 0)) {
+                    if (_.SlideCounter <= 0) {
+                        _.SlideCounter = (2 + (VB6RNG::generateNumber() * 2));
+                        tempLocation.Y = ((_.Location.Y + _.Location.Height) - 5);
+                        tempLocation.X = ((_.Location.X + (_.Location.Width / 2)) - 4);
+                        NewEffect(74, tempLocation, 1, 0, ShadowMode);
+                    }
+                }
+            }
+            return;
+        }
+        if (((LevelSelect == false) && (_.Effect == 0)) && (_.FireBallCD == 0)) {
+            if (_.Controls.Left == true) { _.Direction = -1; }
+            if (_.Controls.Right == true) { _.Direction = 1; }
+        }
+        if (_.Fairy == true) { return; }
+        // Drawing back
+        if (_.SwordPoke < 0) {
+            if (_.Duck == false) {
+                _.Frame = 6;
+            }
+            else {
+                _.Frame = 8;
+            }
+        }
+        // Stabbing
+        else if (_.SwordPoke > 0) {
+            if (_.Duck == false) {
+                _.Frame = 7;
+            }
+            else {
+                _.Frame = 8;
+            }
+        }
+        // Clown Car
+        else if (_.Mount == 2) {
+            _.Frame = 1;
+            _.MountFrame = SpecialFrame[2];
+            if (_.Direction == 1) { _.MountFrame = (_.MountFrame + 4); }
+        }
+        // Ducking
+        else if (_.Duck == true) {
+            _.Frame = 5;
+        }
+        // Link is swimming
+        else if ((((((_.WetFrame == true) && (_.Location.SpeedY != 0)) && (_.Slope == 0)) && (_.StandingOnNPC == 0)) && (_.Duck == false)) && (_.Quicksand == 0)) {
+            if ((_.Location.SpeedY < 0.5) || (_.Frame != 3)) {
+                if ((((_.Frame != 1) && (_.Frame != 2)) && (_.Frame != 3)) && (_.Frame != 4)) { _.FrameCount = 6; }
+                _.FrameCount = (_.FrameCount + 1);
+                if (_.FrameCount < 6) {
+                    _.Frame = 3;
+                }
+                else if (_.FrameCount < 12) {
+                    _.Frame = 2;
+                }
+                else if (_.FrameCount < 18) {
+                    _.Frame = 3;
+                }
+                else if (_.FrameCount < 24) {
+                    _.Frame = 1;
+                }
+                else {
+                    _.Frame = 3;
+                    _.FrameCount = 0;
+                }
+            }
+            else {
+                _.Frame = 3;
+            }
+        }
+        // Jumping/falling
+        else if ((((_.Location.SpeedY != 0) && (_.StandingOnNPC == 0)) && (_.Slope == 0)) && !((_.Quicksand > 0) && (_.Location.SpeedY > 0))) {
+            if (_.Location.SpeedY < 0) {
+                if (_.Controls.Up == true) {
+                    _.Frame = 10;
+                }
+                else {
+                    _.Frame = 5;
+                }
+            }
+            else {
+                if (_.Controls.Down == true) {
+                    _.Frame = 9;
+                }
+                else {
+                    _.Frame = 3;
+                }
+            }
+        }
+        // Standing
+        else if ((_.Location.SpeedX == 0) || (((_.Slippy == true) && (_.Controls.Left == false)) && (_.Controls.Right == false))) {
+            _.Frame = 1;
+        }
+        // Running
+        else {
+            _.FrameCount = (_.FrameCount + 1);
+            if ((_.Location.SpeedX > (Physics.PlayerWalkSpeed - 1.5)) || (_.Location.SpeedX < (-Physics.PlayerWalkSpeed + 1.5))) { _.FrameCount = (_.FrameCount + 1); }
+            if ((_.Location.SpeedX > Physics.PlayerWalkSpeed) || (_.Location.SpeedX < -Physics.PlayerWalkSpeed)) { _.FrameCount = (_.FrameCount + 1); }
+            if ((_.Location.SpeedX > (Physics.PlayerWalkSpeed + 1)) || (_.Location.SpeedX < (-Physics.PlayerWalkSpeed - 1))) { _.FrameCount = (_.FrameCount + 1); }
+            if ((_.Location.SpeedX > (Physics.PlayerWalkSpeed + 2)) || (_.Location.SpeedX < (-Physics.PlayerWalkSpeed - 2))) { _.FrameCount = (_.FrameCount + 1); }
+            if (_.FrameCount >= 8) {
+                _.FrameCount = 0;
+                _.Frame = (_.Frame - 1);
+            }
+            if (_.Frame <= 0) {
+                _.Frame = 4;
+            }
+            else if (_.Frame >= 5) {
+                _.Frame = 1;
+            }
+            if ((_.Location.SpeedX >= (Physics.PlayerRunSpeed * 0.9)) || (_.Location.SpeedX <= (-Physics.PlayerRunSpeed * 0.9))) {
+                if (_.SlideCounter <= 0) {
+                    _.SlideCounter = (2 + (VB6RNG::generateNumber() * 2));
+                    if (gEpisodeSettings.linkShouldRunSlide)
+                    {
+                        PlaySound(86);
+                        tempLocation.Y = ((_.Location.Y + _.Location.Height) - 4);
+                        if (_.Location.SpeedX < 0) {
+                            tempLocation.X = (((_.Location.X + (_.Location.Width / 2)) - 6) - 4);
+                        }
+                        else {
+                            tempLocation.X = (((_.Location.X + (_.Location.Width / 2)) + 6) - 4);
+                        }
+                        NewEffect(74, tempLocation, 1, 0, ShadowMode);
                     }
                 }
             }

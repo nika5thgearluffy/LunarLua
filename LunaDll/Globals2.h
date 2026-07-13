@@ -45,6 +45,9 @@ struct EpisodeSettings
     // If the episode should suppress close-to-the-limit message boxes, this should be set to true.
     bool suppressCloseLimitMessages;
 
+    // If Link should run slide, this should be set to true
+    bool linkShouldRunSlide;
+
     EpisodeSettings() :
         episodeDirectory(L""), episodeDirectoryWithoutRoot(L""),
         usingCustomSplash(false), episodeBootImage(L""),
@@ -55,7 +58,8 @@ struct EpisodeSettings
         showPauseOverlay(true),
         defaultLifeCount(3), decreaseLivesAfterDeath(true),
         easierPowerdown(false),
-        suppressCloseLimitMessages(false)
+        suppressCloseLimitMessages(false),
+        linkShouldRunSlide(true)
     {
     }
 };

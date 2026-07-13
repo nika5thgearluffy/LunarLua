@@ -141,6 +141,9 @@ static void Episode_SetEpisodeIni()
 
             // If this is true, powering down will be easier and go from >= 3 to 2, then 2 to 1.
             gEpisodeSettings.easierPowerdown = episodeConfig.value("easier-powerdown", false).toBool();
+
+            // If this is false, the effect and SFX used for Link to run won't happen, but he will still run.
+            gEpisodeSettings.linkShouldRunSlide = episodeConfig.value("link-should-run-slide", true).toBool();
         }
         episodeConfig.endGroup();
         if(episodeConfig.beginGroup("engine-settings"))
